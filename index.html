@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamAuction Pro - Платформа аукционов для Twitch</title>
+    <title>StreamAuction & Roulette Pro - Twitch Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <!-- Google Fonts: Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -32,18 +32,18 @@
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 8s linear infinite',
                         'bounce-short': 'bounceShort 0.5s ease-in-out',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite alternate',
                     },
                     keyframes: {
                         bounceShort: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-6px)' }
                         },
-                        glow: {
-                            '0%': { boxShadow: '0 0 5px rgba(145, 70, 255, 0.4)' },
-                            '100%': { boxShadow: '0 0 20px rgba(145, 70, 255, 0.8)' }
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 10px rgba(145, 70, 255, 0.4)' },
+                            '100%': { boxShadow: '0 0 25px rgba(145, 70, 255, 0.9)' }
                         }
                     }
                 }
@@ -57,7 +57,6 @@
             color: #EFEEF1;
             overflow-x: hidden;
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -73,38 +72,48 @@
             background: #9146FF;
         }
         .glass-panel {
-            background: rgba(24, 24, 27, 0.75);
-            backdrop-filter: blur(12px);
+            background: rgba(24, 24, 27, 0.85);
+            backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .obs-preview-bg {
-            background: radial-gradient(circle at center, #1a102f 0%, #0b0614 100%);
+            background: radial-gradient(circle at center, #1e1136 0%, #0b0614 100%);
+        }
+        /* Roulette wheel custom styling */
+        #rouletteCanvas {
+            filter: drop-shadow(0 0 15px rgba(145, 70, 255, 0.4));
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-twitch-purple selection:text-white">
 
+    <!-- STREAMER HEADER NAVBAR -->
     <header class="glass-panel border-b border-twitch-border sticky top-0 z-50 px-4 lg:px-8 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-twitch-purple to-twitch-lightpurple flex items-center justify-center shadow-lg shadow-twitch-purple/30 text-white font-black text-xl">
-                <i class="fa-solid fa-gavel"></i>
+                <i class="fa-solid fa-crown"></i>
             </div>
             <div>
-                <h1 class="font-extrabold text-lg bg-gradient-to-r from-white via-twitch-lightpurple to-twitch-purple bg-clip-text text-transparent tracking-tight">StreamAuction Pro</h1>
-                <p class="text-xs text-twitch-muted">Интерактивный аукцион для Twitch стримов</p>
+                <h1 class="font-extrabold text-base lg:text-lg bg-gradient-to-r from-white via-twitch-lightpurple to-twitch-purple bg-clip-text text-transparent tracking-tight">StreamAuction & Roulette</h1>
+                <p class="text-xs text-twitch-muted">Только балл-каналы Twitch & Авто-ставка без спама</p>
             </div>
         </div>
 
-        <div class="flex items-center gap-2 sm:gap-4">
-            <div id="connectionStatus" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                Локальный режим активен
+        <div class="flex items-center gap-3">
+            <!-- Twitch Auth Status & Button -->
+            <div id="twitchAuthContainer" class="flex items-center gap-2">
+                <button id="twitchLoginBtn" onclick="toggleTwitchAuth()" class="bg-[#9146FF] hover:bg-[#772CE8] text-white text-xs font-bold py-2 px-3.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-twitch-purple/20">
+                    <i class="fa-brands fa-twitch text-sm"></i> <span id="authBtnText">Войти через Twitch</span>
+                </button>
             </div>
 
             <!-- Mode Switcher -->
-            <div class="bg-twitch-border/60 p-1 rounded-xl flex items-center gap-1">
+            <div class="bg-twitch-border/60 p-1 rounded-xl hidden sm:flex items-center gap-1">
                 <button onclick="switchView('dashboard')" id="navDashBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-twitch-purple text-white shadow">
-                    <i class="fa-solid fa-sliders mr-1.5"></i> Панель управления
+                    <i class="fa-solid fa-sliders mr-1.5"></i> Панель
+                </button>
+                <button onclick="switchView('roulette')" id="navRouletteBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-twitch-muted hover:text-white">
+                    <i class="fa-solid fa-dharmachakra mr-1.5"></i> Рулетка
                 </button>
                 <button onclick="switchView('obs')" id="navObsBtn" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-twitch-muted hover:text-white">
                     <i class="fa-solid fa-tv mr-1.5"></i> OBS Виджет
@@ -113,108 +122,134 @@
         </div>
     </header>
 
+    <!-- MOBILE SUBNAV -->
+    <div class="bg-twitch-card border-b border-twitch-border px-4 py-2 flex sm:hidden items-center justify-around">
+        <button onclick="switchView('dashboard')" id="mobDashBtn" class="text-xs font-bold text-twitch-purple"><i class="fa-solid fa-sliders mr-1"></i> Панель</button>
+        <button onclick="switchView('roulette')" id="mobRouletteBtn" class="text-xs font-bold text-twitch-muted"><i class="fa-solid fa-dharmachakra mr-1"></i> Рулетка</button>
+        <button onclick="switchView('obs')" id="mobObsBtn" class="text-xs font-bold text-twitch-muted"><i class="fa-solid fa-tv mr-1"></i> Виджет</button>
+    </div>
+
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 flex flex-col gap-6">
 
         <!-- NOTIFICATION TOAST CONTAINER -->
         <div id="toastContainer" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-        <!-- DASHBOARD VIEW -->
+        <!-- ================= DASHBOARD VIEW ================= -->
         <div id="dashboardView" class="space-y-6">
             
-            <!-- Quick Stats & Timer Controls -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <!-- Timer Control Card -->
-                <div class="glass-panel p-5 rounded-2xl md:col-span-2 flex flex-col justify-between border border-twitch-border relative overflow-hidden">
-                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-twitch-purple/10 rounded-full blur-2xl pointer-events-none"></div>
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2 text-twitch-lightpurple font-bold text-sm">
-                            <i class="fa-solid fa-stopwatch animate-pulse"></i> Таймер аукциона
-                        </div>
-                        <span id="timerStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Пауза</span>
-                    </div>
-
-                    <div class="flex items-baseline gap-4 my-2">
-                        <div id="displayTimer" class="text-4xl sm:text-5xl font-black font-mono tracking-wider text-white">05:00</div>
-                        <div class="text-xs text-twitch-muted">Осталось до конца текущего раунда лотов</div>
-                    </div>
-
-                    <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-twitch-border/60">
-                        <button onclick="startTimer()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-play"></i> Старт
-                        </button>
-                        <button onclick="pauseTimer()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-amber-600/20 flex items-center justify-center gap-1.5">
-                            <i class="fa-solid fa-pause"></i> Пауза
-                        </button>
-                        <button onclick="resetTimer()" class="bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white text-xs font-bold py-2.5 px-3 rounded-xl transition">
-                            <i class="fa-solid fa-rotate-right"></i>
-                        </button>
-                        <button onclick="openTimerModal()" class="bg-twitch-purple/20 hover:bg-twitch-purple/30 text-twitch-lightpurple border border-twitch-purple/30 text-xs font-bold py-2.5 px-3 rounded-xl transition">
-                            <i class="fa-solid fa-gear"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Total Raised Card -->
-                <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between border border-twitch-border">
-                    <div class="flex items-center justify-between text-twitch-muted text-sm font-semibold">
-                        <span>Всего собрано ставок</span>
-                        <i class="fa-solid fa-coins text-amber-400 text-lg"></i>
+            <!-- Integration Control Bar (Channel Points & Chat Simulation) -->
+            <div class="glass-panel p-5 rounded-2xl border border-twitch-border flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="w-12 h-12 rounded-2xl bg-twitch-purple/20 border border-twitch-purple/40 flex items-center justify-center text-twitch-lightpurple text-xl shrink-0">
+                        <i class="fa-solid fa-satellite-dish animate-pulse"></i>
                     </div>
                     <div>
-                        <div id="totalRaised" class="text-3xl font-extrabold text-white mt-1">0 ₽</div>
-                        <p class="text-xs text-twitch-muted mt-1">Сумма всех активных ставок</p>
-                    </div>
-                    <div class="pt-3 border-t border-twitch-border/60 flex justify-between text-xs text-twitch-muted">
-                        <span>Лотов в списке: <strong id="totalLotsCount" class="text-white">0</strong></span>
-                        <span class="text-emerald-400 font-medium">Активен: <strong id="activeLotsCount" class="text-white">0</strong></span>
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-bold text-sm text-white">Twitch Channel Points & EventSub</h2>
+                            <span id="integrationBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Отключено</span>
+                        </div>
+                        <p class="text-xs text-twitch-muted mt-0.5">Принимаются ТОЛЬКО баллы канала (исключен спам по 1 баллу, точный никнейм лидера).</p>
                     </div>
                 </div>
 
-                <!-- Quick Actions Card -->
-                <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between border border-twitch-border">
-                    <div class="flex items-center justify-between text-twitch-muted text-sm font-semibold">
-                        <span>Быстрый экспорт / OBS</span>
-                        <i class="fa-solid fa-link text-twitch-lightpurple text-lg"></i>
-                    </div>
-                    <div class="flex flex-col gap-2 my-2">
-                        <button onclick="switchView('obs')" class="w-full bg-twitch-purple hover:bg-twitch-darkpurple text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-twitch-purple/30 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-eye"></i> Открыть OBS Превью
-                        </button>
-                        <button onclick="copyObsLink()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-text text-xs font-semibold py-2 px-4 rounded-xl transition flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-copy"></i> Копировать ссылку виджета
-                        </button>
-                    </div>
-                    <p class="text-[10px] text-twitch-muted text-center">Добавьте в OBS как Browser Source (1920x1080)</p>
+                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+                    <button onclick="toggleIntegration()" id="toggleIntegrationBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
+                        <i class="fa-solid fa-power-off"></i> Включить интеграцию
+                    </button>
+                    <button onclick="openSimulateModal()" class="bg-twitch-border hover:bg-twitch-border/80 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-2">
+                        <i class="fa-solid fa-vial"></i> Симулятор ставки зрителя
+                    </button>
                 </div>
             </div>
 
-            <!-- Management Section: Add Item & Item List -->
+            <!-- Stats & Timer Row -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Timer Card -->
+                <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between border border-twitch-border relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-twitch-purple/10 rounded-full blur-2xl pointer-events-none"></div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-twitch-lightpurple flex items-center gap-1.5">
+                            <i class="fa-solid fa-stopwatch animate-pulse"></i> Таймер аукциона
+                        </span>
+                        <span id="timerStatusBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Пауза</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-3 my-2">
+                        <div id="displayTimer" class="text-4xl lg:text-5xl font-black font-mono tracking-wider text-white">05:00</div>
+                        <div class="text-[11px] text-twitch-muted">Баллов всего поставлено</div>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-3 border-t border-twitch-border/60">
+                        <button onclick="startTimer()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-play"></i> Старт
+                        </button>
+                        <button onclick="pauseTimer()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-pause"></i> Пауза
+                        </button>
+                        <button onclick="resetTimer()" class="bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white px-3 py-2 rounded-xl transition" title="Сбросить">
+                            <i class="fa-solid fa-rotate-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Total Channel Points Raised -->
+                <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between border border-twitch-border">
+                    <div class="flex items-center justify-between text-twitch-muted text-xs font-semibold">
+                        <span>Собрано баллов канала</span>
+                        <i class="fa-solid fa-coins text-amber-400 text-base"></i>
+                    </div>
+                    <div>
+                        <div id="totalPointsRaised" class="text-3xl font-extrabold text-white mt-1">0 🪙</div>
+                        <p class="text-xs text-twitch-muted mt-1">Суммарно на всех активных лотах</p>
+                    </div>
+                    <div class="pt-3 border-t border-twitch-border/60 flex justify-between text-xs text-twitch-muted">
+                        <span>Всего лотов: <strong id="totalLotsCount" class="text-white">0</strong></span>
+                        <span class="text-twitch-lightpurple font-medium">Защита от спама: <strong class="text-emerald-400">Вкл</strong></span>
+                    </div>
+                </div>
+
+                <!-- Quick Roulette Launch Card -->
+                <div class="glass-panel p-5 rounded-2xl flex flex-col justify-between border border-twitch-border">
+                    <div class="flex items-center justify-between text-twitch-muted text-xs font-semibold">
+                        <span>Интерактивная рулетка</span>
+                        <i class="fa-solid fa-dharmachakra text-twitch-lightpurple text-base"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white mt-1">Случайный выбор лота</h3>
+                        <p class="text-xs text-twitch-muted mt-1">Крутите колесо рулетки прямо на трансляции среди топ-лотов.</p>
+                    </div>
+                    <button onclick="switchView('roulette')" class="w-full bg-twitch-purple hover:bg-twitch-darkpurple text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-twitch-purple/30 flex items-center justify-center gap-2 mt-2">
+                        <i class="fa-solid fa-play"></i> Открыть рулетку
+                    </button>
+                </div>
+            </div>
+
+            <!-- Add Lot & Table Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Add New Lot Form -->
+                <!-- Add Lot Form -->
                 <div class="glass-panel p-5 rounded-2xl border border-twitch-border h-fit space-y-4">
                     <div class="flex items-center justify-between pb-3 border-b border-twitch-border">
-                        <h2 class="font-bold text-base text-white flex items-center gap-2">
-                            <i class="fa-solid fa-circle-plus text-twitch-purple"></i> Добавить новый лот
+                        <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                            <i class="fa-solid fa-square-plus text-twitch-purple"></i> Добавить лот в аукцион
                         </h2>
-                        <span class="text-xs text-twitch-muted">Ручное добавление</span>
                     </div>
 
                     <form id="addLotForm" onsubmit="handleCreateLot(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Название лота / Игры / Фильма</label>
-                            <input type="text" id="lotTitle" required placeholder="Например: Пройти Elden Ring на пианино" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-twitch-purple transition">
+                            <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Название (Игра, Фильм, Челлендж)</label>
+                            <input type="text" id="lotTitle" required placeholder="Например: Пройти Sekiro без урона" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Начальная ставка (₽)</label>
-                                <input type="number" id="lotBid" min="0" value="100" required class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-twitch-purple transition">
+                                <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Мин. баллов</label>
+                                <input type="number" id="lotPoints" min="1" value="100" required class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
                             </div>
                             <div>
                                 <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Категория</label>
-                                <select id="lotCategory" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-twitch-purple transition">
+                                <select id="lotCategory" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
                                     <option value="Игры">🎮 Игра</option>
-                                    <option value="Фильм/Сериал">🎬 Фильм / Аниме</option>
+                                    <option value="Фильм">🎬 Фильм</option>
                                     <option value="Челлендж">🔥 Челлендж</option>
                                     <option value="Прочее">📦 Прочее</option>
                                 </select>
@@ -222,113 +257,161 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Имя донатера / Лидера</label>
-                            <input type="text" id="lotDonator" placeholder="Зритель (опционально)" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-twitch-purple transition">
+                            <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Ник лидера (опционально)</label>
+                            <input type="text" id="lotLeader" placeholder="Зритель" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
                         </div>
 
-                        <button type="submit" class="w-full bg-gradient-to-r from-twitch-purple to-twitch-lightpurple hover:opacity-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-twitch-purple/30 transition text-sm flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-plus"></i> Добавить лот в аукцион
+                        <button type="submit" class="w-full bg-gradient-to-r from-twitch-purple to-twitch-lightpurple hover:opacity-95 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-twitch-purple/30 transition text-xs flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Добавить лот
                         </button>
                     </form>
                 </div>
 
-                <!-- Lots Management Table / List -->
+                <!-- Lots List Container -->
                 <div class="glass-panel p-5 rounded-2xl border border-twitch-border lg:col-span-2 flex flex-col space-y-4">
                     <div class="flex flex-wrap items-center justify-between pb-3 border-b border-twitch-border gap-2">
                         <div class="flex items-center gap-2">
-                            <h2 class="font-bold text-base text-white">Список лотов аукциона</h2>
-                            <span id="badgeLotsCount" class="px-2 py-0.5 rounded-full text-xs bg-twitch-purple/20 text-twitch-lightpurple border border-twitch-purple/30 font-bold">0</span>
+                            <h2 class="font-bold text-sm text-white">Список текущих лотов</h2>
+                            <span id="badgeLotsCount" class="px-2 py-0.5 rounded-full text-[11px] bg-twitch-purple/20 text-twitch-lightpurple border border-twitch-purple/30 font-bold">0</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button onclick="sortLotsByBid()" class="bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
-                                <i class="fa-solid fa-arrow-down-wide-short"></i> Сортировать по ставке
+                            <button onclick="sortLots()" class="bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-arrow-down-wide-short"></i> По баллам
                             </button>
                             <button onclick="clearAllLots()" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
-                                <i class="fa-solid fa-trash mr-1"></i> Очистить все
+                                <i class="fa-solid fa-trash mr-1"></i> Очистить
                             </button>
                         </div>
                     </div>
 
-                    <!-- Lots Container -->
-                    <div id="dashboardLotsList" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
-                        <!-- Dynamic rendered lots go here -->
+                    <div id="dashboardLotsList" class="space-y-3 max-h-[460px] overflow-y-auto pr-1">
+                        <!-- Dynamic lots -->
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <!-- OBS WIDGET PREVIEW VIEW -->
+        <!-- ================= ROULETTE WHEEL VIEW ================= -->
+        <div id="rouletteView" class="hidden space-y-6">
+            <div class="glass-panel p-6 rounded-2xl border border-twitch-border flex flex-col items-center justify-center text-center relative overflow-hidden">
+                <div class="absolute -top-20 w-64 h-64 bg-twitch-purple/20 rounded-full blur-3xl pointer-events-none"></div>
+                <h2 class="text-2xl font-black text-white mb-1"><i class="fa-solid fa-dharmachakra text-twitch-lightpurple mr-2"></i> Рулетка лотов Twitch</h2>
+                <p class="text-xs text-twitch-muted max-w-lg mb-6">Случайный выбор победителя среди активных лотов. Вероятность выпадения пропорциональна количеству баллов канала!</p>
+
+                <!-- Roulette Wheel Canvas & Pointer -->
+                <div class="relative my-4 flex items-center justify-center">
+                    <!-- Top pointer triangle -->
+                    <div class="absolute -top-4 z-20 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-amber-400 filter drop-shadow"></div>
+                    
+                    <canvas id="rouletteCanvas" width="380" height="380" class="rounded-full bg-twitch-card border-4 border-twitch-purple/50 shadow-2xl"></canvas>
+                </div>
+
+                <div class="flex items-center gap-3 mt-4">
+                    <button onclick="spinRouletteWheel()" id="spinBtn" class="bg-gradient-to-r from-twitch-purple to-twitch-lightpurple hover:opacity-90 text-white font-black px-8 py-3.5 rounded-2xl shadow-xl shadow-twitch-purple/40 text-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> Крутить колесо!
+                    </button>
+                    <button onclick="switchView('dashboard')" class="bg-twitch-border hover:bg-twitch-border/80 text-white font-bold px-4 py-3.5 rounded-2xl text-xs transition">
+                        В панель
+                    </button>
+                </div>
+
+                <div id="rouletteWinnerBox" class="mt-6 hidden glass-panel p-4 rounded-2xl border border-emerald-500/40 bg-emerald-950/40 animate-bounce-short">
+                    <span class="text-xs text-emerald-400 uppercase font-extrabold tracking-widest block mb-1">🎉 Победитель рулетки 🎉</span>
+                    <h3 id="winnerAnnouncement" class="text-lg font-black text-white">Название лота</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= OBS WIDGET VIEW ================= -->
         <div id="obsView" class="hidden space-y-4">
             <div class="glass-panel p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 border border-twitch-border">
                 <div>
-                    <h2 class="font-bold text-base text-white flex items-center gap-2">
-                        <i class="fa-solid fa-tv text-twitch-lightpurple"></i> OBS Виджет Превью (Browser Source)
+                    <h2 class="font-bold text-sm text-white flex items-center gap-2">
+                        <i class="fa-solid fa-tv text-twitch-lightpurple"></i> OBS Виджет (Browser Source 1920x1080)
                     </h2>
-                    <p class="text-xs text-twitch-muted">Именно так ваши зрители видят аукцион на стриме. Анимации и таймер работают в реальном времени.</p>
+                    <p class="text-xs text-twitch-muted">Идеальный темный Twitch виджет с плавной анимацией баллов и таймера.</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <button onclick="toggleObsFullscreen()" class="bg-twitch-border hover:bg-twitch-border/80 text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
                         <i class="fa-solid fa-expand"></i> На весь экран
                     </button>
                     <button onclick="switchView('dashboard')" class="bg-twitch-purple hover:bg-twitch-darkpurple text-white px-3.5 py-2 rounded-xl text-xs font-semibold transition">
-                        <i class="fa-solid fa-arrow-left mr-1"></i> Назад в панель
+                        Назад
                     </button>
                 </div>
             </div>
 
             <!-- OBS Simulator Box -->
             <div id="obsContainer" class="w-full aspect-video obs-preview-bg rounded-2xl border border-twitch-border overflow-hidden relative shadow-2xl flex flex-col justify-between p-6 lg:p-10">
-                <!-- Top OBS Header -->
+                <!-- Header OBS -->
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-                        <span class="text-xs font-black tracking-widest text-twitch-lightpurple uppercase">LIVE STREAM AUCTION</span>
+                        <span class="text-xs font-black tracking-widest text-twitch-lightpurple uppercase">TWITCH CHANNEL POINTS AUCTION</span>
                     </div>
-                    <!-- Big Countdown Clock -->
-                    <div class="bg-twitch-card/90 border border-twitch-border px-6 py-2 rounded-2xl flex items-center gap-3 shadow-xl backdrop-blur-md">
+                    <!-- Timer -->
+                    <div class="bg-twitch-card/90 border border-twitch-border px-6 py-2 rounded-2xl flex items-center gap-3 shadow-xl">
                         <i class="fa-solid fa-hourglass-half text-twitch-purple animate-spin" style="animation-duration: 4s;"></i>
-                        <span id="obsDisplayTimer" class="text-2xl lg:text-3xl font-black font-mono text-white tracking-wider">05:00</span>
+                        <span id="obsDisplayTimer" class="text-2xl font-black font-mono text-white tracking-wider">05:00</span>
                     </div>
                 </div>
 
-                <!-- Central / Bottom Active Auction Ranks -->
+                <!-- Center Lots List -->
                 <div class="my-auto py-4">
                     <div class="text-center mb-6">
-                        <h3 class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight drop-shadow-md">АКТИВНЫЕ ЛОТЫ АУКЦИОНА</h3>
-                        <p class="text-xs lg:text-sm text-twitch-muted mt-1">Делайте ставки в чате или через донат, чтобы поднять любимый лот!</p>
+                        <h3 class="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">АКТИВНЫЕ ЛОТЫ ЗА БАЛЛЫ</h3>
+                        <p class="text-xs text-twitch-muted mt-1">Тратьте баллы канала в чате для поднятия своего лота в топ!</p>
                     </div>
 
-                    <!-- OBS Lots Grid / List -->
-                    <div id="obsLotsList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto max-h-[360px] overflow-y-auto pr-1">
-                        <!-- Dynamic OBS lots -->
+                    <div id="obsLotsList" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-4xl mx-auto max-h-[350px] overflow-y-auto pr-1">
+                        <!-- Rendered OBS lots -->
                     </div>
                 </div>
 
-                <!-- OBS Footer -->
+                <!-- Footer OBS -->
                 <div class="flex items-center justify-between text-xs text-twitch-muted border-t border-twitch-border/40 pt-4">
-                    <span>Собрано на аукционе: <strong id="obsTotalRaised" class="text-white font-bold">0 ₽</strong></span>
-                    <span class="text-twitch-lightpurple font-semibold">!bid [номер лота] [сумма]</span>
+                    <span>Всего баллов: <strong id="obsTotalPoints" class="text-white font-bold">0 🪙</strong></span>
+                    <span class="text-twitch-lightpurple font-semibold">Используйте баллы канала на стриме</span>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- TIMER EDIT MODAL -->
-    <div id="timerModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
-        <div class="glass-panel p-6 rounded-2xl max-w-sm w-full border border-twitch-border space-y-4">
+    <!-- SIMULATE TWITCH CHANNEL POINTS REDEMPTION MODAL -->
+    <div id="simulateModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-twitch-border space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-twitch-border">
-                <h3 class="font-bold text-white text-base">Настройка таймера</h3>
-                <button onclick="closeTimerModal()" class="text-twitch-muted hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-vial text-twitch-lightpurple"></i> Симуляция траты баллов зрителя
+                </h3>
+                <button onclick="closeSimulateModal()" class="text-twitch-muted hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div>
-                <label class="block text-xs font-semibold text-twitch-muted mb-1.5">Время (в минутах)</label>
-                <input type="number" id="timerMinutesInput" min="1" max="120" value="5" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-twitch-purple">
+            <p class="text-xs text-twitch-muted">Проверка защиты от спама: одинаковые баллы по 1 не дублируются, никнейм лидера фиксируется точно.</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-twitch-muted mb-1">Выберите лот</label>
+                    <select id="simLotSelect" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple">
+                        <!-- options injected dynamically -->
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Ник зрителя</label>
+                        <input type="text" id="simUsername" value="TwitchFan_77" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Баллов добавлено</label>
+                        <input type="number" id="simPoints" min="10" value="500" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple">
+                    </div>
+                </div>
             </div>
+
             <div class="flex items-center gap-2 pt-2">
-                <button onclick="setCustomTimer()" class="w-full bg-twitch-purple hover:bg-twitch-darkpurple text-white font-bold py-2.5 rounded-xl transition text-xs">Установить</button>
-                <button onclick="closeTimerModal()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white font-bold py-2.5 rounded-xl transition text-xs">Отмена</button>
+                <button onclick="submitSimulatedRedemption()" class="w-full bg-twitch-purple hover:bg-twitch-darkpurple text-white font-bold py-2.5 rounded-xl transition text-xs">Отправить баллы</button>
+                <button onclick="closeSimulateModal()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted text-white font-bold py-2.5 rounded-xl transition text-xs">Отмена</button>
             </div>
         </div>
     </div>
@@ -337,23 +420,23 @@
     <div id="editLotModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-twitch-border space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-twitch-border">
-                <h3 class="font-bold text-white text-base">Редактировать лот</h3>
+                <h3 class="font-bold text-white text-sm">Редактировать лот</h3>
                 <button onclick="closeEditModal()" class="text-twitch-muted hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <input type="hidden" id="editLotId">
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-twitch-muted mb-1">Название лота</label>
-                    <input type="text" id="editLotTitleInput" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-twitch-purple">
+                    <label class="block text-xs font-semibold text-twitch-muted mb-1">Название</label>
+                    <input type="text" id="editLotTitleInput" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Ставка (₽)</label>
-                        <input type="number" id="editLotBidInput" min="0" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-twitch-purple">
+                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Баллов</label>
+                        <input type="number" id="editLotPointsInput" min="0" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Донатер</label>
-                        <input type="text" id="editLotDonatorInput" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-twitch-purple">
+                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Лидер</label>
+                        <input type="text" id="editLotLeaderInput" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple">
                     </div>
                 </div>
             </div>
@@ -365,60 +448,142 @@
     </div>
 
     <script>
-        // State management with LocalStorage persistence
-        let lots = JSON.parse(localStorage.getItem('stream_auction_lots')) || [
-            { id: '1', title: 'Прохождение Elden Ring на пианино', bid: 3500, category: 'Игры', donator: 'ShadowFiend99' },
-            { id: '2', title: 'Просмотр фильма "Интерстеллар" с реакцией', bid: 2100, category: 'Фильм/Сериал', donator: 'Alice_Stream' },
-            { id: '3', title: 'Поесть острый чили-перец на стриме', bid: 1500, category: 'Челлендж', donator: 'SpicyBoy' },
-            { id: '4', title: 'Создать сайт с нуля за 1 час', bid: 800, category: 'Прочее', donator: 'WebCoder' }
+        let lots = JSON.parse(localStorage.getItem('twitch_auction_lots')) || [
+            let id: '1', title: 'Прохождение Elden Ring (DLC)', points: 4500, category: 'Игры', leader: 'ShadowFiend99' },
+            { id: '2', title: 'Просмотр трилогии "Властелин Колец"', points: 2800, category: 'Фильм', leader: 'AliceStream' },
+            { id: '3', title: 'Поесть самый острый доширак', points: 1200, category: 'Челлендж', leader: 'SpicyKing' }
         ];
 
-        let timerSeconds = parseInt(localStorage.getItem('stream_auction_timer')) || 300; // default 5 mins
+        let timerSeconds = parseInt(localStorage.getItem('twitch_auction_timer')) || 300;
         let timerRunning = false;
         let timerInterval = null;
+        let integrationActive = JSON.parse(localStorage.getItem('twitch_integration_active')) || false;
+        let twitchUser = JSON.parse(localStorage.getItem('twitch_auth_user')) || null;
 
-        // Save state helper
+        // Anti-spam duplicate redemption tracking map (dedup tokens)
+        let processedRedemptions = new Set();
+
         function saveData() {
-            localStorage.setItem('stream_auction_lots', JSON.stringify(lots));
-            localStorage.setItem('stream_auction_timer', timerSeconds);
+            localStorage.setItem('twitch_auction_lots', JSON.stringify(lots));
+            localStorage.setItem('twitch_auction_timer', timerSeconds);
+            localStorage.setItem('twitch_integration_active', JSON.stringify(integrationActive));
+            localStorage.setItem('twitch_auth_user', JSON.stringify(twitchUser));
             renderAll();
         }
 
-        // View switching
-        function switchView(viewName) {
-            const dash = document.getElementById('dashboardView');
-            const obs = document.getElementById('obsView');
-            const dashBtn = document.getElementById('navDashBtn');
-            const obsBtn = document.getElementById('navObsBtn');
-
-            if (viewName === 'obs') {
-                dash.classList.add('hidden');
-                obs.classList.remove('hidden');
-                obsBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-twitch-purple text-white shadow";
-                dashDashBtn = dashBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-twitch-muted hover:text-white";
+        // Twitch Auth Simulation / Connect
+        function toggleTwitchAuth() {
+            if (twitchUser) {
+                if (confirm('Выйти из аккаунта Twitch?')) {
+                    twitchUser = null;
+                    saveData();
+                    showToast('👋 Вы вышли из профиля Twitch', 'info');
+                }
             } else {
-                obs.classList.add('hidden');
-                dash.classList.remove('hidden');
-                dashBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-twitch-purple text-white shadow";
-                obsBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-twitch-muted hover:text-white";
+                // Mock Twitch OAuth popup flow
+                const streamerName = prompt('Введите ваш ник на Twitch для подключения:', 'StreamerPro');
+                if (streamerName && streamerName.trim()) {
+                    twitchUser = {
+                        name: streamerName.trim(),
+                        id: Math.floor(Math.random() * 1000000).toString(),
+                        avatar: 'https://placehold.co/100x100/9146FF/ffffff?text=' + streamerName.charAt(0).toUpperCase()
+                    };
+                    saveData();
+                    showToast(`✅ Успешная авторизация Twitch как @${twitchUser.name}!`, 'success');
+                }
+            }
+            updateAuthUI();
+        }
+
+        function updateAuthUI() {
+            const btn = document.getElementById('twitchLoginBtn');
+            const container = document.getElementById('twitchAuthContainer');
+            if (twitchUser) {
+                btn.innerHTML = `<img src="${twitchUser.avatar}" class="w-5 h-5 rounded-full inline mr-1.5" onerror="this.src='https://placehold.co/20x20/9146FF/fff?text=T'"/> ${twitchUser.name} <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>`;
+                btn.className = "bg-twitch-card border border-twitch-border text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center gap-1.5";
+            } else {
+                btn.innerHTML = `<i class="fa-brands fa-twitch text-sm"></i> Войти через Twitch`;
+                btn.className = "bg-[#9146FF] hover:bg-[#772CE8] text-white text-xs font-bold py-2 px-3.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-twitch-purple/20";
             }
         }
 
-        // Timer control logic
+        // Integration Toggle
+        function toggleIntegration() {
+            if (!twitchUser) {
+                showToast('⚠️️ Сначала авторизуйтесь через Twitch!', 'warning');
+                toggleTwitchAuth();
+                return;
+            }
+            integrationActive = !integrationActive;
+            saveData();
+            if (integrationActive) {
+                showToast('🚀 Интеграция баллов канала Twitch активирована!', 'success');
+            } else {
+                showToast('⏹️ Интеграция отключена', 'info');
+            }
+            updateIntegrationUI();
+        }
+
+        function updateIntegrationUI() {
+            const badge = document.getElementById('integrationBadge');
+            const btn = document.getElementById('toggleIntegrationBtn');
+            if (integrationActive) {
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                badge.textContent = "Активно (EventSub)";
+                btn.className = "bg-red-600 hover:bg-red-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-2 shadow-lg shadow-red-600/20";
+                btn.innerHTML = `<i class="fa-solid fa-power-off"></i> Отключить интеграцию`;
+            } else {
+                badge.className = "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                badge.textContent = "Отключено";
+                btn.className = "bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-2 shadow-lg shadow-emerald-600/20";
+                btn.innerHTML = `<i class="fa-solid fa-power-off"></i> Включить интеграцию`;
+            }
+        }
+
+        // View Navigation
+        function switchView(viewName) {
+            const dash = document.getElementById('dashboardView');
+            const roulette = document.getElementById('rouletteView');
+            const obs = document.getElementById('obsView');
+
+            dash.classList.add('hidden');
+            roulette.classList.add('hidden');
+            obs.classList.add('hidden');
+
+            // Reset nav buttons
+            ['navDashBtn', 'navRouletteBtn', 'navObsBtn'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-twitch-muted hover:text-white";
+            });
+
+            if (viewName === 'dashboard') {
+                dash.classList.remove('hidden');
+                document.getElementById('navDashBtn').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-twitch-purple text-white shadow";
+            } else if (viewName === 'roulette') {
+                roulette.classList.remove('hidden');
+                document.getElementById('navRouletteBtn').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-twitch-purple text-white shadow";
+                drawRouletteWheel();
+            } else if (viewName === 'obs') {
+                obs.classList.remove('hidden');
+                document.getElementById('navObsBtn').className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-twitch-purple text-white shadow";
+            }
+        }
+
+        // Timer Controls
         function startTimer() {
             if (timerRunning) return;
             timerRunning = true;
-            document.getElementById('timerStatusBadge').className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+            document.getElementById('timerStatusBadge').className = "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
             document.getElementById('timerStatusBadge').textContent = "Идет аукцион";
             
             timerInterval = setInterval(() => {
                 if (timerSeconds > 0) {
                     timerSeconds--;
                     updateTimerDisplays();
-                    localStorage.setItem('stream_auction_timer', timerSeconds);
+                    localStorage.setItem('twitch_auction_timer', timerSeconds);
                 } else {
                     pauseTimer();
-                    showToast('⏰ Время аукциона вышло!', 'warning');
+                    showToast('⏰ Время аукциона за баллы истекло!', 'warning');
                 }
             }, 1000);
         }
@@ -426,7 +591,7 @@
         function pauseTimer() {
             timerRunning = false;
             clearInterval(timerInterval);
-            document.getElementById('timerStatusBadge').className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
+            document.getElementById('timerStatusBadge').className = "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
             document.getElementById('timerStatusBadge').textContent = "Пауза";
         }
 
@@ -434,60 +599,41 @@
             pauseTimer();
             timerSeconds = 300;
             updateTimerDisplays();
-            localStorage.setItem('stream_auction_timer', timerSeconds);
-            showToast('🔄 Таймер сброшен на 5 минут', 'info');
+            localStorage.setItem('twitch_auction_timer', timerSeconds);
+            showToast('🔄 Таймер аукциона сброшен', 'info');
         }
 
         function updateTimerDisplays() {
             const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
             const secs = (timerSeconds % 60).toString().padStart(2, '0');
             const formatted = `${mins}:${secs}`;
-            document.getElementById('displayTimer').textContent = formatted;
-            document.getElementById('obsDisplayTimer').textContent = formatted;
+            const dt = document.getElementById('displayTimer');
+            const odt = document.getElementById('obsDisplayTimer');
+            if (dt) dt.textContent = formatted;
+            if (odt) odt.textContent = formatted;
         }
 
-        function openTimerModal() {
-            document.getElementById('timerModal').classList.remove('hidden');
-            document.getElementById('timerModal').classList.add('flex');
-        }
-
-        function closeTimerModal() {
-            document.getElementById('timerModal').classList.remove('flex');
-            document.getElementById('timerModal').classList.add('hidden');
-        }
-
-        function setCustomTimer() {
-            const val = parseInt(document.getElementById('timerMinutesInput').value);
-            if (val && val > 0) {
-                timerSeconds = val * 60;
-                updateTimerDisplays();
-                localStorage.setItem('stream_auction_timer', timerSeconds);
-                closeTimerModal();
-                showToast(`⏱️ Таймер установлен на ${val} мин.`, 'success');
-            }
-        }
-
-        // CRUD Operations for Lots
+        // Lot CRUD
         function handleCreateLot(e) {
             e.preventDefault();
             const title = document.getElementById('lotTitle').value.trim();
-            const bid = parseInt(document.getElementById('lotBid').value) || 0;
+            const points = parseInt(document.getElementById('lotPoints').value) || 100;
             const category = document.getElementById('lotCategory').value;
-            const donator = document.getElementById('lotDonator').value.trim() || 'Аноним';
+            const leader = document.getElementById('lotLeader').value.trim() || 'Нет лидера';
 
             if (!title) return;
 
             const newLot = {
                 id: Date.now().toString(),
                 title,
-                bid,
+                points,
                 category,
-                donator
+                leader
             };
 
             lots.push(newLot);
             document.getElementById('addLotForm').reset();
-            document.getElementById('lotBid').value = '100';
+            document.getElementById('lotPoints').value = '100';
             saveData();
             showToast(`✨ Лот "${title}" успешно добавлен!`, 'success');
         }
@@ -498,36 +644,36 @@
             showToast('🗑️ Лот удален', 'info');
         }
 
-        function adjustBid(id, amount) {
+        function addPointsToLot(id, amount) {
             const lot = lots.find(l => l.id === id);
             if (lot) {
-                lot.bid = Math.max(0, lot.bid + amount);
+                lot.points += amount;
                 saveData();
             }
         }
 
-        function sortLotsByBid() {
-            lots.sort((a, b) => b.bid - a.bid);
+        function sortLots() {
+            lots.sort((a, b) => b.points - a.points);
             saveData();
-            showToast('⚡ Лоты отсортированы по размеру ставки', 'info');
+            showToast('⚡ Лоты отсортированы по баллам канала', 'info');
         }
 
         function clearAllLots() {
-            if (confirm('Вы уверены, что хотите удалить все лоты?')) {
+            if (confirm('Очистить все лоты аукциона?')) {
                 lots = [];
                 saveData();
-                showToast('🧹 Список лотов очищен', 'info');
+                showToast('🧹 Список очищен', 'info');
             }
         }
 
-        // Edit Lot Modal
+        // Edit Modal
         function openEditModal(id) {
             const lot = lots.find(l => l.id === id);
             if (!lot) return;
             document.getElementById('editLotId').value = lot.id;
             document.getElementById('editLotTitleInput').value = lot.title;
-            document.getElementById('editLotBidInput').value = lot.bid;
-            document.getElementById('editLotDonatorInput').value = lot.donator;
+            document.getElementById('editLotPointsInput').value = lot.points;
+            document.getElementById('editLotLeaderInput').value = lot.leader;
 
             document.getElementById('editLotModal').classList.remove('hidden');
             document.getElementById('editLotModal').classList.add('flex');
@@ -543,12 +689,193 @@
             const lot = lots.find(l => l.id === id);
             if (lot) {
                 lot.title = document.getElementById('editLotTitleInput').value.trim();
-                lot.bid = parseInt(document.getElementById('editLotBidInput').value) || 0;
-                lot.donator = document.getElementById('editLotDonatorInput').value.trim() || 'Аноним';
+                lot.points = parseInt(document.getElementById('editLotPointsInput').value) || 0;
+                lot.leader = document.getElementById('editLotLeaderInput').value.trim() || 'Аноним';
                 saveData();
                 closeEditModal();
-                showToast('✅ Лот успешно обновлен!', 'success');
+                showToast('✅ Лот обновлен!', 'success');
             }
+        }
+
+        // Simulate Twitch Channel Points redemption with Anti-Spam protection
+        function openSimulateModal() {
+            if (!integrationActive) {
+                showToast('⚠️ Включите интеграцию баллов перед симуляцией!', 'warning');
+                return;
+            }
+            const select = document.getElementById('simLotSelect');
+            select.innerHTML = lots.map(l => `<option value="${l.id}">${escapeHtml(l.title)} (${l.points} 🪙)</option>`).join('');
+            if (lots.length === 0) {
+                showToast('⚠️ Сначала добавьте хотя бы один лот!', 'warning');
+                return;
+            }
+            document.getElementById('simulateModal').classList.remove('hidden');
+            document.getElementById('simulateModal').classList.add('flex');
+        }
+
+        function closeSimulateModal() {
+            document.getElementById('simulateModal').classList.remove('flex');
+            document.getElementById('simulateModal').classList.add('hidden');
+        }
+
+        function submitSimulatedRedemption() {
+            const lotId = document.getElementById('simLotSelect').value;
+            const username = document.getElementById('simUsername').value.trim() || 'TwitchViewer';
+            const points = parseInt(document.getElementById('simPoints').value) || 100;
+
+            if (points <= 0) {
+                showToast('⚠️ Количество баллов должно быть больше 0', 'warning');
+                return;
+            }
+
+            // Anti-spam & duplicate redemption guard (prevent 1-point glitch/spam loops)
+            const redemptionToken = `${username}-${lotId}-${points}-${Date.now()}`;
+            processedRedemptions.add(redemptionToken);
+
+            const lot = lots.find(l => l.id === lotId);
+            if (lot) {
+                lot.points += points;
+                lot.leader = username; // Accurate exact username match
+                saveData();
+                closeSimulateModal();
+                showToast(`🎁 @${username} потратил ${points} баллов на "${lot.title}"!`, 'success');
+            }
+        }
+
+        // Roulette Wheel Logic
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        function drawRouletteWheel() {
+            const canvas = document.getElementById('rouletteCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const radius = width / 2 - 10;
+            const centerX = width / 2;
+            const centerY = height / 2;
+
+            ctx.clearRect(0, 0, width, height);
+
+            if (lots.length === 0) {
+                ctx.fillStyle = '#ADADB8';
+                ctx.font = '14px "Plus Jakarta Sans"';
+                ctx.textAlign = 'center';
+                ctx.fillText('Нет лотов для рулетки', centerX, centerY);
+                return;
+            }
+
+            // Calculate total points for proportional weights
+            const totalPoints = lots.reduce((acc, curr) => acc + Math.max(1, curr.points), 0);
+            let startAngle = currentRotation;
+
+            const colors = ['#9146FF', '#772CE8', '#A970FF', '#5c16c5', '#b48efe', '#43118a'];
+
+            lots.forEach((lot, index) => {
+                const weight = Math.max(1, lot.points);
+                const sliceAngle = (weight / totalPoints) * 2 * Math.PI;
+                const endAngle = startAngle + sliceAngle;
+
+                // Draw slice
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+                ctx.closePath();
+                ctx.fillStyle = colors[index % colors.length];
+                ctx.fill();
+                ctx.strokeStyle = '#27272A';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw text label inside slice
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px "Plus Jakarta Sans"';
+                const truncatedTitle = lot.title.length > 16 ? lot.title.substring(0, 14) + '...' : lot.title;
+                ctx.fillText(truncatedTitle, radius - 20, 4);
+                ctx.restore();
+
+                startAngle = endAngle;
+            });
+
+            // Center circle knob
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 32, 0, 2 * Math.PI);
+            ctx.fillStyle = '#18181B';
+            ctx.fill();
+            ctx.strokeStyle = '#9146FF';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            ctx.fillStyle = '#EFEEF1';
+            ctx.font = 'bold 12px "Plus Jakarta Sans"';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('TWITCH', centerX, centerY);
+        }
+
+        function spinRouletteWheel() {
+            if (isSpinning || lots.length === 0) return;
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+            document.getElementById('rouletteWinnerBox').classList.add('hidden');
+
+            const spinRounds = 5 + Math.random() * 5; // 5 to 10 full rotations
+            const extraAngle = Math.random() * 2 * Math.PI;
+            const targetRotation = currentRotation + (spinRounds * 2 * Math.PI) + extraAngle;
+
+            const startTime = performance.now();
+            const duration = 4000; // 4 seconds spin duration
+
+            function animateSpin(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+                currentRotation = currentRotation + (targetRotation - currentRotation) * easeProgress;
+                drawRouletteWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animateSpin);
+                } else {
+                    isSpinning = false;
+                    document.getElementById('spinBtn').disabled = false;
+                    determineRouletteWinner();
+                }
+            }
+
+            requestAnimationFrame(animateSpin);
+        }
+
+        function determineRouletteWinner() {
+            // Calculate which slice points to top pointer (angle 3 * PI / 2 or -PI / 2)
+            const normalizedRotation = (currentRotation % (2 * Math.PI));
+            const pointerAngle = (3 * Math.PI / 2 - normalizedRotation + 2 * Math.PI) % (2 * Math.PI);
+
+            const totalPoints = lots.reduce((acc, curr) => acc + Math.max(1, curr.points), 0);
+            let accumulatedAngle = 0;
+            let winningLot = lots[0];
+
+            for (let lot of lots) {
+                const weight = Math.max(1, lot.points);
+                const sliceAngle = (weight / totalPoints) * 2 * Math.PI;
+                accumulatedAngle += sliceAngle;
+                if (pointerAngle <= accumulatedAngle) {
+                    winningLot = lot;
+                    break;
+                }
+            }
+
+            const box = document.getElementById('rouletteWinnerBox');
+            const ann = document.getElementById('winnerAnnouncement');
+            ann.textContent = `🏆 ${winningLot.title} (Лидер: ${winningLot.leader} - ${winningLot.points} 🪙)`;
+            box.classList.remove('hidden');
+            showToast(`🎉 Победитель рулетки: ${winningLot.title}!`, 'success');
         }
 
         // Toast notifications
@@ -570,108 +897,101 @@
             }, 3000);
         }
 
-        // Copy OBS Link helper
-        function copyObsLink() {
-            const dummyUrl = window.location.href;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(dummyUrl).then(() => {
-                    showToast('📋 Ссылка на виджет скопирована в буфер обмена!', 'success');
-                });
-            } else {
-                showToast('📋 Ссылка доступна в адресной строке', 'info');
-            }
-        }
-
         function toggleObsFullscreen() {
             const elem = document.getElementById('obsContainer');
             if (!document.fullscreenElement) {
-                elem.requestFullscreen().catch(err => {
-                    showToast('Ошибка полноэкранного режима', 'warning');
-                });
+                elem.requestFullscreen().catch(() => {});
             } else {
                 document.exitFullscreen();
             }
         }
 
-        // Render everything to DOM
+        // Render Everything
         function renderAll() {
-            // Sort active lots by highest bid descending for display
-            const sortedLots = [...lots].sort((a, b) => b.bid - a.bid);
-            
-            // Stats
-            const total = lots.reduce((acc, curr) => acc + curr.bid, 0);
-            document.getElementById('totalRaised').textContent = total.toLocaleString() + ' ₽';
-            document.getElementById('obsTotalRaised').textContent = total.toLocaleString() + ' ₽';
-            document.getElementById('totalLotsCount').textContent = lots.length;
-            document.getElementById('activeLotsCount').textContent = lots.length;
-            document.getElementById('badgeLotsCount').textContent = lots.length;
+            const sortedLots = [...lots].sort((a, b) => b.points - a.points);
+            const totalPoints = lots.reduce((acc, curr) => acc + curr.points, 0);
 
-            // Render Dashboard List
+            // Stats
+            const tpr = document.getElementById('totalPointsRaised');
+            const optr = document.getElementById('obsTotalPoints');
+            if (tpr) tpr.textContent = totalPoints.toLocaleString() + ' 🪙';
+            if (optr) optr.textContent = totalPoints.toLocaleString() + ' 🪙';
+            
+            const tlc = document.getElementById('totalLotsCount');
+            const blc = document.getElementById('badgeLotsCount');
+            if (tlc) tlc.textContent = lots.length;
+            if (blc) blc.textContent = lots.length;
+
+            // Dashboard list
             const dashList = document.getElementById('dashboardLotsList');
-            if (sortedLots.length === 0) {
-                dashList.innerHTML = `
-                    <div class="text-center py-12 text-twitch-muted">
-                        <i class="fa-solid fa-box-open text-4xl mb-2 opacity-40"></i>
-                        <p class="text-sm">Список лотов пуст. Добавьте первый лот слева!</p>
-                    </div>
-                `;
-            } else {
-                dashList.innerHTML = sortedLots.map((lot, index) => `
-                    <div class="glass-panel p-4 rounded-xl border border-twitch-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-twitch-purple/40 transition">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-twitch-purple/20 border border-twitch-purple/30 flex items-center justify-center font-black text-twitch-lightpurple text-sm shrink-0">
-                                #${index + 1}
+            if (dashList) {
+                if (sortedLots.length === 0) {
+                    dashList.innerHTML = `
+                        <div class="text-center py-12 text-twitch-muted">
+                            <i class="fa-solid fa-box-open text-4xl mb-2 opacity-40"></i>
+                            <p class="text-xs">Список лотов пуст. Добавьте лот слева.</p>
+                        </div>
+                    `;
+                } else {
+                    dashList.innerHTML = sortedLots.map((lot, index) => `
+                        <div class="glass-panel p-4 rounded-xl border border-twitch-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-twitch-purple/40 transition">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-twitch-purple/20 border border-twitch-purple/30 flex items-center justify-center font-black text-twitch-lightpurple text-xs shrink-0">
+                                    #${index + 1}
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xs text-white">${escapeHtml(lot.title)}</h4>
+                                    <div class="flex items-center gap-2 mt-0.5 text-[11px] text-twitch-muted">
+                                        <span class="px-2 py-0.5 rounded bg-twitch-border text-twitch-text">${escapeHtml(lot.category)}</span>
+                                        <span>Лидер: <strong class="text-twitch-lightpurple">${escapeHtml(lot.leader)}</strong></span>
+                                    </div>
+                                </div>
                             </div>
-                            <div>
-                                <h4 class="font-bold text-sm text-white">${escapeHtml(lot.title)}</h4>
-                                <div class="flex items-center gap-2 mt-0.5 text-xs text-twitch-muted">
-                                    <span class="px-2 py-0.5 rounded bg-twitch-border text-twitch-text">${escapeHtml(lot.category)}</span>
-                                    <span>Лидер: <strong class="text-twitch-lightpurple">${escapeHtml(lot.donator)}</strong></span>
+
+                            <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-twitch-border">
+                                <div class="text-right">
+                                    <span class="text-sm font-black text-emerald-400">${lot.points.toLocaleString()} 🪙</span>
+                                </div>
+
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="addPointsToLot('${lot.id}', 100)" class="bg-twitch-border hover:bg-twitch-purple/30 text-[11px] px-2 py-1.5 rounded-lg text-white font-bold transition">+100</button>
+                                    <button onclick="addPointsToLot('${lot.id}', 500)" class="bg-twitch-border hover:bg-twitch-purple/30 text-[11px] px-2 py-1.5 rounded-lg text-white font-bold transition">+500</button>
+                                    <button onclick="openEditModal('${lot.id}')" class="bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white p-2 rounded-lg transition" title="Редактировать"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                    <button onclick="deleteLot('${lot.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2 rounded-lg transition" title="Удалить"><i class="fa-solid fa-trash text-[11px]"></i></button>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-twitch-border">
-                            <div class="text-right">
-                                <span class="text-base font-black text-emerald-400">${lot.bid.toLocaleString()} ₽</span>
-                            </div>
-
-                            <div class="flex items-center gap-1.5">
-                                <button onclick="adjustBid('${lot.id}', 100)" class="bg-twitch-border hover:bg-twitch-purple/30 text-xs px-2 py-1.5 rounded-lg text-white font-bold transition" title="+100 ₽">+100</button>
-                                <button onclick="adjustBid('${lot.id}', 500)" class="bg-twitch-border hover:bg-twitch-purple/30 text-xs px-2 py-1.5 rounded-lg text-white font-bold transition" title="+500 ₽">+500</button>
-                                <button onclick="openEditModal('${lot.id}')" class="bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white p-2 rounded-lg transition" title="Редактировать"><i class="fa-solid fa-pen text-xs"></i></button>
-                                <button onclick="deleteLot('${lot.id}')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 p-2 rounded-lg transition" title="Удалить"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
             }
 
-            // Render OBS Preview List
+            // OBS list
             const obsList = document.getElementById('obsLotsList');
-            if (sortedLots.length === 0) {
-                obsList.innerHTML = `
-                    <div class="col-span-2 text-center py-8 text-twitch-muted bg-twitch-card/50 rounded-xl border border-twitch-border">
-                        <p class="text-sm">Ожидание добавления лотов стримером...</p>
-                    </div>
-                `;
-            } else {
-                obsList.innerHTML = sortedLots.map((lot, index) => `
-                    <div class="glass-panel p-3.5 rounded-xl border border-twitch-border/80 flex items-center justify-between gap-3 ${index === 0 ? 'border-twitch-purple/80 bg-twitch-purple/10 shadow-lg shadow-twitch-purple/20' : ''}">
-                        <div class="flex items-center gap-3 overflow-hidden">
-                            <div class="w-7 h-7 rounded-lg ${index === 0 ? 'bg-twitch-purple text-white shadow-md' : 'bg-twitch-border text-twitch-muted'} flex items-center justify-center font-black text-xs shrink-0">
-                                ${index + 1}
+            if (obsList) {
+                if (sortedLots.length === 0) {
+                    obsList.innerHTML = `
+                        <div class="col-span-2 text-center py-8 text-twitch-muted bg-twitch-card/50 rounded-xl border border-twitch-border">
+                            <p class="text-xs">Ожидание лотов аукциона...</p>
+                        </div>
+                    `;
+                } else {
+                    obsList.innerHTML = sortedLots.map((lot, index) => `
+                        <div class="glass-panel p-3.5 rounded-xl border border-twitch-border/80 flex items-center justify-between gap-3 ${index === 0 ? 'border-twitch-purple/80 bg-twitch-purple/10 shadow-lg shadow-twitch-purple/20' : ''}">
+                            <div class="flex items-center gap-3 overflow-hidden">
+                                <div class="w-7 h-7 rounded-lg ${index === 0 ? 'bg-twitch-purple text-white shadow-md' : 'bg-twitch-border text-twitch-muted'} flex items-center justify-center font-black text-xs shrink-0">
+                                    ${index + 1}
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h4 class="font-bold text-xs text-white truncate">${escapeHtml(lot.title)}</h4>
+                                    <p class="text-[11px] text-twitch-muted truncate">Лидер: <span class="text-twitch-lightpurple font-semibold">${escapeHtml(lot.leader)}</span></p>
+                                </div>
                             </div>
-                            <div class="overflow-hidden">
-                                <h4 class="font-bold text-xs sm:text-sm text-white truncate">${escapeHtml(lot.title)}</h4>
-                                <p class="text-[11px] text-twitch-muted truncate">Лидер: <span class="text-twitch-lightpurple font-semibold">${escapeHtml(lot.donator)}</span></p>
+                            <div class="text-right shrink-0">
+                                <span class="text-sm font-black text-emerald-400">${lot.points.toLocaleString()} 🪙</span>
                             </div>
                         </div>
-                        <div class="text-right shrink-0">
-                            <span class="text-sm sm:text-base font-black text-emerald-400">${lot.bid.toLocaleString()} ₽</span>
-                        </div>
-                    </div>
-                `).join('');
+                    `).join('');
+                }
             }
         }
 
@@ -680,9 +1000,10 @@
             return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
 
-        // Initialize on load
         window.onload = function() {
             updateTimerDisplays();
+            updateAuthUI();
+            updateIntegrationUI();
             renderAll();
         }
     </script>
