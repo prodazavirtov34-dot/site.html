@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>магахоствидео — Свободный медиахостинг</title>
+  <title>магахоствидео — Премиум Медиа Хостинг</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -18,11 +18,17 @@
               800: '#9f1239', 900: '#881337', 950: '#4c0519'
             },
             dark: {
-              bg: '#090d16', surface: '#0f172a', card: '#1e293b', border: '#334155', hover: '#273549'
+              bg: '#070a12',
+              surface: '#0d1322',
+              card: '#131b2e',
+              border: '#1f2b45',
+              hover: '#1b253d'
             }
           },
           boxShadow: {
-            'neon-red': '0 0 25px -5px rgba(225, 29, 72, 0.4), 0 0 10px -5px rgba(225, 29, 72, 0.2)'
+            'neon-red': '0 0 25px -4px rgba(225, 29, 72, 0.45)',
+            'neon-gold': '0 0 25px -4px rgba(234, 179, 8, 0.35)',
+            'neon-cyan': '0 0 25px -4px rgba(6, 182, 212, 0.35)'
           }
         }
       }
@@ -31,54 +37,76 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <style>
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #090d16; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #070a12; }
+    ::-webkit-scrollbar-thumb { background: #1f2b45; border-radius: 6px; }
     ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
+
     .glassmorphism {
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(51, 65, 85, 0.7);
+      background: rgba(13, 19, 34, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(31, 43, 69, 0.8);
     }
-    .glass-card-hover {
-      transition: all 0.25s ease;
+
+    .card-zoom {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .glass-card-hover:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 24px -8px rgba(225, 29, 72, 0.25);
-      border-color: rgba(244, 63, 94, 0.4);
+    .card-zoom:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 30px -10px rgba(225, 29, 72, 0.3);
+      border-color: rgba(244, 63, 94, 0.5);
     }
+
+    .banner-glow {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(13, 19, 34, 0.95) 100%);
+    }
+
+    .maga-ad-gradient {
+      background: linear-gradient(135deg, #131b2e 0%, #1f1224 50%, #0d1322 100%);
+    }
+
     input[type=range] { accent-color: #e11d48; }
   </style>
 </head>
 <body class="bg-dark-bg text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-600 selection:text-white">
 
-  <!-- ХЕДЕР -->
-  <header class="sticky top-0 z-40 glassmorphism border-b border-dark-border px-3 sm:px-6 py-3">
-    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-2 sm:gap-4">
+  <!-- ========================================== -->
+  <!-- 1. ШАПКА САЙТА (HEADER)                    -->
+  <!-- ========================================== -->
+  <header class="sticky top-0 z-40 glassmorphism border-b border-dark-border px-3 sm:px-6 py-3.5 transition-all">
+    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-3">
       
+      <!-- ЛОГОТИП -->
       <div class="flex items-center gap-3 cursor-pointer select-none group" onclick="filterMedia('all')">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-700 to-amber-500 flex items-center justify-center shadow-neon-red group-hover:scale-105 transition-transform">
-          <i class="fa-solid fa-play text-white text-lg ml-0.5"></i>
+        <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-700 via-brand-500 to-amber-500 flex items-center justify-center shadow-neon-red group-hover:scale-105 transition-transform duration-300">
+          <i class="fa-solid fa-bolt text-white text-xl"></i>
+          <span class="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+          </span>
         </div>
         <div>
-          <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white to-brand-400 bg-clip-text text-transparent">
-            магахоствидео
-          </span>
-          <span class="text-[10px] text-slate-400 block -mt-1 uppercase tracking-wider font-mono">турбо скорость</span>
+          <div class="flex items-center gap-2">
+            <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-brand-400 bg-clip-text text-transparent">
+              магахоствидео
+            </span>
+            <span class="bg-brand-600/30 text-brand-400 border border-brand-500/40 text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase">VIP</span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-mono tracking-wider block -mt-1 hidden xs:block">БЕЗ ЛАГОВ • БЕЗ БОТОВ</span>
         </div>
       </div>
 
-      <!-- ПОИСКОВИК -->
-      <div class="flex-1 max-w-2xl mx-2 hidden md:block">
+      <!-- ЖИВОЙ ПОИСК -->
+      <div class="flex-1 max-w-xl mx-2 hidden md:block">
         <div class="relative flex items-center">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-slate-400 text-sm"></i>
+          <i class="fa-solid fa-magnifying-glass absolute left-4 text-slate-400 text-sm"></i>
           <input 
             type="text" 
             id="globalSearchInput" 
             oninput="handleLiveSearch(this.value)"
-            placeholder="Искать видео, фото, авторов..." 
-            class="w-full pl-10 pr-10 py-2.5 bg-dark-surface border border-dark-border rounded-2xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-500 transition-all"
+            placeholder="Искать видео, клипы, фото, авторов..." 
+            class="w-full pl-11 pr-10 py-2.5 bg-dark-surface border border-dark-border rounded-2xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all shadow-inner"
           />
           <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-3.5 text-slate-500 hover:text-white hidden">
             <i class="fa-solid fa-xmark text-sm"></i>
@@ -86,124 +114,346 @@
         </div>
       </div>
 
-      <!-- КНОПКИ ВЕРХА -->
+      <!-- КНОПКИ ВЕРХНЕЙ ПАНЕЛИ -->
       <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- Кнопка случайного видео -->
+        <button 
+          onclick="playRandomPost()" 
+          title="Случайное медиа" 
+          class="p-2.5 sm:px-3 sm:py-2 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-amber-400 hover:text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-dice text-base"></i>
+          <span class="hidden lg:inline">Мне повезёт!</span>
+        </button>
+
+        <!-- Залить файл -->
         <button 
           onclick="triggerUploadCheck()" 
-          class="flex items-center gap-2 bg-gradient-to-r from-brand-600 to-rose-600 hover:from-brand-500 hover:to-rose-500 text-white px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-neon-red active:scale-95 transition-all">
+          class="flex items-center gap-2 bg-gradient-to-r from-brand-600 via-rose-600 to-amber-600 hover:from-brand-500 hover:to-rose-500 text-white px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm shadow-neon-red active:scale-95 transition-all">
           <i class="fa-solid fa-cloud-arrow-up"></i>
           <span>Залить</span>
         </button>
 
+        <!-- Профиль пользователя -->
         <div id="userProfileBar" class="flex items-center"></div>
+
       </div>
 
     </div>
   </header>
 
-  <!-- ФИЛЬТРЫ -->
-  <nav class="bg-dark-surface/50 border-b border-dark-border/80 px-4 py-2.5 sticky top-[65px] z-30 backdrop-blur-md">
-    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-4 overflow-x-auto">
+  <!-- ========================================== -->
+  <!-- 2. ВЕРХНИЙ РЕКЛАМНЫЙ БАННЕР (UPGRADER)     -->
+  <!-- ========================================== -->
+  <div id="topAdBanner" class="max-w-[1700px] w-full mx-auto px-3 sm:px-6 pt-3 pb-1">
+    <div class="relative w-full rounded-2xl overflow-hidden border border-yellow-500/40 banner-glow shadow-neon-gold group">
+      
+      <span class="absolute top-2 left-2 z-20 bg-black/85 text-yellow-400 border border-yellow-500/40 text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase">
+        ⚡ РЕКЛАМА UPGRADER
+      </span>
+
+      <button 
+        onclick="document.getElementById('topAdBanner').style.display='none'" 
+        title="Скрыть рекламу"
+        class="absolute top-2 right-2 z-20 w-6 h-6 rounded-full bg-black/80 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center text-xs transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <a href="https://upgrader.gg" target="_blank" rel="noopener noreferrer" class="block relative w-full h-24 sm:h-32 md:h-36 overflow-hidden">
+        <img 
+          src="banner.jpg" 
+          alt="UPGRADER — Апгрейд скинов" 
+          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600';"
+          class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500 brightness-95 group-hover:brightness-105"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 3. НАВИГАЦИЯ ПО КАТЕГОРИЯМ И ТЕГАМ         -->
+  <!-- ========================================== -->
+  <nav class="bg-dark-surface/60 border-b border-dark-border/80 px-4 py-2.5 sticky top-[69px] z-30 backdrop-blur-md">
+    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
+      
       <div class="flex items-center gap-2 flex-shrink-0" id="filterTabsGroup">
-        <button onclick="filterMedia('all')" data-category="all" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white transition-all">Все</button>
-        <button onclick="filterMedia('video')" data-category="video" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border"><i class="fa-solid fa-clapperboard mr-1.5 text-brand-400"></i>Видео</button>
-        <button onclick="filterMedia('photo')" data-category="photo" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border"><i class="fa-solid fa-camera mr-1.5 text-amber-400"></i>Фото</button>
-        <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border"><i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои</button>
+        <button onclick="filterMedia('all')" data-category="all" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all">
+          <i class="fa-solid fa-layer-group mr-1.5"></i>Все
+        </button>
+        <button onclick="filterMedia('trend')" data-category="trend" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+          <i class="fa-solid fa-fire mr-1.5 text-amber-400"></i>В тренде
+        </button>
+        <button onclick="filterMedia('video')" data-category="video" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+          <i class="fa-solid fa-clapperboard mr-1.5 text-brand-400"></i>Видео
+        </button>
+        <button onclick="filterMedia('photo')" data-category="photo" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+          <i class="fa-solid fa-camera mr-1.5 text-cyan-400"></i>Фотографии
+        </button>
+        <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+          <i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои загрузки
+        </button>
       </div>
 
       <div class="flex items-center gap-2 flex-shrink-0 text-xs">
-        <select id="sortSelector" onchange="changeSorting(this.value)" class="bg-dark-card border border-dark-border text-slate-300 rounded-xl px-2.5 py-1.5 text-xs focus:outline-none focus:border-brand-500">
-          <option value="newest">Сначала новые</option>
-          <option value="popular">Больше лайков</option>
+        <span class="text-slate-400 hidden lg:inline">Сортировка:</span>
+        <select id="sortSelector" onchange="changeSorting(this.value)" class="bg-dark-card border border-dark-border text-slate-300 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
+          <option value="newest">Свежие публикации</option>
+          <option value="popular">По лайкам</option>
           <option value="views">По просмотрам</option>
         </select>
       </div>
+
     </div>
   </nav>
 
-  <!-- СЕТКА МАТЕРИАЛОВ -->
+  <!-- ========================================== -->
+  <!-- 4. ОСНОВНОЙ КОНТЕНТНЫЙ БЛОК                -->
+  <!-- ========================================== -->
   <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8">
+    
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <div class="w-2.5 h-6 bg-brand-600 rounded-full"></div>
-        <h2 id="sectionHeading" class="text-lg sm:text-xl font-extrabold text-white tracking-tight">Все материалы</h2>
-        <span id="postsTotalCount" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-dark-surface border border-dark-border text-slate-400">0</span>
+        <div class="w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red"></div>
+        <h2 id="sectionHeading" class="text-lg sm:text-xl font-black text-white tracking-tight">Все публикации</h2>
+        <span id="postsTotalCount" class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-dark-surface border border-dark-border text-slate-300">0</span>
+      </div>
+
+      <div class="text-[11px] text-slate-400 flex items-center gap-2">
+        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>Платформа онлайн</span>
       </div>
     </div>
 
+    <!-- СЕТКА КАРТОЧЕК -->
     <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 sm:gap-6"></div>
 
+    <!-- БЛОК ПУСТОГО ХОСТИНГА -->
     <div id="noContentState" class="hidden text-center py-20 px-4">
-      <div class="w-20 h-20 mx-auto rounded-3xl bg-dark-surface border border-dark-border flex items-center justify-center text-slate-500 text-3xl mb-4">
+      <div class="w-20 h-20 mx-auto rounded-3xl bg-dark-surface border border-dark-border flex items-center justify-center text-slate-500 text-3xl mb-4 shadow-2xl">
         <i class="fa-solid fa-photo-film"></i>
       </div>
-      <h3 class="text-lg font-bold text-slate-200">Здесь пока пусто</h3>
-      <p class="text-slate-400 text-xs max-w-sm mx-auto mt-1 mb-5">Загрузите видео или фото с диска — сайт работает плавно и быстро!</p>
-      <button onclick="triggerUploadCheck()" class="bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-neon-red">
-        Загрузить первое видео
+      <h3 class="text-xl font-black text-slate-200">Пока ничего не загружено</h3>
+      <p class="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto mt-1 mb-5">
+        Зарегистрируйтесь под уникальным ником и залейте первый ролик прямо сейчас!
+      </p>
+      <button onclick="triggerUploadCheck()" class="bg-brand-600 hover:bg-brand-500 text-white font-black text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-neon-red transition-all">
+        <i class="fa-solid fa-plus mr-1.5"></i> Загрузить первое медиа
       </button>
     </div>
+
   </main>
 
-  <!-- МОДАЛКА: РЕГИСТРАЦИЯ И ВХОД -->
+  <!-- ============================================================== -->
+  <!-- 5. НИЖНИЙ РЕКЛАМНЫЙ БАННЕР (МАГА РЕКОМЕНДУЕТ / СПОНСОР)         -->
+  <!-- ============================================================== -->
+  <section id="bottomMagaBanner" class="max-w-[1700px] w-full mx-auto px-3 sm:px-6 mb-8">
+    <div class="relative w-full rounded-3xl overflow-hidden border border-brand-500/40 maga-ad-gradient p-4 sm:p-6 shadow-2xl shadow-rose-950/40 flex flex-col md:flex-row items-center justify-between gap-6 group">
+      
+      <span class="absolute top-3 left-3 bg-brand-600 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full tracking-widest uppercase shadow">
+        ⭐ СПОНСОР ХОСТИНГА
+      </span>
+
+      <button 
+        onclick="document.getElementById('bottomMagaBanner').style.display='none'" 
+        title="Закрыть рекламу"
+        class="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/60 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center text-xs transition-colors">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Левая часть с текстом -->
+      <div class="flex-1 text-center md:text-left pt-6 md:pt-0 max-w-2xl">
+        <div class="inline-flex items-center gap-1.5 text-amber-400 font-bold text-xs uppercase tracking-widest mb-1.5">
+          <i class="fa-solid fa-crown text-sm"></i> Главный амбассадор проекта
+        </div>
+        <h3 class="text-xl sm:text-2xl font-black text-white leading-tight">
+          «Качайте хостинг, заливайте контент от души!»
+        </h3>
+        <p class="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
+          Только чистые ролики, топовые фото и моментальная скорость без зависаний. Мага лично гарантирует максимальную отдачу и уважение каждому автору!
+        </p>
+        <div class="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-3">
+          <button onclick="triggerUploadCheck()" class="bg-gradient-to-r from-brand-600 to-amber-600 hover:from-brand-500 hover:to-amber-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-neon-red transition-all">
+            Залить ролик для Маги
+          </button>
+          <span class="text-[11px] text-slate-400 font-mono">#магахоствидео #газвпол</span>
+        </div>
+      </div>
+
+      <!-- Правая часть с фото Маги -->
+      <div class="relative w-48 sm:w-56 h-64 sm:h-72 rounded-2xl overflow-hidden border-2 border-brand-500/50 shadow-neon-red flex-shrink-0 bg-black">
+        <img 
+          src="maga_ad.jpg" 
+          alt="Магахост Реклама" 
+          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';"
+          class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+        <div class="absolute bottom-2 inset-x-2 text-center bg-black/60 backdrop-blur-sm py-1 rounded-lg border border-white/10">
+          <span class="text-xs font-black text-amber-400 tracking-wide uppercase">Мага одобряет 👍</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- 6. ФУТЕР                                   -->
+  <!-- ========================================== -->
+  <footer class="glassmorphism border-t border-dark-border mt-auto py-8 px-4 text-xs text-slate-400">
+    <div class="max-w-[1700px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black text-sm shadow-neon-red">М</div>
+        <div>
+          <span class="font-black text-slate-200">магахоствидео 2026</span>
+          <span class="text-slate-600 mx-1.5">•</span>
+          <span>Народная платформа</span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-6 text-slate-400">
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-brand-500"></i> Анти-мат фильтр</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-rose-500"></i> Без 18+ и порно</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-fingerprint text-amber-500"></i> Уникальные имена</span>
+      </div>
+
+      <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-300 transition-colors">
+        <i class="fa-solid fa-arrow-up mr-1"></i> Наверх
+      </button>
+    </div>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- 7. МОДАЛЬНОЕ ОКНО: АВТОРИЗАЦИЯ (РЕГИСТРАЦИЯ И ВХОД)             -->
+  <!-- ============================================================== -->
   <div id="authModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glassmorphism max-w-md w-full rounded-3xl border border-dark-border p-6 sm:p-8 shadow-2xl relative">
+    <div class="glassmorphism max-w-md w-full rounded-3xl border border-dark-border p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95">
+      
       <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
       <div class="text-center mb-6">
-        <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white text-xl font-black shadow-neon-red mb-3">М</div>
-        <h3 id="authModalTitle" class="text-xl font-black text-white">Регистрация</h3>
-        <p class="text-xs text-slate-400 mt-1">Один никнейм — один владелец</p>
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-neon-red mb-3">
+          М
+        </div>
+        <h3 id="authModalTitle" class="text-xl sm:text-2xl font-black text-white">Регистрация аккаунта</h3>
+        <p class="text-xs text-slate-400 mt-1">Никнейм навсегда привязывается к вам</p>
       </div>
 
-      <div class="grid grid-cols-2 p-1 bg-dark-card rounded-2xl border border-dark-border mb-5 text-xs font-bold">
-        <button id="tabRegister" onclick="switchAuthTab('register')" class="py-2 rounded-xl bg-brand-600 text-white shadow">Регистрация</button>
-        <button id="tabLogin" onclick="switchAuthTab('login')" class="py-2 rounded-xl text-slate-400 hover:text-white">Вход</button>
+      <div class="grid grid-cols-2 p-1 bg-dark-card rounded-2xl border border-dark-border mb-5 text-xs font-black">
+        <button id="tabRegister" onclick="switchAuthTab('register')" class="py-2.5 rounded-xl bg-brand-600 text-white shadow">Регистрация</button>
+        <button id="tabLogin" onclick="switchAuthTab('login')" class="py-2.5 rounded-xl text-slate-400 hover:text-white">Вход</button>
       </div>
 
       <!-- РЕГИСТРАЦИЯ -->
-      <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-3.5">
+      <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Имя пользователя (Ник) *</label>
-          <input type="text" id="regUsername" required maxlength="20" placeholder="Например: Мага05" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Придумайте имя (Ник) *</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+            <input 
+              type="text" 
+              id="regUsername" 
+              required 
+              maxlength="20"
+              placeholder="Например: Maga05" 
+              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
+            />
+          </div>
         </div>
+
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Пароль *</label>
-          <input type="password" id="regPassword" required minlength="4" placeholder="Минимум 4 символа" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Придумайте пароль *</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+            <input 
+              type="password" 
+              id="regPassword" 
+              required 
+              minlength="4"
+              placeholder="Минимум 4 символа" 
+              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
+            />
+          </div>
         </div>
-        <div id="regErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
-        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl text-xs transition-all shadow-neon-red">Создать аккаунт</button>
+
+        <div id="regErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300 flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation flex-shrink-0"></i>
+          <span id="regErrorText"></span>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs sm:text-sm transition-all shadow-neon-red">
+          Зарегистрироваться
+        </button>
       </form>
 
       <!-- ВХОД -->
-      <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-3.5 hidden">
+      <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-4 hidden">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Ваше имя</label>
-          <input type="text" id="loginUsername" required placeholder="Имя" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Ваш никнейм</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+            <input 
+              type="text" 
+              id="loginUsername" 
+              required 
+              placeholder="Имя" 
+              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
+            />
+          </div>
         </div>
+
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Пароль</label>
-          <input type="password" id="loginPassword" required placeholder="Пароль" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Пароль</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+            <input 
+              type="password" 
+              id="loginPassword" 
+              required 
+              placeholder="Пароль" 
+              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
+            />
+          </div>
         </div>
-        <div id="loginErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
-        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl text-xs transition-all shadow-neon-red">Войти</button>
+
+        <div id="loginErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300 flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation flex-shrink-0"></i>
+          <span id="loginErrorText"></span>
+        </div>
+
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs sm:text-sm transition-all shadow-neon-red">
+          Войти
+        </button>
       </form>
+
     </div>
   </div>
 
-  <!-- МОДАЛКА: ЗАГРУЗКА ВИДЕО/ФОТО С ДИСКА -->
+  <!-- ============================================================== -->
+  <!-- 8. МОДАЛЬНОЕ ОКНО: ЗАГРУЗКА МЕДИА С ДИСКА                       -->
+  <!-- ============================================================== -->
   <div id="uploadModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glassmorphism max-w-lg w-full rounded-3xl border border-dark-border p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+    <div class="glassmorphism max-w-lg w-full rounded-3xl border border-dark-border p-6 sm:p-7 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      
       <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <h3 class="text-lg font-black text-white mb-1"><i class="fa-solid fa-cloud-arrow-up text-brand-500 mr-2"></i>Залить видео или фото</h3>
-      <p class="text-xs text-slate-400 mb-4">Файл мгновенно оптимизируется для плавной работы сайта</p>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-brand-600/20 border border-brand-500/40 text-brand-500 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+        </div>
+        <div>
+          <h3 class="text-lg font-black text-white">Залить на хостинг</h3>
+          <p class="text-xs text-slate-400">Видео и фото сохраняются моментально</p>
+        </div>
+      </div>
 
       <form id="uploadForm" onsubmit="processMediaUpload(event)" class="space-y-4">
+        
         <div 
           id="dropArea" 
           onclick="document.getElementById('nativeFileInput').click()"
@@ -211,109 +461,132 @@
           <input type="file" id="nativeFileInput" accept="video/*,image/*" class="hidden" onchange="onFileChosen(this.files[0])"/>
           <div id="dropPrompt">
             <i class="fa-solid fa-file-video text-3xl text-brand-500 mb-2"></i>
-            <p class="text-xs font-bold text-slate-200">Выберите видео или фото с диска</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">MP4, WebM, MOV, JPG, PNG</p>
+            <p class="text-xs font-bold text-slate-200">Выберите файл с вашего диска</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">MP4, WebM, MOV, JPG, PNG, GIF</p>
           </div>
           <div id="dropPreviewBox" class="hidden text-xs text-emerald-400 font-bold"></div>
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Название *</label>
-          <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Название ролика" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1">Название ролика / фото *</label>
+          <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Придумайте название" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Описание</label>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Описание публикации</label>
           <textarea id="uploadDescInput" rows="2" maxlength="300" placeholder="О чем видео..." class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500 resize-none"></textarea>
         </div>
 
         <div id="uploadFormAlert" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
 
-        <button type="submit" id="uploadSubmitBtn" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-3.5 rounded-2xl text-xs sm:text-sm transition-all shadow-neon-red">
+        <button type="submit" id="uploadSubmitBtn" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-2xl text-xs sm:text-sm transition-all shadow-neon-red">
           Опубликовать на магахоствидео
         </button>
       </form>
     </div>
   </div>
 
-  <!-- МОДАЛКА: ПЛЕЕР / ПРОСМОТРЩИК -->
+  <!-- ============================================================== -->
+  <!-- 9. ПОЛНОРАЗМЕРНЫЙ ПЛЕЕР / ПРОСМОТРЩИК И КОММЕНТАРИИ            -->
+  <!-- ============================================================== -->
   <div id="viewerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-0 sm:p-4">
     <div class="glassmorphism w-full max-w-6xl h-full sm:h-[92vh] sm:rounded-3xl border border-dark-border shadow-2xl flex flex-col lg:flex-row overflow-hidden">
       
-      <!-- ПЛЕЕР -->
+      <!-- МЕДИА ЗОНА -->
       <div class="lg:w-2/3 bg-black flex flex-col justify-center items-center relative border-b lg:border-b-0 lg:border-r border-dark-border">
-        <button onclick="closeViewerModal()" class="absolute top-4 right-4 z-30 w-8 h-8 rounded-full bg-black/70 hover:bg-brand-600 text-white flex items-center justify-center text-xs">
+        
+        <div class="absolute top-4 left-4 z-30 flex items-center gap-2">
+          <span id="viewerTypeBadge" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-brand-600 text-white">Видео</span>
+        </div>
+
+        <button onclick="closeViewerModal()" class="absolute top-4 right-4 z-30 w-8 h-8 rounded-full bg-black/80 hover:bg-rose-600 text-white flex items-center justify-center text-xs transition-colors">
           <i class="fa-solid fa-xmark"></i>
         </button>
+
         <div id="mediaStage" class="w-full h-full flex items-center justify-center max-h-[70vh] lg:max-h-full"></div>
       </div>
 
-      <!-- ДЕТАЛИ И КОММЕНТАРИИ -->
-      <div class="lg:w-1/3 flex flex-col bg-dark-surface/90 overflow-hidden">
+      <!-- ИНФОРМАЦИЯ И КОММЕНТАРИИ -->
+      <div class="lg:w-1/3 flex flex-col bg-dark-surface overflow-hidden">
+        
         <div class="p-4 border-b border-dark-border">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2.5">
-              <img id="viewerAuthorAvatar" src="" class="w-8 h-8 rounded-xl object-cover border border-dark-border bg-dark-card">
+              <img id="viewerAuthorAvatar" src="" class="w-9 h-9 rounded-xl object-cover border border-dark-border bg-dark-card">
               <div>
-                <h4 id="viewerAuthorName" class="text-xs font-bold text-white leading-tight"></h4>
+                <h4 id="viewerAuthorName" class="text-xs sm:text-sm font-bold text-white leading-tight"></h4>
                 <div id="viewerPostDate" class="text-[10px] text-slate-400 mt-0.5"></div>
               </div>
             </div>
-            <button id="viewerDeleteBtn" onclick="deleteCurrentViewingPost()" class="hidden text-brand-400 text-xs px-2 py-1 rounded-lg bg-brand-950/60 border border-brand-800">
+
+            <button id="viewerDeleteBtn" onclick="deleteCurrentViewingPost()" class="hidden text-brand-400 text-xs px-2.5 py-1 rounded-lg bg-brand-950/60 border border-brand-800">
               <i class="fa-solid fa-trash-can mr-1"></i>Удалить
             </button>
           </div>
 
-          <h2 id="viewerPostTitle" class="text-sm font-black text-white"></h2>
+          <h2 id="viewerPostTitle" class="text-sm sm:text-base font-black text-white"></h2>
           <p id="viewerPostDescription" class="text-xs text-slate-300 mt-1 whitespace-pre-line max-h-20 overflow-y-auto"></p>
 
           <div class="flex items-center justify-between pt-3 mt-3 border-t border-dark-border/80 text-xs">
             <div class="flex items-center gap-2">
-              <button onclick="handleLikeToggle()" id="viewerLikeBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dark-card border border-dark-border text-xs">
+              <button onclick="handleLikeToggle()" id="viewerLikeBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dark-card border border-dark-border text-xs transition-all">
                 <i id="viewerLikeIcon" class="fa-regular fa-heart"></i>
                 <span id="viewerLikesCount">0</span>
               </button>
+
+              <button onclick="copyShareLink()" class="p-2 rounded-xl bg-dark-card border border-dark-border text-slate-300 hover:text-white" title="Поделиться">
+                <i class="fa-solid fa-share-nodes"></i>
+              </button>
             </div>
+            
             <span class="text-[11px] text-slate-400"><i class="fa-regular fa-eye mr-1"></i><span id="viewerViewsCount">0</span></span>
           </div>
         </div>
 
+        <!-- КОММЕНТАРИИ -->
         <div class="flex-1 p-4 overflow-y-auto space-y-2.5" id="commentsContainer"></div>
 
+        <!-- ПОЛЕ ОТПРАВКИ -->
         <div class="p-3 bg-dark-surface border-t border-dark-border">
           <form onsubmit="handleSendComment(event)" class="flex gap-2">
-            <input type="text" id="commentTextInput" maxlength="150" placeholder="Комментарий..." class="flex-1 bg-dark-card border border-dark-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-            <button type="submit" class="p-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+            <input type="text" id="commentTextInput" maxlength="150" placeholder="Написать комментарий..." class="flex-1 bg-dark-card border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+            <button type="submit" class="p-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs transition-colors">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
           </form>
         </div>
+
       </div>
 
     </div>
   </div>
 
+  <!-- TOAST УВЕДОМЛЕНИЕ -->
   <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="glassmorphism bg-dark-card text-white px-4 py-2.5 rounded-2xl border border-brand-500 text-xs font-semibold shadow-neon-red flex items-center gap-2">
-      <i class="fa-solid fa-circle-check text-brand-400"></i>
+    <div class="glassmorphism bg-dark-card text-white px-4 py-3 rounded-2xl border border-brand-500 text-xs font-bold shadow-neon-red flex items-center gap-2">
+      <i class="fa-solid fa-circle-check text-brand-400 text-sm"></i>
       <span id="toastMessage"></span>
     </div>
   </div>
 
-  <!-- СКРИПТ: ОПТИМИЗИРОВАННЫЙ БЕЗ ЛАГОВ ДВИЖОК -->
+  <!-- ============================================================== -->
+  <!-- 10. JAVASCRIPT ДВИЖОК ХОСТИНГА (БЕЗ ЛАГОВ, BLOB + INDEXEDDB)    -->
+  <!-- ============================================================== -->
   <script>
-    // 1. АНТИ-МАТ И АНТИ-18+
+    // 1. АНТИ-МАТ И АНТИ-18+ ФИЛЬТР
     const ModerationEngine = {
-      bannedWords: ['порно', 'porno', 'porn', 'xxx', 'секс', 'sex', 'nsfw', 'сиськи', 'член', 'хуй', 'пизда', 'ебать', 'бля', 'сука', 'мудак', 'залупа', 'дрочить', 'хентай', 'голая', 'голый'],
+      banned: ['порно', 'porno', 'porn', 'xxx', 'секс', 'sex', 'nsfw', 'сиськи', 'член', 'хуй', 'пизда', 'ебать', 'бля', 'сука', 'мудак', 'залупа', 'дрочить', 'хентай', 'голая', 'голый'],
       isClean(text) {
         if (!text) return true;
-        const lower = text.toLowerCase();
-        for (let w of this.bannedWords) {
-          if (lower.includes(w)) return false;
+        const low = text.toLowerCase();
+        for (let w of this.banned) {
+          if (low.includes(w)) return false;
         }
         return true;
       }
     };
 
-    // 2. БЫСТРАЯ ГЕНЕРАЦИЯ ОБЛОЖКИ (THUMBNAIL) ИЗ ВИДЕО НА ЛЕТУ
+    // 2. СВЕРХБЫСТРАЯ ГЕНЕРАЦИЯ ОБЛОЖКИ ВИДЕО (ЧТОБЫ НЕ ЛАГАЛО)
     function createVideoThumbnail(file) {
       return new Promise((resolve) => {
         const video = document.createElement('video');
@@ -332,20 +605,18 @@
           canvas.height = 270;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const thumbUrl = canvas.toDataURL('image/jpeg', 0.65); // Лёгкая сжатая картинка (всего ~20 КБ вместо 100 МБ видео!)
+          const thumbUrl = canvas.toDataURL('image/jpeg', 0.65);
           URL.revokeObjectURL(video.src);
           resolve(thumbUrl);
         };
 
-        video.onerror = () => {
-          resolve('');
-        };
+        video.onerror = () => resolve('');
       });
     }
 
-    // 3. БАЗА ДАННЫХ INDEXEDDB (ХРАНИТ ЧИСТЫЙ BLOB БЕЗ РАЗДУВАНИЯ)
+    // 3. БАЗА ДАННЫХ INDEXEDDB (ЧИСТЫЙ BLOB)
     const DatabaseEngine = {
-      dbName: 'MagaHostTurbo_DB',
+      dbName: 'MagaHostMegaPro_DB',
       version: 1,
       db: null,
 
@@ -429,7 +700,7 @@
       }
     };
 
-    // 4. СОСТОЯНИЕ
+    // 4. СОСТОЯНИЕ САЙТА
     const AppState = {
       currentUser: null,
       posts: [],
@@ -441,7 +712,6 @@
       currentActiveBlobUrl: null
     };
 
-    // 5. ИНИЦИАЛИЗАЦИЯ И СЕССИЯ
     function initUserSession() {
       const stored = localStorage.getItem('magahost_active_user');
       if (stored) {
@@ -454,7 +724,7 @@
       const bar = document.getElementById('userProfileBar');
       if (!AppState.currentUser) {
         bar.innerHTML = `
-          <button onclick="openAuthModal()" class="flex items-center gap-1.5 bg-dark-card hover:bg-dark-hover text-slate-200 border border-dark-border px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold">
+          <button onclick="openAuthModal()" class="flex items-center gap-1.5 bg-dark-card hover:bg-dark-hover text-slate-200 border border-dark-border px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-sm">
             <i class="fa-solid fa-right-to-bracket text-brand-400"></i>
             <span>Вход</span>
           </button>
@@ -462,8 +732,8 @@
       } else {
         bar.innerHTML = `
           <div class="flex items-center gap-2 bg-dark-surface border border-dark-border py-1 px-2.5 rounded-2xl">
-            <img src="${AppState.currentUser.avatar}" class="w-7 h-7 rounded-xl object-cover border border-brand-500/40 bg-dark-card">
-            <span class="text-xs font-bold text-white max-w-[100px] truncate hidden xs:inline">${AppState.currentUser.username}</span>
+            <img src="${AppState.currentUser.avatar}" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl object-cover border border-brand-500/40 bg-dark-card">
+            <span class="text-xs font-bold text-white max-w-[90px] truncate hidden xs:inline">${AppState.currentUser.username}</span>
             <button onclick="handleUserLogout()" title="Выйти" class="p-1 text-slate-400 hover:text-brand-400 text-xs ml-1">
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </button>
@@ -485,12 +755,12 @@
       const fR = document.getElementById('formRegister');
       const fL = document.getElementById('formLogin');
       if (tab === 'register') {
-        tabR.className = 'py-2 rounded-xl bg-brand-600 text-white shadow';
-        tabL.className = 'py-2 rounded-xl text-slate-400 hover:text-white';
+        tabR.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow';
+        tabL.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white';
         fR.classList.remove('hidden'); fL.classList.add('hidden');
       } else {
-        tabL.className = 'py-2 rounded-xl bg-brand-600 text-white shadow';
-        tabR.className = 'py-2 rounded-xl text-slate-400 hover:text-white';
+        tabL.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow';
+        tabR.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white';
         fL.classList.remove('hidden'); fR.classList.add('hidden');
       }
       document.getElementById('regErrorBox').classList.add('hidden');
@@ -502,15 +772,16 @@
       const name = document.getElementById('regUsername').value.trim();
       const pass = document.getElementById('regPassword').value;
       const errBox = document.getElementById('regErrorBox');
+      const errText = document.getElementById('regErrorText');
 
       if (!ModerationEngine.isClean(name)) {
-        errBox.textContent = 'Имя содержит недопустимые слова!';
+        errText.textContent = 'Имя содержит запрещенные слова!';
         errBox.classList.remove('hidden'); return;
       }
 
       const res = await DatabaseEngine.registerUser(name, pass);
       if (!res.success) {
-        errBox.textContent = res.message;
+        errText.textContent = res.message;
         errBox.classList.remove('hidden'); return;
       }
 
@@ -527,10 +798,11 @@
       const name = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
       const errBox = document.getElementById('loginErrorBox');
+      const errText = document.getElementById('loginErrorText');
 
       const res = await DatabaseEngine.loginUser(name, pass);
       if (!res.success) {
-        errBox.textContent = res.message;
+        errText.textContent = res.message;
         errBox.classList.remove('hidden'); return;
       }
 
@@ -543,7 +815,7 @@
     }
 
     function handleUserLogout() {
-      if (confirm('Выйти?')) {
+      if (confirm('Выйти из профиля?')) {
         AppState.currentUser = null;
         localStorage.removeItem('magahost_active_user');
         renderUserProfileBar();
@@ -560,7 +832,7 @@
       openUploadModal();
     }
 
-    // 6. ЗАГРУЗКА БЕЗ ЛАГОВ (ТОЛЬКО ЛЕГКИЙ THUMBNAIL В ПАМЯТИ)
+    // 5. ЗАГРУЗКА
     function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
     function closeUploadModal() {
       document.getElementById('uploadModal').classList.add('hidden');
@@ -599,23 +871,21 @@
 
       if (!ModerationEngine.isClean(title) || !ModerationEngine.isClean(desc)) {
         const al = document.getElementById('uploadFormAlert');
-        al.textContent = 'Мат и 18+ контент запрещены!';
+        al.textContent = 'Мат и порнография строго запрещены!';
         al.classList.remove('hidden'); return;
       }
 
       const btn = document.getElementById('uploadSubmitBtn');
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Оптимизация видео...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Сохранение...';
 
       const file = AppState.selectedUploadFile;
       const isVideo = file.type.startsWith('video');
 
-      // 1. Создаем сверхлёгкую обложку для ленты
       let thumbUrl = '';
       if (isVideo) {
         thumbUrl = await createVideoThumbnail(file);
       } else {
-        // Для фото сжимаем превью
         thumbUrl = await new Promise(resolve => {
           const r = new FileReader();
           r.onload = () => resolve(r.result);
@@ -623,13 +893,12 @@
         });
       }
 
-      // 2. Сохраняем пост в IndexedDB (видео хранится как Blob, не грузит браузер)
       const post = {
         id: 'post_' + Date.now(),
         title: title,
         description: desc,
         type: isVideo ? 'video' : 'photo',
-        mediaBlob: file, // Бинарный Blob без утечек памяти!
+        mediaBlob: file,
         thumbnail: thumbUrl,
         authorName: AppState.currentUser.username,
         authorAvatar: AppState.currentUser.avatar,
@@ -644,11 +913,11 @@
       AppState.posts.unshift(post);
 
       closeUploadModal();
-      showToast('Видео успешно залито без зависаний!');
+      showToast('Успешно опубликовано!');
       renderMediaGrid();
     }
 
-    // 7. СЕТКА (ОТОБРАЖАЕТ ТОЛЬКО КАРТИНКИ, ВИДЕО НЕ ЖРУТ ПАМЯТЬ!)
+    // 6. ОТОБРАЖЕНИЕ КАРТОЧЕК
     function renderMediaGrid() {
       const grid = document.getElementById('mediaGrid');
       const empty = document.getElementById('noContentState');
@@ -657,6 +926,7 @@
 
       if (AppState.currentCategory === 'video') list = list.filter(p => p.type === 'video');
       else if (AppState.currentCategory === 'photo') list = list.filter(p => p.type === 'photo');
+      else if (AppState.currentCategory === 'trend') list = list.filter(p => (p.likesCount || 0) > 0 || (p.viewsCount || 0) > 2);
       else if (AppState.currentCategory === 'mine') {
         list = AppState.currentUser ? list.filter(p => p.authorName === AppState.currentUser.username) : [];
       }
@@ -680,9 +950,8 @@
       empty.classList.add('hidden');
 
       grid.innerHTML = list.map(post => `
-        <div onclick="openViewerModal('${post.id}')" class="glassmorphism rounded-2xl overflow-hidden glass-card-hover cursor-pointer border border-dark-border flex flex-col group">
+        <div onclick="openViewerModal('${post.id}')" class="glassmorphism rounded-2xl overflow-hidden card-zoom cursor-pointer border border-dark-border flex flex-col group">
           <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden">
-            <!-- В ленте рендерится ТОЛЬКО картинка-обложка, поэтому 0 лагов! -->
             <img src="${post.thumbnail || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             ${post.type === 'video' ? `
               <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
@@ -710,7 +979,7 @@
       `).join('');
     }
 
-    // 8. ПЛЕЕР: ВИДЕО СОЗДАЕТСЯ ТОЛЬКО ПРИ КЛИКЕ И УДАЛЯЕТСЯ ПРИ ЗАКРЫТИИ
+    // 7. ПЛЕЕР
     async function openViewerModal(postId) {
       AppState.activePostId = postId;
       const post = AppState.posts.find(p => p.id === postId);
@@ -726,6 +995,7 @@
       document.getElementById('viewerPostDescription').textContent = post.description || '';
       document.getElementById('viewerViewsCount').textContent = post.viewsCount;
       document.getElementById('viewerLikesCount').textContent = post.likesCount || 0;
+      document.getElementById('viewerTypeBadge').textContent = post.type === 'video' ? 'Видео' : 'Фото';
 
       const delBtn = document.getElementById('viewerDeleteBtn');
       if (AppState.currentUser && AppState.currentUser.username === post.authorName) {
@@ -735,13 +1005,8 @@
       }
 
       const stage = document.getElementById('mediaStage');
-      
-      // Освобождаем старый URL видео из памяти
-      if (AppState.currentActiveBlobUrl) {
-        URL.revokeObjectURL(AppState.currentActiveBlobUrl);
-      }
+      if (AppState.currentActiveBlobUrl) URL.revokeObjectURL(AppState.currentActiveBlobUrl);
 
-      // Создаем системный потоковый URL из Blob
       AppState.currentActiveBlobUrl = URL.createObjectURL(post.mediaBlob);
 
       if (post.type === 'video') {
@@ -834,7 +1099,7 @@
       const box = document.getElementById('commentsContainer');
       const list = post.comments || [];
       if (list.length === 0) {
-        box.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Нет комментариев</p>`;
+        box.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Комментариев пока нет</p>`;
         return;
       }
       box.innerHTML = list.map(c => `
@@ -849,20 +1114,35 @@
     }
 
     async function deleteCurrentViewingPost() {
-      if (!confirm('Удалить ролик?')) return;
+      if (!confirm('Удалить эту публикацию?')) return;
       await DatabaseEngine.deletePost(AppState.activePostId);
       AppState.posts = AppState.posts.filter(p => p.id !== AppState.activePostId);
       closeViewerModal();
       showToast('Удалено!');
     }
 
+    function playRandomPost() {
+      if (AppState.posts.length === 0) {
+        showToast('Пока нет загруженных материалов!');
+        return;
+      }
+      const rand = AppState.posts[Math.floor(Math.random() * AppState.posts.length)];
+      openViewerModal(rand.id);
+    }
+
+    function copyShareLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast('Ссылка скопирована!');
+      });
+    }
+
     function filterMedia(cat) {
       AppState.currentCategory = cat;
       document.querySelectorAll('#filterTabsGroup .cat-pill').forEach(btn => {
         if (btn.getAttribute('data-category') === cat) {
-          btn.className = 'cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white transition-all';
+          btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all';
         } else {
-          btn.className = 'cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border';
+          btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border';
         }
       });
       renderMediaGrid();
