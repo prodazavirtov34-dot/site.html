@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -32,14 +34,13 @@
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                     },
                     animation: {
-                        'spin-slow': 'spin 8s linear infinite',
-                        'bounce-short': 'bounceShort 0.5s ease-in-out',
+                        'bounce-short': 'bounceShort 0.4s ease-in-out',
                         'pulse-glow': 'pulseGlow 2s ease-in-out infinite alternate',
                     },
                     keyframes: {
                         bounceShort: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-6px)' }
+                            '50%': { transform: 'translateY(-4px)' }
                         },
                         pulseGlow: {
                             '0%': { boxShadow: '0 0 10px rgba(145, 70, 255, 0.4)' },
@@ -72,16 +73,15 @@
             background: #9146FF;
         }
         .glass-panel {
-            background: rgba(24, 24, 27, 0.85);
+            background: rgba(24, 24, 27, 0.9);
             backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .obs-preview-bg {
             background: radial-gradient(circle at center, #1e1136 0%, #0b0614 100%);
         }
-        /* Roulette wheel custom styling */
         #rouletteCanvas {
-            filter: drop-shadow(0 0 15px rgba(145, 70, 255, 0.4));
+            filter: drop-shadow(0 0 20px rgba(145, 70, 255, 0.5));
         }
     </style>
 </head>
@@ -94,15 +94,15 @@
                 <i class="fa-solid fa-crown"></i>
             </div>
             <div>
-                <h1 class="font-extrabold text-base lg:text-lg bg-gradient-to-r from-white via-twitch-lightpurple to-twitch-purple bg-clip-text text-transparent tracking-tight">StreamAuction & Roulette</h1>
-                <p class="text-xs text-twitch-muted">Только балл-каналы Twitch & Авто-ставка без спама</p>
+                <h1 class="font-extrabold text-base lg:text-lg bg-gradient-to-r from-white via-twitch-lightpurple to-twitch-purple bg-clip-text text-transparent tracking-tight">StreamAuction Pro</h1>
+                <p class="text-xs text-twitch-muted">Только балл-каналы Twitch & Рулетка</p>
             </div>
         </div>
 
         <div class="flex items-center gap-3">
             <!-- Twitch Auth Status & Button -->
             <div id="twitchAuthContainer" class="flex items-center gap-2">
-                <button id="twitchLoginBtn" onclick="toggleTwitchAuth()" class="bg-[#9146FF] hover:bg-[#772CE8] text-white text-xs font-bold py-2 px-3.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-twitch-purple/20">
+                <button id="twitchLoginBtn" onclick="openTwitchAuthModal()" class="bg-[#9146FF] hover:bg-[#772CE8] text-white text-xs font-bold py-2 px-3.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-twitch-purple/20">
                     <i class="fa-brands fa-twitch text-sm"></i> <span id="authBtnText">Войти через Twitch</span>
                 </button>
             </div>
@@ -145,10 +145,10 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h2 class="font-bold text-sm text-white">Twitch Channel Points & EventSub</h2>
+                            <h2 class="font-bold text-sm text-white">Интеграция баллов канала (Twitch EventSub)</h2>
                             <span id="integrationBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Отключено</span>
                         </div>
-                        <p class="text-xs text-twitch-muted mt-0.5">Принимаются ТОЛЬКО баллы канала (исключен спам по 1 баллу, точный никнейм лидера).</p>
+                        <p class="text-xs text-twitch-muted mt-0.5">Принимаются ТОЛЬКО баллы канала. Спам по 1 баллу фильтруется, ник лидера обновляется мгновенно.</p>
                     </div>
                 </div>
 
@@ -157,7 +157,7 @@
                         <i class="fa-solid fa-power-off"></i> Включить интеграцию
                     </button>
                     <button onclick="openSimulateModal()" class="bg-twitch-border hover:bg-twitch-border/80 text-white font-bold px-4 py-2 rounded-xl text-xs transition flex items-center gap-2">
-                        <i class="fa-solid fa-vial"></i> Симулятор ставки зрителя
+                        <i class="fa-solid fa-vial"></i> Симулятор баллов зрителя
                     </button>
                 </div>
             </div>
@@ -204,7 +204,7 @@
                     </div>
                     <div class="pt-3 border-t border-twitch-border/60 flex justify-between text-xs text-twitch-muted">
                         <span>Всего лотов: <strong id="totalLotsCount" class="text-white">0</strong></span>
-                        <span class="text-twitch-lightpurple font-medium">Защита от спама: <strong class="text-emerald-400">Вкл</strong></span>
+                        <span class="text-twitch-lightpurple font-medium">Анти-спам: <strong class="text-emerald-400">Вкл (dedup)</strong></span>
                     </div>
                 </div>
 
@@ -216,7 +216,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-sm text-white mt-1">Случайный выбор лота</h3>
-                        <p class="text-xs text-twitch-muted mt-1">Крутите колесо рулетки прямо на трансляции среди топ-лотов.</p>
+                        <p class="text-xs text-twitch-muted mt-1">Крутите колесо рулетки со звуком и конфетти прямо на трансляции.</p>
                     </div>
                     <button onclick="switchView('roulette')" class="w-full bg-twitch-purple hover:bg-twitch-darkpurple text-white text-xs font-bold py-2.5 px-4 rounded-xl transition shadow-lg shadow-twitch-purple/30 flex items-center justify-center gap-2 mt-2">
                         <i class="fa-solid fa-play"></i> Открыть рулетку
@@ -297,7 +297,7 @@
             <div class="glass-panel p-6 rounded-2xl border border-twitch-border flex flex-col items-center justify-center text-center relative overflow-hidden">
                 <div class="absolute -top-20 w-64 h-64 bg-twitch-purple/20 rounded-full blur-3xl pointer-events-none"></div>
                 <h2 class="text-2xl font-black text-white mb-1"><i class="fa-solid fa-dharmachakra text-twitch-lightpurple mr-2"></i> Рулетка лотов Twitch</h2>
-                <p class="text-xs text-twitch-muted max-w-lg mb-6">Случайный выбор победителя среди активных лотов. Вероятность выпадения пропорциональна количеству баллов канала!</p>
+                <p class="text-xs text-twitch-muted max-w-lg mb-6">Случайный выбор победителя среди активных лотов. Вероятность пропорциональна количеству баллов канала!</p>
 
                 <!-- Roulette Wheel Canvas & Pointer -->
                 <div class="relative my-4 flex items-center justify-center">
@@ -379,16 +379,49 @@
 
     </main>
 
+    <!-- TWITCH OAUTH LOGIN MODAL -->
+    <div id="twitchAuthModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-twitch-border space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-twitch-border">
+                <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                    <i class="fa-brands fa-twitch text-[#9146FF]"></i> Авторизация через Twitch
+                </h3>
+                <button onclick="closeTwitchAuthModal()" class="text-twitch-muted hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs text-twitch-muted">Введите ваш ник на Twitch или Client ID для подключения API баллов канала.</p>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-twitch-muted mb-1">Ник стримера на Twitch</label>
+                    <input type="text" id="authStreamerInput" placeholder="например: Buster или Evelone" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-twitch-muted mb-1">Twitch Client ID (опционально)</label>
+                    <input type="text" id="authClientIdInput" placeholder="оставьте пустым для быстрого входа" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 pt-2">
+                <button onclick="submitTwitchAuth()" class="w-full bg-[#9146FF] hover:bg-[#772CE8] text-white font-bold py-3 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-twitch-purple/30">
+                    <i class="fa-brands fa-twitch"></i> Подключить Twitch
+                </button>
+                <button onclick="closeTwitchAuthModal()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white font-bold py-3 rounded-xl transition text-xs">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- SIMULATE TWITCH CHANNEL POINTS REDEMPTION MODAL -->
     <div id="simulateModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
         <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-twitch-border space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-twitch-border">
                 <h3 class="font-bold text-white text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-vial text-twitch-lightpurple"></i> Симуляция траты баллов зрителя
+                    <i class="fa-solid fa-vial text-twitch-lightpurple"></i> Симуляция ставки за баллы
                 </h3>
                 <button onclick="closeSimulateModal()" class="text-twitch-muted hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <p class="text-xs text-twitch-muted">Проверка защиты от спама: одинаковые баллы по 1 не дублируются, никнейм лидера фиксируется точно.</p>
+            <p class="text-xs text-twitch-muted">Защита от спама (dedup ID): проверяет уникальность транзакции и точный ник лидера без спама по 1 баллу.</p>
             
             <div class="space-y-3">
                 <div>
@@ -399,7 +432,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Ник зрителя</label>
+                        <label class="block text-xs font-semibold text-twitch-muted mb-1">Точный ник зрителя</label>
                         <input type="text" id="simUsername" value="TwitchFan_77" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-twitch-purple">
                     </div>
                     <div>
@@ -411,7 +444,7 @@
 
             <div class="flex items-center gap-2 pt-2">
                 <button onclick="submitSimulatedRedemption()" class="w-full bg-twitch-purple hover:bg-twitch-darkpurple text-white font-bold py-2.5 rounded-xl transition text-xs">Отправить баллы</button>
-                <button onclick="closeSimulateModal()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted text-white font-bold py-2.5 rounded-xl transition text-xs">Отмена</button>
+                <button onclick="closeSimulateModal()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white font-bold py-2.5 rounded-xl transition text-xs">Отмена</button>
             </div>
         </div>
     </div>
@@ -448,8 +481,9 @@
     </div>
 
     <script>
+        // State data initialization
         let lots = JSON.parse(localStorage.getItem('twitch_auction_lots')) || [
-            let id: '1', title: 'Прохождение Elden Ring (DLC)', points: 4500, category: 'Игры', leader: 'ShadowFiend99' },
+            { id: '1', title: 'Прохождение Elden Ring (DLC)', points: 4500, category: 'Игры', leader: 'ShadowFiend99' },
             { id: '2', title: 'Просмотр трилогии "Властелин Колец"', points: 2800, category: 'Фильм', leader: 'AliceStream' },
             { id: '3', title: 'Поесть самый острый доширак', points: 1200, category: 'Челлендж', leader: 'SpicyKing' }
         ];
@@ -460,8 +494,48 @@
         let integrationActive = JSON.parse(localStorage.getItem('twitch_integration_active')) || false;
         let twitchUser = JSON.parse(localStorage.getItem('twitch_auth_user')) || null;
 
-        // Anti-spam duplicate redemption tracking map (dedup tokens)
+        // Anti-spam deduplication Set (tracking redemption unique IDs)
         let processedRedemptions = new Set();
+
+        // Web Audio API sound effects generator
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'spin') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3); // C6
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.7);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.7);
+            } else if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            }
+        }
 
         function saveData() {
             localStorage.setItem('twitch_auction_lots', JSON.stringify(lots));
@@ -471,33 +545,44 @@
             renderAll();
         }
 
-        // Twitch Auth Simulation / Connect
-        function toggleTwitchAuth() {
+        // Twitch Auth Functions
+        function openTwitchAuthModal() {
             if (twitchUser) {
-                if (confirm('Выйти из аккаунта Twitch?')) {
+                if (confirm(`Выйти из аккаунта @${twitchUser.name}?`)) {
                     twitchUser = null;
                     saveData();
                     showToast('👋 Вы вышли из профиля Twitch', 'info');
                 }
-            } else {
-                // Mock Twitch OAuth popup flow
-                const streamerName = prompt('Введите ваш ник на Twitch для подключения:', 'StreamerPro');
-                if (streamerName && streamerName.trim()) {
-                    twitchUser = {
-                        name: streamerName.trim(),
-                        id: Math.floor(Math.random() * 1000000).toString(),
-                        avatar: 'https://placehold.co/100x100/9146FF/ffffff?text=' + streamerName.charAt(0).toUpperCase()
-                    };
-                    saveData();
-                    showToast(`✅ Успешная авторизация Twitch как @${twitchUser.name}!`, 'success');
-                }
+                return;
             }
+            document.getElementById('twitchAuthModal').classList.remove('hidden');
+            document.getElementById('twitchAuthModal').classList.add('flex');
+        }
+
+        function closeTwitchAuthModal() {
+            document.getElementById('twitchAuthModal').classList.remove('flex');
+            document.getElementById('twitchAuthModal').classList.add('hidden');
+        }
+
+        function submitTwitchAuth() {
+            const streamer = document.getElementById('authStreamerInput').value.trim();
+            if (!streamer) {
+                showToast('⚠️ Введите никнейм стримера!', 'warning');
+                return;
+            }
+            twitchUser = {
+                name: streamer,
+                id: 'tw_' + Math.floor(Math.random() * 900000 + 100000),
+                avatar: `https://placehold.co/100x100/9146FF/ffffff?text=${streamer.charAt(0).toUpperCase()}`
+            };
+            saveData();
+            closeTwitchAuthModal();
+            showToast(`✅ Успешная авторизация Twitch как @${twitchUser.name}!`, 'success');
             updateAuthUI();
         }
 
         function updateAuthUI() {
             const btn = document.getElementById('twitchLoginBtn');
-            const container = document.getElementById('twitchAuthContainer');
             if (twitchUser) {
                 btn.innerHTML = `<img src="${twitchUser.avatar}" class="w-5 h-5 rounded-full inline mr-1.5" onerror="this.src='https://placehold.co/20x20/9146FF/fff?text=T'"/> ${twitchUser.name} <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>`;
                 btn.className = "bg-twitch-card border border-twitch-border text-white text-xs font-bold py-2 px-3 rounded-xl transition flex items-center gap-1.5";
@@ -509,15 +594,16 @@
 
         // Integration Toggle
         function toggleIntegration() {
+            playSound('click');
             if (!twitchUser) {
-                showToast('⚠️️ Сначала авторизуйтесь через Twitch!', 'warning');
-                toggleTwitchAuth();
+                showToast('⚠ Сначала авторизуйтесь через Twitch!', 'warning');
+                openTwitchAuthModal();
                 return;
             }
             integrationActive = !integrationActive;
             saveData();
             if (integrationActive) {
-                showToast('🚀 Интеграция баллов канала Twitch активирована!', 'success');
+                showToast('🚀 Интеграция баллов канала Twitch активна!', 'success');
             } else {
                 showToast('⏹️ Интеграция отключена', 'info');
             }
@@ -542,6 +628,7 @@
 
         // View Navigation
         function switchView(viewName) {
+            playSound('click');
             const dash = document.getElementById('dashboardView');
             const roulette = document.getElementById('rouletteView');
             const obs = document.getElementById('obsView');
@@ -550,7 +637,6 @@
             roulette.classList.add('hidden');
             obs.classList.add('hidden');
 
-            // Reset nav buttons
             ['navDashBtn', 'navRouletteBtn', 'navObsBtn'].forEach(id => {
                 const el = document.getElementById(id);
                 if(el) el.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-twitch-muted hover:text-white";
@@ -571,6 +657,7 @@
 
         // Timer Controls
         function startTimer() {
+            playSound('click');
             if (timerRunning) return;
             timerRunning = true;
             document.getElementById('timerStatusBadge').className = "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
@@ -589,6 +676,7 @@
         }
 
         function pauseTimer() {
+            playSound('click');
             timerRunning = false;
             clearInterval(timerInterval);
             document.getElementById('timerStatusBadge').className = "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30";
@@ -596,6 +684,7 @@
         }
 
         function resetTimer() {
+            playSound('click');
             pauseTimer();
             timerSeconds = 300;
             updateTimerDisplays();
@@ -616,6 +705,7 @@
         // Lot CRUD
         function handleCreateLot(e) {
             e.preventDefault();
+            playSound('click');
             const title = document.getElementById('lotTitle').value.trim();
             const points = parseInt(document.getElementById('lotPoints').value) || 100;
             const category = document.getElementById('lotCategory').value;
@@ -639,12 +729,14 @@
         }
 
         function deleteLot(id) {
+            playSound('click');
             lots = lots.filter(l => l.id !== id);
             saveData();
             showToast('🗑️ Лот удален', 'info');
         }
 
         function addPointsToLot(id, amount) {
+            playSound('click');
             const lot = lots.find(l => l.id === id);
             if (lot) {
                 lot.points += amount;
@@ -653,12 +745,14 @@
         }
 
         function sortLots() {
+            playSound('click');
             lots.sort((a, b) => b.points - a.points);
             saveData();
             showToast('⚡ Лоты отсортированы по баллам канала', 'info');
         }
 
         function clearAllLots() {
+            playSound('click');
             if (confirm('Очистить все лоты аукциона?')) {
                 lots = [];
                 saveData();
@@ -668,6 +762,7 @@
 
         // Edit Modal
         function openEditModal(id) {
+            playSound('click');
             const lot = lots.find(l => l.id === id);
             if (!lot) return;
             document.getElementById('editLotId').value = lot.id;
@@ -685,6 +780,7 @@
         }
 
         function saveEditedLot() {
+            playSound('click');
             const id = document.getElementById('editLotId').value;
             const lot = lots.find(l => l.id === id);
             if (lot) {
@@ -697,8 +793,9 @@
             }
         }
 
-        // Simulate Twitch Channel Points redemption with Anti-Spam protection
+        // Simulate Channel Points Redemption with Anti-Spam (Dedup Token)
         function openSimulateModal() {
+            playSound('click');
             if (!integrationActive) {
                 showToast('⚠️ Включите интеграцию баллов перед симуляцией!', 'warning');
                 return;
@@ -719,6 +816,7 @@
         }
 
         function submitSimulatedRedemption() {
+            playSound('click');
             const lotId = document.getElementById('simLotSelect').value;
             const username = document.getElementById('simUsername').value.trim() || 'TwitchViewer';
             const points = parseInt(document.getElementById('simPoints').value) || 100;
@@ -728,9 +826,13 @@
                 return;
             }
 
-            // Anti-spam & duplicate redemption guard (prevent 1-point glitch/spam loops)
-            const redemptionToken = `${username}-${lotId}-${points}-${Date.now()}`;
-            processedRedemptions.add(redemptionToken);
+            // Anti-spam deduplication check
+            const dedupId = `red_${username}_${lotId}_${points}_${Math.floor(Date.now() / 2000)}`;
+            if (processedRedemptions.has(dedupId)) {
+                showToast('🛡️ Защита от спама: дубликат ставки заблокирован', 'warning');
+                return;
+            }
+            processedRedemptions.add(dedupId);
 
             const lot = lots.find(l => l.id === lotId);
             if (lot) {
@@ -742,7 +844,7 @@
             }
         }
 
-        // Roulette Wheel Logic
+        // Roulette Wheel Physics & Canvas Render
         let currentRotation = 0;
         let isSpinning = false;
 
@@ -766,10 +868,8 @@
                 return;
             }
 
-            // Calculate total points for proportional weights
             const totalPoints = lots.reduce((acc, curr) => acc + Math.max(1, curr.points), 0);
             let startAngle = currentRotation;
-
             const colors = ['#9146FF', '#772CE8', '#A970FF', '#5c16c5', '#b48efe', '#43118a'];
 
             lots.forEach((lot, index) => {
@@ -777,7 +877,6 @@
                 const sliceAngle = (weight / totalPoints) * 2 * Math.PI;
                 const endAngle = startAngle + sliceAngle;
 
-                // Draw slice
                 ctx.beginPath();
                 ctx.moveTo(centerX, centerY);
                 ctx.arc(centerX, centerY, radius, startAngle, endAngle);
@@ -788,7 +887,6 @@
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // Draw text label inside slice
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 ctx.rotate(startAngle + sliceAngle / 2);
@@ -802,7 +900,7 @@
                 startAngle = endAngle;
             });
 
-            // Center circle knob
+            // Center knob
             ctx.beginPath();
             ctx.arc(centerX, centerY, 32, 0, 2 * Math.PI);
             ctx.fillStyle = '#18181B';
@@ -824,21 +922,26 @@
             document.getElementById('spinBtn').disabled = true;
             document.getElementById('rouletteWinnerBox').classList.add('hidden');
 
-            const spinRounds = 5 + Math.random() * 5; // 5 to 10 full rotations
+            const spinRounds = 6 + Math.random() * 4;
             const extraAngle = Math.random() * 2 * Math.PI;
             const targetRotation = currentRotation + (spinRounds * 2 * Math.PI) + extraAngle;
 
             const startTime = performance.now();
-            const duration = 4000; // 4 seconds spin duration
+            const duration = 4500;
+            let lastSoundTick = 0;
 
             function animateSpin(currentTime) {
                 const elapsed = currentTime - startTime;
                 const progress = Math.min(elapsed / duration, 1);
-                // Ease out cubic
                 const easeProgress = 1 - Math.pow(1 - progress, 3);
 
                 currentRotation = currentRotation + (targetRotation - currentRotation) * easeProgress;
                 drawRouletteWheel();
+
+                if (currentTime - lastSoundTick > 120 && progress < 0.9) {
+                    playSound('spin');
+                    lastSoundTick = currentTime;
+                }
 
                 if (progress < 1) {
                     requestAnimationFrame(animateSpin);
@@ -853,7 +956,6 @@
         }
 
         function determineRouletteWinner() {
-            // Calculate which slice points to top pointer (angle 3 * PI / 2 or -PI / 2)
             const normalizedRotation = (currentRotation % (2 * Math.PI));
             const pointerAngle = (3 * Math.PI / 2 - normalizedRotation + 2 * Math.PI) % (2 * Math.PI);
 
@@ -871,9 +973,16 @@
                 }
             }
 
+            playSound('win');
+            confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
             const box = document.getElementById('rouletteWinnerBox');
             const ann = document.getElementById('winnerAnnouncement');
-            ann.textContent = `🏆 ${winningLot.title} (Лидер: ${winningLot.leader} - ${winningLot.points} 🪙)`;
+            ann.textContent = `🏆 ${winningLot.title} (Лидер: ${winningLot.leader} — ${winningLot.points} 🪙)`;
             box.classList.remove('hidden');
             showToast(`🎉 Победитель рулетки: ${winningLot.title}!`, 'success');
         }
@@ -898,6 +1007,7 @@
         }
 
         function toggleObsFullscreen() {
+            playSound('click');
             const elem = document.getElementById('obsContainer');
             if (!document.fullscreenElement) {
                 elem.requestFullscreen().catch(() => {});
@@ -1000,7 +1110,14 @@
             return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
 
+        // Auto-detect URL parameter `?obs=true` for OBS Browser Source direct mode
         window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('obs') === 'true') {
+                switchView('obs');
+            } else {
+                switchView('dashboard');
+            }
             updateTimerDisplays();
             updateAuthUI();
             updateIntegrationUI();
