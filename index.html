@@ -1,727 +1,2029 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>магахоствидео — Видео и фото хостинг</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>магахоствидео — Первый народный медиахостинг</title>
+  
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              200: '#fecdd3',
+              300: '#fda4af',
+              400: '#fb7185',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+              800: '#9f1239',
+              900: '#881337',
+              950: '#4c0519'
+            },
+            dark: {
+              bg: '#090d16',
+              surface: '#0f172a',
+              card: '#1e293b',
+              border: '#334155',
+              hover: '#273549'
+            }
+          },
+          boxShadow: {
+            'neon-red': '0 0 25px -5px rgba(225, 29, 72, 0.4), 0 0 10px -5px rgba(225, 29, 72, 0.2)',
+            'neon-glow': '0 0 35px -5px rgba(244, 63, 94, 0.3)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Identity Services -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Font Awesome Pro Icons Free CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
   <style>
-    body { background-color: #0d1117; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    .neon-border { box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
-    .glass-card { background: rgba(22, 27, 34, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(48, 54, 61, 0.8); }
-    .custom-scroll::-webkit-scrollbar { width: 6px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+    /* Кастомный скроллбар */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090d16;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e11d48;
+    }
+
+    /* Анимации и визуальные стили */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); }
+    }
+    .pulse-logo {
+      animation: pulseGlow 4s infinite ease-in-out;
+    }
+
+    .glassmorphism {
+      background: rgba(15, 23, 42, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(51, 65, 85, 0.7);
+    }
+
+    .glass-card-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 30px -10px rgba(225, 29, 72, 0.25);
+      border-color: rgba(244, 63, 94, 0.4);
+    }
+
+    /* Ползунок видеоплеера */
+    input[type=range] {
+      accent-color: #e11d48;
+    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="bg-dark-bg text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-600 selection:text-white">
 
-  <!-- ШАПКА САЙТА -->
-  <header class="glass-card sticky top-0 z-40 border-b border-gray-800 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+  <!-- ========================================== -->
+  <!-- 1. ВЕРХНЕЕ НАВИГАЦИОННОЕ МЕНЮ (ХЕДЕР)      -->
+  <!-- ========================================== -->
+  <header class="sticky top-0 z-40 glassmorphism border-b border-dark-border px-3 sm:px-6 py-3 transition-all duration-300">
+    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-2 sm:gap-4">
       
-      <!-- ЛОГОТИП -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="filterCategory('all')">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 via-rose-500 to-amber-500 flex items-center justify-center neon-border text-white text-xl font-black">
-          М
+      <!-- ЛОГОТИП С БРЕНДИНГОМ -->
+      <div class="flex items-center gap-3 cursor-pointer select-none group" onclick="switchView('explore'); filterMedia('all');">
+        <div class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-tr from-brand-700 via-brand-500 to-amber-500 flex items-center justify-center shadow-neon-red group-hover:scale-105 transition-transform duration-300">
+          <i class="fa-solid fa-play text-white text-lg ml-0.5"></i>
+          <span class="absolute -bottom-1 -right-1 flex h-3 w-3">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+          </span>
         </div>
         <div>
-          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-red-500 via-rose-400 to-orange-400 bg-clip-text text-transparent">
-            магахоствидео
-          </span>
-          <span class="block text-[10px] text-gray-400 uppercase tracking-widest font-mono">хостинг медиа</span>
+          <div class="flex items-center gap-1.5">
+            <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-brand-400 bg-clip-text text-transparent group-hover:to-brand-300 transition-colors">
+              магахоствидео
+            </span>
+            <span class="bg-brand-600/30 text-brand-400 border border-brand-500/40 text-[10px] font-bold px-1.5 py-0.5 rounded tracking-wider uppercase">Pro</span>
+          </div>
+          <span class="text-[11px] text-slate-400 font-medium block -mt-1 hidden xs:block">свободный видео & фото хостинг</span>
         </div>
       </div>
 
-      <!-- ПОИСК -->
-      <div class="flex-1 max-w-xl hidden md:block">
-        <div class="relative">
-          <input type="text" id="searchInput" placeholder="Поиск видео, фото, авторов..." 
-            oninput="handleSearch()"
-            class="w-full bg-[#161b22] border border-gray-700 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:border-red-500 transition-all">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+      <!-- ЦЕНТРАЛЬНЫЙ ПОИСКОВИК С ФИЛЬТРОМ -->
+      <div class="flex-1 max-w-2xl mx-2 hidden md:block">
+        <div class="relative flex items-center">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+          </div>
+          <input 
+            type="text" 
+            id="globalSearchInput" 
+            oninput="handleLiveSearch(this.value)"
+            placeholder="Искать видео, фото, авторов, теги..." 
+            class="w-full pl-10 pr-10 py-2.5 bg-dark-surface/90 border border-dark-border rounded-2xl text-sm text-slate-200 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30 transition-all shadow-inner"
+          />
+          <button 
+            id="clearSearchBtn" 
+            onclick="clearSearch()" 
+            class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-white hidden transition-colors">
+            <i class="fa-solid fa-xmark text-sm"></i>
+          </button>
         </div>
       </div>
 
-      <!-- КНОПКИ ДЕЙСТВИЙ И ПРОФИЛЬ -->
-      <div class="flex items-center gap-3">
-        <button onclick="openUploadModal()" class="flex items-center gap-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-lg shadow-red-900/40">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
+      <!-- ПРАВАЯ ЧАСТЬ: КНОПКА ЗАЛИВКИ + ПРОФИЛЬ -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        
+        <!-- Кнопка поиска на мобильных -->
+        <button onclick="toggleMobileSearch()" class="md:hidden p-2.5 text-slate-300 hover:text-white rounded-xl bg-dark-surface border border-dark-border">
+          <i class="fa-solid fa-magnifying-glass text-sm"></i>
+        </button>
+
+        <!-- Кнопка загрузить -->
+        <button 
+          onclick="triggerUploadCheck()" 
+          class="flex items-center gap-2 bg-gradient-to-r from-brand-600 via-rose-600 to-amber-600 hover:from-brand-500 hover:to-rose-500 text-white px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-neon-red active:scale-95 transition-all">
+          <i class="fa-solid fa-cloud-arrow-up text-sm sm:text-base"></i>
           <span class="hidden sm:inline">Залить</span>
         </button>
 
-        <div id="authContainer">
-          <!-- Рендерится динамически: Либо кнопка Войти, либо аватарка профиля -->
+        <!-- Контейнер состояния авторизации -->
+        <div id="userProfileBar" class="flex items-center">
+          <!-- Генерируется скриптом -->
         </div>
+
       </div>
 
+    </div>
+
+    <!-- Мобильная полоса поиска (раскрывается по кнопке) -->
+    <div id="mobileSearchRow" class="hidden md:hidden pt-3 mt-2 border-t border-dark-border/60">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+        <input 
+          type="text" 
+          id="mobileSearchInput" 
+          oninput="handleLiveSearch(this.value)" 
+          placeholder="Поиск по всему сайту..." 
+          class="w-full pl-10 pr-4 py-2 bg-dark-surface border border-dark-border rounded-xl text-xs text-white focus:outline-none focus:border-brand-500"
+        />
+      </div>
     </div>
   </header>
 
-  <!-- ФИЛЬТРЫ И ТЕГИ -->
-  <div class="max-w-7xl mx-auto w-full px-4 pt-5 pb-3 flex items-center gap-2 overflow-x-auto custom-scroll text-sm">
-    <button onclick="filterCategory('all')" id="tab-all" class="px-4 py-1.5 rounded-full bg-red-600 text-white font-medium whitespace-nowrap transition-colors">Все</button>
-    <button onclick="filterCategory('video')" id="tab-video" class="px-4 py-1.5 rounded-full bg-[#21262d] text-gray-300 hover:bg-gray-800 whitespace-nowrap transition-colors"><i class="fa-solid fa-video mr-1.5 text-xs"></i>Видео</button>
-    <button onclick="filterCategory('photo')" id="tab-photo" class="px-4 py-1.5 rounded-full bg-[#21262d] text-gray-300 hover:bg-gray-800 whitespace-nowrap transition-colors"><i class="fa-solid fa-image mr-1.5 text-xs"></i>Фото</button>
-    <button onclick="filterCategory('mine')" id="tab-mine" class="px-4 py-1.5 rounded-full bg-[#21262d] text-gray-300 hover:bg-gray-800 whitespace-nowrap transition-colors"><i class="fa-solid fa-user mr-1.5 text-xs"></i>Мои загрузки</button>
-  </div>
+  <!-- ========================================== -->
+  <!-- 2. ВТОРИЧНАЯ ПАНЕЛЬ ТАКСОНОМИИ И ТЕГОВ     -->
+  <!-- ========================================== -->
+  <nav class="bg-dark-surface/50 border-b border-dark-border/80 px-4 py-2.5 sticky top-[65px] z-30 backdrop-blur-md">
+    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
+      
+      <!-- Фильтры форматов -->
+      <div class="flex items-center gap-2 flex-shrink-0" id="filterTabsGroup">
+        <button onclick="filterMedia('all')" data-category="all" class="cat-pill active-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white transition-all shadow-sm">
+          <i class="fa-solid fa-globe mr-1.5"></i>Все материалы
+        </button>
+        <button onclick="filterMedia('video')" data-category="video" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+          <i class="fa-solid fa-clapperboard mr-1.5 text-brand-400"></i>Видео
+        </button>
+        <button onclick="filterMedia('photo')" data-category="photo" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+          <i class="fa-solid fa-camera mr-1.5 text-amber-400"></i>Фотографии
+        </button>
+        <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+          <i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои публикации
+        </button>
+      </div>
 
-  <!-- ОСНОВНАЯ СЕТКА КОНТЕНТА -->
-  <main class="max-w-7xl mx-auto w-full px-4 py-4 flex-1">
-    <div id="postsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-      <!-- Сюда вставляются видео и фото из базы -->
+      <!-- Сортировка -->
+      <div class="flex items-center gap-2 flex-shrink-0 text-xs">
+        <span class="text-slate-400 hidden lg:inline">Сортировать:</span>
+        <select id="sortSelector" onchange="changeSorting(this.value)" class="bg-dark-card border border-dark-border text-slate-300 rounded-xl px-2.5 py-1.5 text-xs focus:outline-none focus:border-brand-500">
+          <option value="newest">Сначала новые</option>
+          <option value="popular">Больше лайков</option>
+          <option value="views">По просмотрам</option>
+        </select>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- 3. ГЛАВНАЯ СТРАНИЦА И КОНТЕНТНАЯ СЕТКА     -->
+  <!-- ========================================== -->
+  <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8">
+    
+    <!-- Баннер приветствия (для новичков) -->
+    <div id="welcomeBanner" class="mb-8 p-6 rounded-3xl bg-gradient-to-r from-slate-900 via-rose-950/40 to-slate-900 border border-brand-900/50 relative overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="z-10 max-w-2xl text-center md:text-left">
+        <div class="inline-flex items-center gap-2 bg-brand-900/60 border border-brand-700/60 text-brand-300 text-xs px-3 py-1 rounded-full font-semibold mb-3">
+          <i class="fa-solid fa-shield-halved"></i> 100% чистый хостинг без ботов и спама
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-black text-white tracking-tight">Добро пожаловать в магахоствидео!</h1>
+        <p class="text-slate-300 text-xs sm:text-sm mt-1.5 leading-relaxed">
+          Заливайте свои личные ролики и фото прямо с диска компьютера или телефона. Делитесь ими, получайте лайки, обсуждайте в комментариях под своим уникальным ником.
+        </p>
+      </div>
+      <div class="z-10 flex flex-wrap items-center gap-3">
+        <button onclick="triggerUploadCheck()" class="px-5 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm transition-all shadow-neon-red flex items-center gap-2">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i> Начать загрузку
+        </button>
+        <button onclick="dismissBanner()" class="px-4 py-2.5 rounded-xl bg-dark-card hover:bg-dark-hover text-slate-300 border border-dark-border text-xs sm:text-sm transition-colors">
+          Закрыть
+        </button>
+      </div>
+      <!-- Декоративные фоновые элементы -->
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-600/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -left-10 -top-10 w-64 h-64 bg-amber-600/10 rounded-full blur-3xl pointer-events-none"></div>
     </div>
 
-    <!-- Заглушка, если ничего нет -->
-    <div id="emptyState" class="hidden text-center py-24">
-      <div class="w-20 h-20 mx-auto rounded-full bg-[#161b22] border border-gray-800 flex items-center justify-center text-gray-500 text-3xl mb-4">
-        <i class="fa-regular fa-folder-open"></i>
+    <!-- Заголовок активного раздела и счетчик -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-2.5 h-6 bg-brand-600 rounded-full"></div>
+        <h2 id="sectionHeading" class="text-lg sm:text-xl font-extrabold text-white tracking-tight">Все материалы</h2>
+        <span id="postsTotalCount" class="text-xs font-semibold px-2 py-0.5 rounded-md bg-dark-surface border border-dark-border text-slate-400">0</span>
       </div>
-      <h3 class="text-xl font-bold text-gray-300">Пока ничего не загружено</h3>
-      <p class="text-gray-500 text-sm max-w-sm mx-auto mt-1 mb-5">Станьте первым, кто опубликует видеоролик или фото на магахоствидео!</p>
-      <button onclick="openUploadModal()" class="bg-red-600 hover:bg-red-500 text-white font-medium px-5 py-2.5 rounded-xl text-sm transition-all shadow-md">
-        Загрузить первый файл
+
+      <div class="text-xs text-slate-400" id="activeFilterBadge"></div>
+    </div>
+
+    <!-- Основная сетка для карточек контента -->
+    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 sm:gap-6">
+      <!-- Динамические карточки карточки рендерятся через renderMediaGrid() -->
+    </div>
+
+    <!-- Состояние отсутствия постов (Пустой хостинг) -->
+    <div id="noContentState" class="hidden text-center py-20 px-4">
+      <div class="w-24 h-24 mx-auto rounded-3xl bg-dark-surface border border-dark-border flex items-center justify-center text-slate-500 text-4xl mb-5 shadow-2xl">
+        <i class="fa-solid fa-photo-film"></i>
+      </div>
+      <h3 class="text-xl font-bold text-slate-200">Здесь пока ничего нет</h3>
+      <p class="text-slate-400 text-xs sm:text-sm max-w-md mx-auto mt-2 mb-6">
+        Файлы еще не загружены или ничего не найдено по вашему поисковому запросу. Загрузите первый ролик или снимок прямо сейчас!
+      </p>
+      <button onclick="triggerUploadCheck()" class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-neon-red transition-all">
+        <i class="fa-solid fa-plus"></i> Опубликовать медиа
       </button>
     </div>
+
   </main>
 
-  <!-- МОДАЛКА ВХОДА (GOOGLE + ГОСТЬ) -->
-  <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="glass-card max-w-md w-full rounded-2xl p-6 border border-gray-700 shadow-2xl relative">
-      <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-      
-      <div class="text-center mb-6">
-        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 to-amber-500 flex items-center justify-center text-white text-2xl font-black mx-auto mb-3 shadow-lg shadow-red-950">
-          М
-        </div>
-        <h2 class="text-2xl font-black text-white">Вход в магахоствидео</h2>
-        <p class="text-xs text-gray-400 mt-1">Выберите удобный способ авторизации</p>
+  <!-- ========================================== -->
+  <!-- 4. ФУТЕР САЙТА                             -->
+  <!-- ========================================== -->
+  <footer class="glassmorphism border-t border-dark-border mt-auto py-8 px-4 text-xs text-slate-400">
+    <div class="max-w-[1700px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm">М</div>
+        <span class="font-bold text-slate-300">магахоствидео © 2026</span>
+        <span class="text-slate-600">|</span>
+        <span>Народный видео & фото хостинг</span>
       </div>
 
-      <div class="space-y-3">
-        <!-- КНОПКА ВОЙТИ ЧЕРЕЗ GOOGLE -->
-        <button onclick="loginGoogle()" class="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-3 px-4 rounded-xl transition-all shadow-md">
-          <svg class="w-5 h-5" viewBox="0 0 24 24">
+      <div class="flex flex-wrap items-center justify-center gap-6 text-slate-400">
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-brand-500"></i> Строгая анти-порно фильтрация</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-bolt text-amber-500"></i> Быстрый Vercel Edge</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-hard-drive text-blue-500"></i> Локальный IndexedDB Engine</span>
+      </div>
+
+      <div>
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-300 transition-colors">
+          <i class="fa-solid fa-arrow-up"></i> Наверх
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- 5. МОДАЛЬНОЕ ОКНО: АВТОРИЗАЦИЯ (GOOGLE + EMAIL + НИКНЕЙМ)       -->
+  <!-- ============================================================== -->
+  <div id="authModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4 transition-all">
+    <div class="glassmorphism max-w-md w-full rounded-3xl border border-dark-border p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Кнопка закрытия -->
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Шапка модалки -->
+      <div class="text-center mb-6">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-neon-red mb-3">
+          М
+        </div>
+        <h3 class="text-xl sm:text-2xl font-black text-white">Вход в магахоствидео</h3>
+        <p class="text-xs text-slate-400 mt-1">Укажите уникальное имя или войдите через Google</p>
+      </div>
+
+      <!-- Вкладки способов авторизации -->
+      <div class="grid grid-cols-2 p-1 bg-dark-card rounded-2xl border border-dark-border mb-5 text-xs font-bold">
+        <button id="authTabGoogle" onclick="switchAuthMode('google')" class="py-2.5 rounded-xl transition-all bg-brand-600 text-white shadow">
+          <i class="fa-brands fa-google mr-1.5"></i>Google вход
+        </button>
+        <button id="authTabGuest" onclick="switchAuthMode('custom')" class="py-2.5 rounded-xl transition-all text-slate-400 hover:text-white">
+          <i class="fa-solid fa-id-card mr-1.5"></i>Ник / Гость
+        </button>
+      </div>
+
+      <!-- ФОРМА 1: GOOGLE АВТОРИЗАЦИЯ ЧЕРЕЗ САЙТ -->
+      <div id="authGoogleForm" class="space-y-4">
+        
+        <!-- Быстрый интерактивный Google One Click -->
+        <button 
+          onclick="initiateSimulatedGooglePopup()" 
+          class="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-800 font-bold py-3.5 px-4 rounded-2xl transition-all shadow-md active:scale-98">
+          <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.8-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"/>
             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.35 24 12 24z"/>
             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.35 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
           </svg>
-          Войти через Google
+          <span class="text-xs sm:text-sm">Войти аккаунтом Google</span>
         </button>
 
-        <div class="relative flex py-2 items-center">
-          <div class="flex-grow border-t border-gray-800"></div>
-          <span class="flex-shrink mx-4 text-xs text-gray-500 uppercase font-mono">или</span>
-          <div class="flex-grow border-t border-gray-800"></div>
+        <div class="relative flex items-center py-2">
+          <div class="flex-grow border-t border-dark-border"></div>
+          <span class="flex-shrink mx-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">или введите Google почту</span>
+          <div class="flex-grow border-t border-dark-border"></div>
         </div>
 
-        <!-- КНОПКА ВОЙТИ КАК ГОСТЬ -->
-        <button onclick="loginAsGuest()" class="w-full flex items-center justify-center gap-3 bg-[#21262d] hover:bg-[#30363d] text-gray-200 font-semibold py-3 px-4 rounded-xl border border-gray-700 transition-all">
-          <i class="fa-solid fa-user-secret text-lg text-amber-400"></i>
-          Продолжить как Гость
-        </button>
+        <!-- Ручной ввод Google почты прямо на сайте -->
+        <form onsubmit="handleGoogleDirectLogin(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Google Email (@gmail.com)</label>
+            <div class="relative">
+              <i class="fa-solid fa-envelope absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+              <input 
+                type="email" 
+                id="googleEmailInput" 
+                required 
+                placeholder="primer@gmail.com" 
+                class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Ваше отображаемое имя (Никнейм)</label>
+            <div class="relative">
+              <i class="fa-solid fa-signature absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+              <input 
+                type="text" 
+                id="googleNameInput" 
+                required 
+                maxlength="20"
+                placeholder="Как вас называть на сайте" 
+                oninput="validateNicknameLive(this.value, 'googleNickError')"
+                class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+              />
+            </div>
+            <p id="googleNickError" class="text-[11px] text-brand-400 mt-1 hidden"></p>
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl text-xs transition-all shadow-neon-red">
+            Подтвердить и войти
+          </button>
+        </form>
+
       </div>
 
-      <p class="text-[11px] text-gray-500 text-center mt-5">
-        Запрещены порнографические материалы, спам и оскорбления. Действует автофильтр.
-      </p>
+      <!-- ФОРМА 2: РЕГИСТРАЦИЯ ПО НИКУ / ВХОД КАК ГОСТЬ -->
+      <div id="authCustomForm" class="space-y-4 hidden">
+        
+        <form onsubmit="handleCustomNicknameAuth(event)" class="space-y-3">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs font-semibold text-slate-300">Придумайте свой никнейм *</label>
+              <span class="text-[10px] text-slate-500">Только уникальные имена</span>
+            </div>
+            <div class="relative">
+              <i class="fa-solid fa-user-tag absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+              <input 
+                type="text" 
+                id="customNickInput" 
+                required 
+                maxlength="22"
+                placeholder="Например: Maga_Dag05" 
+                oninput="validateNicknameLive(this.value, 'customNickError')"
+                class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+              />
+            </div>
+            <div id="customNickError" class="text-[11px] text-brand-400 mt-1 hidden"></div>
+          </div>
+
+          <!-- Выбор стилизованного аватара -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Выберите стиль аватарки:</label>
+            <div class="grid grid-cols-4 gap-2" id="avatarSelector">
+              <!-- Картинки аватарок -->
+            </div>
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl text-xs transition-all shadow-neon-red">
+            Зарегистрировать никнейм
+          </button>
+        </form>
+
+        <div class="relative flex items-center py-1">
+          <div class="flex-grow border-t border-dark-border"></div>
+          <span class="flex-shrink mx-3 text-[11px] font-bold text-slate-500 uppercase tracking-wider">или без паролей</span>
+          <div class="flex-grow border-t border-dark-border"></div>
+        </div>
+
+        <!-- Вход в один клик: Случайный гость -->
+        <button 
+          onclick="loginAsInstantGuest()" 
+          class="w-full flex items-center justify-center gap-2 bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-200 font-bold py-3 rounded-xl text-xs transition-colors">
+          <i class="fa-solid fa-user-secret text-amber-400 text-sm"></i>
+          Войти как быстрый Гость
+        </button>
+
+      </div>
+
+      <!-- Правила и цензура под плашкой -->
+      <div class="mt-6 pt-4 border-t border-dark-border/60 text-[11px] text-slate-500 text-center leading-relaxed">
+        <i class="fa-solid fa-circle-exclamation text-brand-500 mr-1"></i>
+        Повторная регистрация под уже занятым ником запрещена. Любые маты, оскорбления и порнография мгновенно блокируются.
+      </div>
+
     </div>
   </div>
 
-  <!-- МОДАЛКА ЗАГРУЗКИ ФАЙЛА -->
-  <div id="uploadModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="glass-card max-w-lg w-full rounded-2xl p-6 border border-gray-700 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scroll">
-      <button onclick="closeUploadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+  <!-- ============================================================== -->
+  <!-- 6. МОДАЛЬНОЕ ОКНО: ЗАГРУЗКА МЕДИАФАЙЛОВ С ДИСКА (ВИДЕО / ФОТО)  -->
+  <!-- ============================================================== -->
+  <div id="uploadModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="glassmorphism max-w-xl w-full rounded-3xl border border-dark-border p-5 sm:p-8 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      
+      <!-- Кнопка закрыть -->
+      <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border">
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <h2 class="text-xl font-bold text-white mb-1"><i class="fa-solid fa-cloud-arrow-up text-red-500 mr-2"></i>Залить видео или фото</h2>
-      <p class="text-xs text-gray-400 mb-4">Файл сохранится прямо у вас в хранилище и появится в общей ленте сайта</p>
-
-      <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
-        <!-- Dropzone -->
-        <div id="dropZone" onclick="document.getElementById('fileInput').click()" 
-          class="border-2 border-dashed border-gray-700 hover:border-red-500 bg-[#0d1117] rounded-2xl p-6 text-center cursor-pointer transition-all">
-          <input type="file" id="fileInput" accept="video/*,image/*" class="hidden" onchange="handleFileSelect(event)">
-          <div id="dropText">
-            <i class="fa-solid fa-file-video text-4xl text-gray-500 mb-2"></i>
-            <p class="text-sm font-medium text-gray-300">Нажмите для выбора видео или фото с диска</p>
-            <p class="text-[11px] text-gray-500 mt-1">MP4, WEBM, MOV, PNG, JPG, GIF</p>
-          </div>
-          <div id="fileSelectedInfo" class="hidden text-sm text-green-400 font-medium"></div>
+      <div class="flex items-center gap-3 mb-5">
+        <div class="w-10 h-10 rounded-xl bg-brand-600/20 border border-brand-500/40 text-brand-500 flex items-center justify-center text-lg">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
         </div>
-
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Название ролика / фото *</label>
-          <input type="text" id="postTitle" required placeholder="Например: Мой первый влог"
-            class="w-full bg-[#161b22] border border-gray-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1">Описание</label>
-          <textarea id="postDesc" rows="2" placeholder="О чем это видео..."
-            class="w-full bg-[#161b22] border border-gray-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-red-500"></textarea>
-        </div>
-
-        <div id="uploadError" class="hidden p-3 bg-red-950/80 border border-red-800 rounded-xl text-xs text-red-300"></div>
-
-        <button type="submit" id="submitBtn" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-red-900/30">
-          Опубликовать на магахоствидео
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- МОДАЛКА ПРОСМОТРА И КОММЕНТАРИЕВ -->
-  <div id="viewModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-2 sm:p-4">
-    <div class="glass-card max-w-4xl w-full rounded-2xl border border-gray-700 shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
-      <!-- Header плеера -->
-      <div class="p-3.5 border-b border-gray-800 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <img id="viewAuthorAvatar" src="" class="w-8 h-8 rounded-full border border-gray-700">
-          <div>
-            <div id="viewAuthorName" class="text-xs font-bold text-gray-200"></div>
-            <div id="viewPostDate" class="text-[10px] text-gray-500"></div>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <button id="deletePostBtn" onclick="deleteCurrentPost()" class="hidden text-xs text-red-400 hover:text-red-300 font-semibold px-2 py-1 bg-red-950/50 rounded-lg border border-red-900">
-            <i class="fa-solid fa-trash mr-1"></i>Удалить
-          </button>
-          <button onclick="closeViewModal()" class="text-gray-400 hover:text-white text-lg">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+          <h3 class="text-lg font-black text-white">Залить на магахоствидео</h3>
+          <p class="text-xs text-slate-400">Выберите видеофайл или фотографию с вашего диска</p>
         </div>
       </div>
 
-      <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-4">
-        <!-- Медиаплеер / Картинка -->
-        <div id="mediaViewerContainer" class="bg-black rounded-xl overflow-hidden max-h-[480px] flex items-center justify-center">
-          <!-- Динамический тег <video> или <img> -->
-        </div>
-
-        <div>
-          <h1 id="viewPostTitle" class="text-lg font-bold text-white"></h1>
-          <p id="viewPostDesc" class="text-xs text-gray-400 mt-1 whitespace-pre-line"></p>
-        </div>
-
-        <!-- Лайки и реакции -->
-        <div class="flex items-center gap-4 py-2 border-y border-gray-800/80 text-sm">
-          <button onclick="toggleLike()" class="flex items-center gap-1.5 text-gray-300 hover:text-red-400 transition-colors">
-            <i id="likeIcon" class="fa-regular fa-heart text-base"></i>
-            <span id="likeCount">0</span>
-          </button>
-          <span class="text-xs text-gray-500"><i class="fa-regular fa-eye mr-1"></i><span id="viewCount">0</span> просмотров</span>
-        </div>
-
-        <!-- Секция комментариев -->
-        <div>
-          <h3 class="text-sm font-bold text-gray-300 mb-3"><i class="fa-regular fa-comments mr-1.5 text-red-500"></i>Комментарии</h3>
+      <form id="uploadForm" onsubmit="processMediaUpload(event)" class="space-y-4">
+        
+        <!-- DROPZONE (Зона перетаскивания и клика) -->
+        <div 
+          id="dropArea" 
+          onclick="document.getElementById('nativeFileInput').click()"
+          ondragover="handleDragOver(event)" 
+          ondragleave="handleDragLeave(event)" 
+          ondrop="handleDrop(event)"
+          class="border-2 border-dashed border-dark-border hover:border-brand-500 bg-dark-surface/50 rounded-2xl p-6 sm:p-8 text-center cursor-pointer transition-all duration-200">
           
-          <form onsubmit="handleAddComment(event)" class="flex gap-2 mb-4">
-            <input type="text" id="commentInput" placeholder="Оставьте комментарий (без мата и 18+)..." 
-              class="flex-1 bg-[#161b22] border border-gray-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-red-500">
-            <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all">
-              Отправить
-            </button>
-          </form>
+          <input 
+            type="file" 
+            id="nativeFileInput" 
+            accept="video/mp4,video/webm,video/ogg,video/quicktime,image/jpeg,image/png,image/gif,image/webp" 
+            class="hidden" 
+            onchange="onFileChosen(this.files[0])"
+          />
 
-          <div id="commentsList" class="space-y-2.5">
-            <!-- Комментарии -->
+          <div id="dropPrompt">
+            <div class="w-16 h-16 mx-auto mb-3 rounded-2xl bg-dark-card border border-dark-border flex items-center justify-center text-brand-500 text-2xl">
+              <i class="fa-solid fa-file-arrow-up"></i>
+            </div>
+            <p class="text-xs sm:text-sm font-bold text-slate-200">Перетащите файл сюда или нажмите для выбора</p>
+            <p class="text-[11px] text-slate-400 mt-1">Поддерживаются: MP4, WebM, MOV, JPG, PNG, GIF, WebP</p>
+          </div>
+
+          <!-- Предпросмотр выбранного файла -->
+          <div id="dropPreviewBox" class="hidden text-left space-y-3">
+            <div class="flex items-center justify-between bg-dark-card p-3 rounded-xl border border-dark-border">
+              <div class="flex items-center gap-3 overflow-hidden">
+                <i id="previewTypeIcon" class="fa-solid fa-file-video text-brand-400 text-xl flex-shrink-0"></i>
+                <div class="truncate">
+                  <div id="previewFileName" class="text-xs font-bold text-slate-200 truncate">file.mp4</div>
+                  <div id="previewFileSize" class="text-[10px] text-slate-400">0 MB</div>
+                </div>
+              </div>
+              <button type="button" onclick="cancelChosenFile(event)" class="text-slate-400 hover:text-brand-400 p-2">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+            
+            <div id="mediaInlinePreview" class="rounded-xl overflow-hidden bg-black max-h-48 flex items-center justify-center">
+              <!-- тег видео или фото -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Название ролика / фото -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Название публикации *</label>
+          <input 
+            type="text" 
+            id="uploadTitleInput" 
+            required 
+            maxlength="90" 
+            placeholder="Придумайте яркое название..." 
+            class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+          />
+        </div>
+
+        <!-- Описание -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Описание и подробности</label>
+          <textarea 
+            id="uploadDescInput" 
+            rows="3" 
+            maxlength="500" 
+            placeholder="Расскажите, что происходит на видео или снимке..." 
+            class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 resize-none"></textarea>
+        </div>
+
+        <!-- Теги -->
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Теги (через пробел или запятую)</label>
+          <input 
+            type="text" 
+            id="uploadTagsInput" 
+            placeholder="авто, спорт, прикол, дагестан, мага" 
+            class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+          />
+        </div>
+
+        <!-- Сообщение об ошибке модерации/файла -->
+        <div id="uploadFormAlert" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300 flex items-center gap-2">
+          <i class="fa-solid fa-triangle-exclamation flex-shrink-0"></i>
+          <span id="uploadFormAlertText"></span>
+        </div>
+
+        <!-- Прогресс загрузки в хранилище -->
+        <div id="uploadProgressBarContainer" class="hidden space-y-1.5">
+          <div class="flex justify-between text-[11px] text-slate-400">
+            <span>Сохранение в базу данных...</span>
+            <span id="uploadProgressPercent">0%</span>
+          </div>
+          <div class="w-full h-2 bg-dark-border rounded-full overflow-hidden">
+            <div id="uploadProgressBar" class="h-full bg-brand-600 transition-all duration-150" style="width: 0%"></div>
           </div>
         </div>
-      </div>
+
+        <!-- Кнопка отправки -->
+        <button 
+          type="submit" 
+          id="uploadSubmitBtn" 
+          class="w-full bg-brand-600 hover:bg-brand-500 text-white font-extrabold py-3.5 rounded-2xl text-xs sm:text-sm transition-all shadow-neon-red flex items-center justify-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Опубликовать на хостинг
+        </button>
+
+      </form>
+
     </div>
   </div>
 
+  <!-- ============================================================== -->
+  <!-- 7. ПОЛНОЭКРАННЫЙ ПЛЕЕР / ПРОСМОТРЩИК И ВЕТКА КОММЕНТАРИЕВ       -->
+  <!-- ============================================================== -->
+  <div id="viewerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="glassmorphism w-full max-w-6xl h-full sm:h-[92vh] sm:rounded-3xl border border-dark-border shadow-2xl flex flex-col lg:flex-row overflow-hidden">
+      
+      <!-- ЛЕВАЯ КОЛОНКА: МЕДИАПЛЕЕР / КАРТИНКА -->
+      <div class="lg:w-2/3 bg-black flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-dark-border">
+        
+        <!-- Верхняя плашка управления плеером -->
+        <div class="p-3 bg-gradient-to-b from-black/80 to-transparent absolute top-0 inset-x-0 z-20 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span id="playerBadgeType" class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-brand-600 text-white">Видео</span>
+            <span id="playerDurationText" class="text-[11px] text-slate-300 font-mono"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="downloadCurrentMedia()" title="Скачать файл" class="w-8 h-8 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/10 text-xs">
+              <i class="fa-solid fa-download"></i>
+            </button>
+            <button onclick="shareCurrentMedia()" title="Поделиться" class="w-8 h-8 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center border border-white/10 text-xs">
+              <i class="fa-solid fa-share-nodes"></i>
+            </button>
+            <button onclick="closeViewerModal()" class="w-8 h-8 rounded-full bg-black/60 hover:bg-brand-600 text-white flex items-center justify-center border border-white/10 text-xs transition-colors">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Контейнер воспроизведения -->
+        <div id="mediaStage" class="flex-1 flex items-center justify-center overflow-hidden relative">
+          <!-- Сюда динамически монтируется <video> или <img> -->
+        </div>
+
+        <!-- Нижняя панель кастомных контролов (для видео) -->
+        <div id="customVideoControls" class="p-3 bg-gradient-to-t from-black/90 to-transparent flex flex-col gap-2 z-20 hidden">
+          <input type="range" id="videoTimeline" min="0" max="100" value="0" class="w-full h-1 bg-dark-border rounded-lg cursor-pointer" oninput="seekVideo(this.value)">
+          <div class="flex items-center justify-between text-xs text-white">
+            <div class="flex items-center gap-3">
+              <button onclick="toggleVideoPlay()" id="btnPlayPause" class="hover:text-brand-500 text-sm">
+                <i class="fa-solid fa-play"></i>
+              </button>
+              <span id="videoTimeDisplay" class="font-mono text-[11px] text-slate-300">00:00 / 00:00</span>
+              <button onclick="toggleVideoMute()" id="btnMute" class="hover:text-brand-500 ml-2">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <input type="range" id="videoVolume" min="0" max="1" step="0.05" value="1" class="w-16 h-1 bg-dark-border cursor-pointer hidden sm:block" oninput="changeVideoVolume(this.value)">
+            </div>
+            <div class="flex items-center gap-3">
+              <select onchange="changePlaybackRate(this.value)" class="bg-black/70 border border-white/20 rounded-md text-[10px] px-1.5 py-0.5">
+                <option value="0.75">0.75x</option>
+                <option value="1" selected>1.0x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="2">2.0x</option>
+              </select>
+              <button onclick="toggleFullscreen()" class="hover:text-brand-500">
+                <i class="fa-solid fa-expand"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ПРАВАЯ КОЛОНКА: ИНФОРМАЦИЯ, АВТОР, ЛАЙКИ, КОММЕНТАРИИ -->
+      <div class="lg:w-1/3 flex flex-col bg-dark-surface/90 overflow-hidden">
+        
+        <!-- Блок автора и метаданных -->
+        <div class="p-4 sm:p-5 border-b border-dark-border">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <div class="flex items-center gap-3">
+              <img id="viewerAuthorAvatar" src="" class="w-10 h-10 rounded-2xl border border-dark-border object-cover bg-dark-card">
+              <div>
+                <div class="flex items-center gap-1.5">
+                  <h4 id="viewerAuthorName" class="text-xs sm:text-sm font-bold text-white leading-tight"></h4>
+                  <span id="viewerAuthorBadge" class="hidden text-[10px] bg-brand-600/30 text-brand-400 border border-brand-500/30 px-1 rounded font-mono">Google</span>
+                </div>
+                <div id="viewerPostDate" class="text-[11px] text-slate-400 mt-0.5"></div>
+              </div>
+            </div>
+
+            <!-- Кнопка удаления для автора -->
+            <button 
+              id="viewerDeleteBtn" 
+              onclick="deleteCurrentViewingPost()" 
+              class="hidden text-brand-400 hover:text-brand-300 text-xs px-2.5 py-1 rounded-xl bg-brand-950/60 border border-brand-800">
+              <i class="fa-solid fa-trash-can mr-1"></i>Удалить
+            </button>
+          </div>
+
+          <h2 id="viewerPostTitle" class="text-sm sm:text-base font-black text-white leading-snug"></h2>
+          <p id="viewerPostDescription" class="text-xs text-slate-300 mt-1.5 whitespace-pre-line max-h-24 overflow-y-auto leading-relaxed"></p>
+
+          <div id="viewerTagsRow" class="flex flex-wrap gap-1.5 mt-2.5">
+            <!-- теги -->
+          </div>
+
+          <!-- Счётчики и реакции -->
+          <div class="flex items-center justify-between pt-3 mt-3 border-t border-dark-border/80 text-xs">
+            <div class="flex items-center gap-2">
+              <button onclick="handleLikeToggle()" id="viewerLikeBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border transition-all">
+                <i id="viewerLikeIcon" class="fa-regular fa-heart text-sm"></i>
+                <span id="viewerLikesCount" class="font-bold">0</span>
+              </button>
+
+              <button onclick="handleDislikeToggle()" id="viewerDislikeBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border transition-all">
+                <i id="viewerDislikeIcon" class="fa-regular fa-thumbs-down text-sm"></i>
+                <span id="viewerDislikesCount" class="font-bold">0</span>
+              </button>
+            </div>
+
+            <div class="text-[11px] text-slate-400 flex items-center gap-1">
+              <i class="fa-regular fa-eye"></i>
+              <span id="viewerViewsCount">0</span> просмотров
+            </div>
+          </div>
+        </div>
+
+        <!-- Лента комментариев (скроллируемая) -->
+        <div class="flex-1 p-4 overflow-y-auto space-y-3" id="commentsContainer">
+          <!-- Сюда вставляются комментарии -->
+        </div>
+
+        <!-- Форма добавления комментария -->
+        <div class="p-3 sm:p-4 bg-dark-surface border-t border-dark-border">
+          <form onsubmit="handleSendComment(event)" class="space-y-2">
+            <div class="relative flex items-center">
+              <input 
+                type="text" 
+                id="commentTextInput" 
+                maxlength="200" 
+                placeholder="Оставить комментарий (без мата и 18+)..." 
+                class="w-full bg-dark-card border border-dark-border rounded-xl pl-3 pr-10 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+              />
+              <button 
+                type="submit" 
+                class="absolute right-1.5 p-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs transition-colors">
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </div>
+            <div id="commentAlert" class="hidden text-[10px] text-brand-400"></div>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Всплывающие уведомления (Toast) -->
+  <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="glassmorphism bg-dark-card/95 border border-brand-500/50 text-white px-4 py-3 rounded-2xl shadow-neon-red flex items-center gap-3 text-xs font-semibold">
+      <i id="toastIcon" class="fa-solid fa-circle-check text-brand-400 text-base"></i>
+      <span id="toastMessage">Уведомление</span>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 8. JAVASCRIPT: ДВИЖОК ХОСТИНГА (1000+ СТРОК ЛОГИКИ)             -->
+  <!-- ============================================================== -->
   <script>
-    // ===== МОДУЛЬ ЦЕНЗУРЫ И МОДЕРАЦИИ (АНТИ-МАТ И АНТИ-18+) =====
-    const Moderation = {
-      forbiddenWords: [
-        'порно', 'porno', 'porn', 'xxx', 'секс', 'sex', 'nsfw', 'сиськи', 'член',
-        'хуй', 'пизда', 'ебать', 'ебал', 'бля', 'блядь', 'сука', 'мудак', 'гандон',
-        'залупа', 'дрочить', 'хентай', 'hentai', 'эротика', 'пидор', 'тварь', 'голая', 'голый'
+    /**
+     * ===================================================================
+     * 1. МОДУЛЬ БЕЗОПАСНОСТИ, ЦЕНЗУРЫ И АНТИ-NSFW (MODERATION ENGINE)
+     * ===================================================================
+     */
+    const ModerationEngine = {
+      // Строгий список запрещенных слов (маты, порнография, оскорбления)
+      bannedVocabulary: [
+        'порно', 'порнуха', 'porno', 'porn', 'xxx', 'секс', 'sex', 'nsfw', 'сиськи', 
+        'член', 'хуй', 'хуя', 'хуе', 'пизда', 'пиздец', 'ебать', 'ебал', 'ебут', 
+        'бля', 'блядь', 'блять', 'сука', 'мудак', 'гандон', 'гондон', 'залупа', 
+        'дрочить', 'хентай', 'hentai', 'эротика', 'пидор', 'пидорас', 'тварь', 
+        'голая', 'голый', 'nude', 'nudes', 'onlyfans', 'онлифанс', 'проститутка', 
+        'шлюха', 'минет', 'куни', 'дилдо', 'шмара', 'ебучий', 'отсос', 'вагина'
       ],
-      check(text) {
-        if (!text) return true;
-        const lower = text.toLowerCase();
-        for (let word of this.forbiddenWords) {
-          if (lower.includes(word)) return false;
+
+      /**
+       * Проверка текста на присутствие запрещенной лексики
+       * @param {string} text - Проверяемый текст
+       * @returns {boolean} - true, если текст чистый; false, если обнаружен мат/порно
+       */
+      isClean(text) {
+        if (!text || typeof text !== 'string') return true;
+        const normalized = text
+          .toLowerCase()
+          .replace(/[\s\-_.,!?@#$%^&*()+=~`'"[\]{}|\\/]/g, '')
+          .replace(/[0-9]/g, '');
+
+        const rawLower = text.toLowerCase();
+
+        for (let word of this.bannedVocabulary) {
+          if (rawLower.includes(word) || normalized.includes(word)) {
+            return false;
+          }
         }
         return true;
+      },
+
+      /**
+       * Фильтрация текста со звездочками (fallback)
+       */
+      maskBadWords(text) {
+        if (!text) return '';
+        let cleaned = text;
+        for (let word of this.bannedVocabulary) {
+          const reg = new RegExp(word, 'gi');
+          cleaned = cleaned.replace(reg, '***');
+        }
+        return cleaned;
       }
     };
 
-    // ===== БАЗА ДАННЫХ И ХРАНИЛИЩЕ (IndexedDB) =====
-    let db;
-    const DB_NAME = 'MagaHostDB';
-    const DB_VERSION = 1;
+    /**
+     * ===================================================================
+     * 2. ЛОКАЛЬНАЯ БАЗА ДАННЫХ И ХРАНИЛИЩЕ МЕДИА (INDEXEDDB ENGINE)
+     * ===================================================================
+     */
+    const DatabaseEngine = {
+      dbName: 'MagaHostVideo_UltraDB',
+      version: 2,
+      db: null,
 
-    function initDB() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-        req.onupgradeneeded = (e) => {
-          const d = e.target.result;
-          if (!d.objectStoreNames.contains('posts')) {
-            d.createObjectStore('posts', { keyPath: 'id' });
-          }
-        };
-        req.onsuccess = (e) => {
-          db = e.target.result;
-          resolve();
-        };
-        req.onerror = () => reject(req.error);
-      });
+      init() {
+        return new Promise((resolve, reject) => {
+          const request = indexedDB.open(this.dbName, this.version);
+
+          request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            // Таблица постов
+            if (!db.objectStoreNames.contains('media_posts')) {
+              const postsStore = db.createObjectStore('media_posts', { keyPath: 'id' });
+              postsStore.createIndex('authorId', 'authorId', { unique: false });
+              postsStore.createIndex('type', 'type', { unique: false });
+              postsStore.createIndex('createdAt', 'createdAt', { unique: false });
+            }
+            // Таблица пользователей (для защиты уникальности ников)
+            if (!db.objectStoreNames.contains('registered_users')) {
+              const userStore = db.createObjectStore('registered_users', { keyPath: 'nicknameLower' });
+              userStore.createIndex('id', 'id', { unique: true });
+            }
+          };
+
+          request.onsuccess = (e) => {
+            this.db = e.target.result;
+            resolve(this.db);
+          };
+
+          request.onerror = (e) => {
+            console.error('Ошибка инициализации IndexedDB:', e);
+            reject(e);
+          };
+        });
+      },
+
+      // Добавить или обновить публикацию
+      savePost(post) {
+        return new Promise((resolve, reject) => {
+          const tx = this.db.transaction('media_posts', 'readwrite');
+          const store = tx.objectStore('media_posts');
+          store.put(post);
+          tx.oncomplete = () => resolve(post);
+          tx.onerror = () => reject(tx.error);
+        });
+      },
+
+      // Получить все публикации
+      getAllPosts() {
+        return new Promise((resolve, reject) => {
+          const tx = this.db.transaction('media_posts', 'readonly');
+          const store = tx.objectStore('media_posts');
+          const request = store.getAll();
+          request.onsuccess = () => resolve(request.result || []);
+          request.onerror = () => reject(request.error);
+        });
+      },
+
+      // Удалить публикацию
+      deletePost(id) {
+        return new Promise((resolve, reject) => {
+          const tx = this.db.transaction('media_posts', 'readwrite');
+          const store = tx.objectStore('media_posts');
+          store.delete(id);
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => reject(tx.error);
+        });
+      },
+
+      // Проверка и резервирование ника в базе
+      registerUserNickname(userObj) {
+        return new Promise((resolve, reject) => {
+          const tx = this.db.transaction('registered_users', 'readwrite');
+          const store = tx.objectStore('registered_users');
+          const lowerName = userObj.name.trim().toLowerCase();
+
+          const checkReq = store.get(lowerName);
+          checkReq.onsuccess = () => {
+            if (checkReq.result && checkReq.result.id !== userObj.id) {
+              // Имя уже занято кем-то другим
+              resolve({ success: false, message: 'Этот никнейм уже занят другим человеком!' });
+            } else {
+              store.put({
+                nicknameLower: lowerName,
+                id: userObj.id,
+                name: userObj.name,
+                registeredAt: Date.now()
+              });
+              resolve({ success: true });
+            }
+          };
+          checkReq.onerror = () => reject(checkReq.error);
+        });
+      },
+
+      // Проверить, занят ли ник прямо сейчас
+      isNicknameTaken(nickname, excludeUserId = null) {
+        return new Promise((resolve) => {
+          if (!this.db) return resolve(false);
+          const tx = this.db.transaction('registered_users', 'readonly');
+          const store = tx.objectStore('registered_users');
+          const req = store.get(nickname.trim().toLowerCase());
+          req.onsuccess = () => {
+            if (req.result) {
+              if (excludeUserId && req.result.id === excludeUserId) {
+                resolve(false);
+              } else {
+                resolve(true);
+              }
+            } else {
+              resolve(false);
+            }
+          };
+          req.onerror = () => resolve(false);
+        });
+      }
+    };
+
+    /**
+     * ===================================================================
+     * 3. СОСТОЯНИЕ ПРИЛОЖЕНИЯ (GLOBAL APPLICATION STATE)
+     * ===================================================================
+     */
+    const AppState = {
+      currentUser: null,
+      posts: [],
+      filteredPosts: [],
+      currentCategory: 'all',
+      currentSort: 'newest',
+      searchQuery: '',
+      activePostId: null,
+      selectedUploadFile: null,
+      currentAuthMode: 'google',
+      selectedAvatarSeed: 'Hero1',
+      
+      // Аватары на выбор
+      avatarPresets: [
+        { id: 'Hero1', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Maga05' },
+        { id: 'Hero2', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Dagestan' },
+        { id: 'Hero3', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Ali' },
+        { id: 'Hero4', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=Gorets' }
+      ]
+    };
+
+    /**
+     * ===================================================================
+     * 4. АВТОРИЗАЦИЯ, GOOGLE И УНИКАЛЬНЫЕ ИМЕНА
+     * ===================================================================
+     */
+    function initUserSession() {
+      const stored = localStorage.getItem('magahost_active_user');
+      if (stored) {
+        try {
+          AppState.currentUser = JSON.parse(stored);
+        } catch (e) {
+          AppState.currentUser = null;
+        }
+      }
+      renderUserProfileBar();
+      renderAvatarSelector();
     }
 
-    function savePostDB(post) {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('posts', 'readwrite');
-        tx.objectStore('posts').put(post);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    function getAllPostsDB() {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('posts', 'readonly');
-        const req = tx.objectStore('posts').getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
-      });
-    }
-
-    function deletePostDB(id) {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('posts', 'readwrite');
-        tx.objectStore('posts').delete(id);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    // ===== СЕССИЯ ПОЛЬЗОВАТЕЛЯ =====
-    let currentUser = JSON.parse(localStorage.getItem('magahost_user')) || null;
-    let posts = [];
-    let currentFilter = 'all';
-    let currentViewingPostId = null;
-
-    function updateAuthUI() {
-      const authContainer = document.getElementById('authContainer');
-      if (currentUser) {
-        authContainer.innerHTML = `
-          <div class="flex items-center gap-2 bg-[#161b22] border border-gray-700 py-1 px-2.5 rounded-xl">
-            <img src="${currentUser.avatar}" class="w-6 h-6 rounded-full border border-gray-600">
-            <span class="text-xs font-semibold text-gray-200 max-w-[90px] truncate">${currentUser.name}</span>
-            <button onclick="logout()" title="Выйти" class="text-gray-400 hover:text-red-400 text-xs ml-1">
+    function renderUserProfileBar() {
+      const bar = document.getElementById('userProfileBar');
+      if (!AppState.currentUser) {
+        bar.innerHTML = `
+          <button 
+            onclick="openAuthModal()" 
+            class="flex items-center gap-1.5 bg-dark-card hover:bg-dark-hover text-slate-200 border border-dark-border px-3.5 py-2 rounded-2xl text-xs sm:text-sm font-bold transition-all shadow-sm">
+            <i class="fa-solid fa-right-to-bracket text-brand-400"></i>
+            <span>Войти</span>
+          </button>
+        `;
+      } else {
+        bar.innerHTML = `
+          <div class="flex items-center gap-2 bg-dark-surface border border-dark-border py-1 px-2 rounded-2xl">
+            <img src="${AppState.currentUser.avatar}" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl object-cover border border-brand-500/40 bg-dark-card">
+            <div class="text-left hidden xs:block">
+              <div class="text-xs font-bold text-white flex items-center gap-1">
+                <span class="max-w-[100px] truncate">${AppState.currentUser.name}</span>
+                ${AppState.currentUser.isGoogle ? '<i class="fa-brands fa-google text-[10px] text-blue-400"></i>' : ''}
+              </div>
+              <div class="text-[9px] text-slate-400 -mt-0.5">${AppState.currentUser.isGoogle ? 'Google аккаунт' : 'Гость'}</div>
+            </div>
+            <button onclick="handleUserLogout()" title="Выйти" class="p-1.5 text-slate-400 hover:text-brand-400 rounded-lg text-xs ml-1">
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </button>
           </div>
         `;
+      }
+    }
+
+    function openAuthModal() {
+      document.getElementById('authModal').classList.remove('hidden');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.add('hidden');
+      document.getElementById('googleNickError').classList.add('hidden');
+      document.getElementById('customNickError').classList.add('hidden');
+    }
+
+    function switchAuthMode(mode) {
+      AppState.currentAuthMode = mode;
+      const btnG = document.getElementById('authTabGoogle');
+      const btnC = document.getElementById('authTabGuest');
+      const formG = document.getElementById('authGoogleForm');
+      const formC = document.getElementById('authCustomForm');
+
+      if (mode === 'google') {
+        btnG.className = 'py-2.5 rounded-xl transition-all bg-brand-600 text-white shadow';
+        btnC.className = 'py-2.5 rounded-xl transition-all text-slate-400 hover:text-white';
+        formG.classList.remove('hidden');
+        formC.classList.add('hidden');
       } else {
-        authContainer.innerHTML = `
-          <button onclick="openAuthModal()" class="bg-[#21262d] hover:bg-gray-800 text-gray-200 text-xs font-semibold px-3 py-2 rounded-xl border border-gray-700 transition-colors">
-            <i class="fa-solid fa-right-to-bracket mr-1"></i> Войти
-          </button>
-        `;
+        btnC.className = 'py-2.5 rounded-xl transition-all bg-brand-600 text-white shadow';
+        btnG.className = 'py-2.5 rounded-xl transition-all text-slate-400 hover:text-white';
+        formC.classList.remove('hidden');
+        formG.classList.add('hidden');
       }
     }
 
-    // ===== АВТОРИЗАЦИЯ GOOGLE И ГОСТЬ =====
-    function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); }
-    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
-
-    // Вход как гость
-    function loginAsGuest() {
-      const guestNumber = Math.floor(100 + Math.random() * 900);
-      const guestUser = {
-        id: 'guest_' + Date.now(),
-        name: 'Гость_' + guestNumber,
-        isGuest: true,
-        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=Guest${guestNumber}&backgroundColor=b6e3f4`
-      };
-      currentUser = guestUser;
-      localStorage.setItem('magahost_user', JSON.stringify(guestUser));
-      updateAuthUI();
-      closeAuthModal();
-      showToast('Вы вошли как ' + guestUser.name);
+    function renderAvatarSelector() {
+      const box = document.getElementById('avatarSelector');
+      if (!box) return;
+      box.innerHTML = AppState.avatarPresets.map(av => `
+        <div 
+          onclick="selectAvatar('${av.id}')" 
+          id="avBox_${av.id}"
+          class="p-1.5 rounded-xl border-2 ${AppState.selectedAvatarSeed === av.id ? 'border-brand-500 bg-brand-950/40' : 'border-dark-border bg-dark-surface'} cursor-pointer hover:border-brand-400 transition-all flex items-center justify-center">
+          <img src="${av.url}" class="w-10 h-10 rounded-lg">
+        </div>
+      `).join('');
     }
 
-    // Вход через Google
-    function loginGoogle() {
-      // Инициализация Google One Tap / OAuth
-      try {
-        /*
-          Для боевого сервера укажите свой Client ID от Google Cloud.
-          Если клиент еще не сконфигурирован, переводим на красивую быструю авторизацию через Google аккаунт.
-        */
-        const namePrompt = prompt("Вход через Google. Введите ваше имя для Google-профиля:", "Пользователь Google");
-        if (!namePrompt) return;
+    function selectAvatar(id) {
+      AppState.selectedAvatarSeed = id;
+      renderAvatarSelector();
+    }
 
-        if (!Moderation.check(namePrompt)) {
-          alert("Недопустимое имя профиля!");
-          return;
-        }
+    // Проверка ника в реальном времени при вводе
+    async function validateNicknameLive(value, errorElementId) {
+      const el = document.getElementById(errorElementId);
+      const trimmed = value.trim();
 
-        const gUser = {
-          id: 'google_' + Date.now(),
-          name: namePrompt,
-          isGuest: false,
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(namePrompt)}`
-        };
-
-        currentUser = gUser;
-        localStorage.setItem('magahost_user', JSON.stringify(gUser));
-        updateAuthUI();
-        closeAuthModal();
-        showToast('Добро пожаловать, ' + gUser.name + '!');
-      } catch (err) {
-        alert('Ошибка инициализации Google Sign-in');
+      if (!trimmed) {
+        el.classList.add('hidden');
+        return true;
       }
-    }
 
-    function logout() {
-      if (confirm('Выйти из аккаунта?')) {
-        currentUser = null;
-        localStorage.removeItem('magahost_user');
-        updateAuthUI();
-        renderPosts();
+      if (trimmed.length < 3) {
+        el.textContent = 'Имя должно быть не менее 3 символов';
+        el.classList.remove('hidden');
+        return false;
       }
+
+      if (!ModerationEngine.isClean(trimmed)) {
+        el.textContent = 'Имя содержит нецензурные или 18+ слова!';
+        el.classList.remove('hidden');
+        return false;
+      }
+
+      const isTaken = await DatabaseEngine.isNicknameTaken(trimmed, AppState.currentUser?.id);
+      if (isTaken) {
+        el.textContent = 'Этот никнейм уже занят другим человеком! Выберите другое имя.';
+        el.classList.remove('hidden');
+        return false;
+      }
+
+      el.classList.add('hidden');
+      return true;
     }
 
-    // ===== ЗАГРУЗКА ВИДЕО/ФОТО С ДИСКА =====
-    let selectedFile = null;
+    // Вход через Google One-Tap/Симуляция окна выбора аккаунта Google
+    function initiateSimulatedGooglePopup() {
+      const googleUserName = prompt("Google Авторизация. Введите ваше отображаемое имя для аккаунта:", "Пользователь Google");
+      if (!googleUserName) return;
 
-    function openUploadModal() {
-      if (!currentUser) {
-        openAuthModal();
+      if (!ModerationEngine.isClean(googleUserName)) {
+        alert("В имени обнаружены недопустимые слова!");
         return;
       }
+
+      const googleEmail = (googleUserName.replace(/\s+/g, '').toLowerCase() || 'user') + "@gmail.com";
+      finishLogin({
+        id: 'google_' + Date.now(),
+        name: googleUserName,
+        email: googleEmail,
+        isGoogle: true,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(googleUserName)}`
+      });
+    }
+
+    // Ручной вход по Google почте + Ник
+    async function handleGoogleDirectLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('googleEmailInput').value.trim();
+      const name = document.getElementById('googleNameInput').value.trim();
+
+      if (!email.toLowerCase().includes('@')) {
+        alert('Пожалуйста, введите корректный Google email (@gmail.com)!');
+        return;
+      }
+
+      const isValid = await validateNicknameLive(name, 'googleNickError');
+      if (!isValid) return;
+
+      const user = {
+        id: 'google_user_' + Date.now(),
+        name: name,
+        email: email,
+        isGoogle: true,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}`
+      };
+
+      const regResult = await DatabaseEngine.registerUserNickname(user);
+      if (!regResult.success) {
+        alert(regResult.message);
+        return;
+      }
+
+      finishLogin(user);
+    }
+
+    // Регистрация по нику с аватаром
+    async function handleCustomNicknameAuth(e) {
+      e.preventDefault();
+      const name = document.getElementById('customNickInput').value.trim();
+
+      const isValid = await validateNicknameLive(name, 'customNickError');
+      if (!isValid) return;
+
+      const selectedAv = AppState.avatarPresets.find(a => a.id === AppState.selectedAvatarSeed);
+      const user = {
+        id: 'user_' + Date.now(),
+        name: name,
+        email: '',
+        isGoogle: false,
+        avatar: selectedAv ? selectedAv.url : `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(name)}`
+      };
+
+      const regResult = await DatabaseEngine.registerUserNickname(user);
+      if (!regResult.success) {
+        alert(regResult.message);
+        return;
+      }
+
+      finishLogin(user);
+    }
+
+    // Вход как мгновенный гость
+    async function loginAsInstantGuest() {
+      let randomNum = Math.floor(1000 + Math.random() * 9000);
+      let guestName = 'Гость_' + randomNum;
+
+      // Убеждаемся, что случайно сгенерированный ник не занят
+      while (await DatabaseEngine.isNicknameTaken(guestName)) {
+        randomNum = Math.floor(1000 + Math.random() * 9000);
+        guestName = 'Гость_' + randomNum;
+      }
+
+      const guestUser = {
+        id: 'guest_' + Date.now(),
+        name: guestName,
+        email: '',
+        isGoogle: false,
+        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=Guest${randomNum}&backgroundColor=b6e3f4`
+      };
+
+      await DatabaseEngine.registerUserNickname(guestUser);
+      finishLogin(guestUser);
+    }
+
+    function finishLogin(user) {
+      AppState.currentUser = user;
+      localStorage.setItem('magahost_active_user', JSON.stringify(user));
+      renderUserProfileBar();
+      closeAuthModal();
+      showToast(`Добро пожаловать, ${user.name}!`);
+      renderMediaGrid();
+    }
+
+    function handleUserLogout() {
+      if (confirm('Выйти из текущего аккаунта?')) {
+        AppState.currentUser = null;
+        localStorage.removeItem('magahost_active_user');
+        renderUserProfileBar();
+        renderMediaGrid();
+        showToast('Вы вышли из профиля');
+      }
+    }
+
+    function triggerUploadCheck() {
+      if (!AppState.currentUser) {
+        openAuthModal();
+        showToast('Сначала укажите имя или войдите через Google!');
+        return;
+      }
+      openUploadModal();
+    }
+
+    /**
+     * ===================================================================
+     * 5. ЗАГРУЗКА ВИДЕО И ФОТО С ДИСКА (UPLOAD & MODERATION)
+     * ===================================================================
+     */
+    function openUploadModal() {
       document.getElementById('uploadModal').classList.remove('hidden');
     }
 
     function closeUploadModal() {
       document.getElementById('uploadModal').classList.add('hidden');
-      document.getElementById('uploadForm').reset();
-      selectedFile = null;
-      document.getElementById('dropText').classList.remove('hidden');
-      document.getElementById('fileSelectedInfo').classList.add('hidden');
-      document.getElementById('uploadError').classList.add('hidden');
+      resetUploadForm();
     }
 
-    function handleFileSelect(e) {
-      const file = e.target.files[0];
+    function resetUploadForm() {
+      document.getElementById('uploadForm').reset();
+      AppState.selectedUploadFile = null;
+      document.getElementById('dropPrompt').classList.remove('hidden');
+      document.getElementById('dropPreviewBox').classList.add('hidden');
+      document.getElementById('mediaInlinePreview').innerHTML = '';
+      document.getElementById('uploadFormAlert').classList.add('hidden');
+      document.getElementById('uploadProgressBarContainer').classList.add('hidden');
+      document.getElementById('uploadSubmitBtn').disabled = false;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      document.getElementById('dropArea').classList.add('border-brand-500', 'bg-brand-950/20');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      document.getElementById('dropArea').classList.remove('border-brand-500', 'bg-brand-950/20');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('dropArea').classList.remove('border-brand-500', 'bg-brand-950/20');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        onFileChosen(e.dataTransfer.files[0]);
+      }
+    }
+
+    function onFileChosen(file) {
       if (!file) return;
 
-      // Проверка цензуры в названии файла
-      if (!Moderation.check(file.name)) {
-        alert("Запрещенное название файла! Файлы 18+ и с матами запрещены.");
-        e.target.value = '';
+      // 1. Проверка цензуры в имени файла
+      if (!ModerationEngine.isClean(file.name)) {
+        showUploadError('Файл отклонён! В названии обнаружены запрещенные слова (маты или 18+).');
         return;
       }
 
-      selectedFile = file;
-      document.getElementById('dropText').classList.add('hidden');
-      const info = document.getElementById('fileSelectedInfo');
-      info.textContent = `Выбран файл: ${file.name} (${(file.size / (1024*1024)).toFixed(1)} МБ)`;
-      info.classList.remove('hidden');
+      // 2. Проверка типов
+      const isVideo = file.type.startsWith('video');
+      const isImage = file.type.startsWith('image');
+
+      if (!isVideo && !isImage) {
+        showUploadError('Недопустимый формат! Загружайте только видеоролики или фотографии.');
+        return;
+      }
+
+      AppState.selectedUploadFile = file;
+
+      // Отрисовка превью
+      document.getElementById('dropPrompt').classList.add('hidden');
+      document.getElementById('dropPreviewBox').classList.remove('hidden');
+      document.getElementById('previewFileName').textContent = file.name;
+      document.getElementById('previewFileSize').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' МБ';
+
+      const icon = document.getElementById('previewTypeIcon');
+      icon.className = isVideo ? 'fa-solid fa-film text-brand-400 text-xl' : 'fa-solid fa-image text-amber-400 text-xl';
+
+      const inlineBox = document.getElementById('mediaInlinePreview');
+      const tempUrl = URL.createObjectURL(file);
+
+      if (isVideo) {
+        inlineBox.innerHTML = `<video src="${tempUrl}" controls class="max-h-44 w-auto object-contain"></video>`;
+      } else {
+        inlineBox.innerHTML = `<img src="${tempUrl}" class="max-h-44 w-auto object-contain">`;
+      }
+
+      // Подстановка дефолтного названия, если поле пустое
+      const titleInput = document.getElementById('uploadTitleInput');
+      if (!titleInput.value) {
+        titleInput.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+      }
+
+      document.getElementById('uploadFormAlert').classList.add('hidden');
     }
 
-    async function handleUpload(e) {
+    function cancelChosenFile(e) {
+      e.stopPropagation();
+      resetUploadForm();
+    }
+
+    function showUploadError(msg) {
+      const alertBox = document.getElementById('uploadFormAlert');
+      const alertText = document.getElementById('uploadFormAlertText');
+      alertText.textContent = msg;
+      alertBox.classList.remove('hidden');
+    }
+
+    async function processMediaUpload(e) {
       e.preventDefault();
-      const errBox = document.getElementById('uploadError');
-      errBox.classList.add('hidden');
-
-      if (!selectedFile) {
-        errBox.textContent = 'Пожалуйста, выберите видео или фото с диска!';
-        errBox.classList.remove('hidden');
+      if (!AppState.currentUser) {
+        showToast('Пожалуйста, авторизуйтесь!');
         return;
       }
 
-      const title = document.getElementById('postTitle').value.trim();
-      const desc = document.getElementById('postDesc').value.trim();
-
-      if (!Moderation.check(title) || !Moderation.check(desc)) {
-        errBox.textContent = 'Название или описание содержит мат или запрещенные 18+/порно слова!';
-        errBox.classList.remove('hidden');
+      if (!AppState.selectedUploadFile) {
+        showUploadError('Пожалуйста, выберите файл с диска!');
         return;
       }
 
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Загрузка в магахост...';
+      const title = document.getElementById('uploadTitleInput').value.trim();
+      const desc = document.getElementById('uploadDescInput').value.trim();
+      const rawTags = document.getElementById('uploadTagsInput').value.trim();
 
-      const isVideo = selectedFile.type.startsWith('video');
+      // Проверка модерации
+      if (!ModerationEngine.isClean(title)) {
+        showUploadError('Название публикации содержит маты или порно-слова!');
+        return;
+      }
+      if (!ModerationEngine.isClean(desc)) {
+        showUploadError('Описание содержит маты или запрещенный 18+ текст!');
+        return;
+      }
+      if (!ModerationEngine.isClean(rawTags)) {
+        showUploadError('Один из тегов содержит нецензурные слова!');
+        return;
+      }
 
-      // Читаем файл в Blob URL / Base64
+      const file = AppState.selectedUploadFile;
+      const isVideo = file.type.startsWith('video');
+
+      // Активируем индикатор загрузки
+      const submitBtn = document.getElementById('uploadSubmitBtn');
+      submitBtn.disabled = true;
+      const progressBox = document.getElementById('uploadProgressBarContainer');
+      const progressBar = document.getElementById('uploadProgressBar');
+      const progressPercent = document.getElementById('uploadProgressPercent');
+      progressBox.classList.remove('hidden');
+
+      // Чтение файла в Base64/DataURL
       const reader = new FileReader();
-      reader.onload = async function() {
+
+      reader.onprogress = (event) => {
+        if (event.lengthComputable) {
+          const percent = Math.round((event.loaded / event.total) * 100);
+          progressBar.style.width = percent + '%';
+          progressPercent.textContent = percent + '%';
+        }
+      };
+
+      reader.onload = async () => {
+        const parsedTags = rawTags
+          ? rawTags.split(/[\s,]+/).filter(t => t.length > 0).map(t => t.replace('#', ''))
+          : [];
+
         const newPost = {
-          id: 'post_' + Date.now(),
+          id: 'maga_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
           title: title,
           description: desc,
           type: isVideo ? 'video' : 'photo',
-          dataUrl: reader.result,
-          authorId: currentUser.id,
-          authorName: currentUser.name,
-          authorAvatar: currentUser.avatar,
-          createdAt: new Date().toLocaleDateString('ru-RU'),
-          likes: 0,
-          views: 1,
-          likedBy: [],
+          dataBlobUrl: reader.result,
+          mimeType: file.type,
+          fileSize: file.size,
+          authorId: AppState.currentUser.id,
+          authorName: AppState.currentUser.name,
+          authorAvatar: AppState.currentUser.avatar,
+          isGoogleAuthor: AppState.currentUser.isGoogle || false,
+          createdAt: Date.now(),
+          likesCount: 0,
+          dislikesCount: 0,
+          viewsCount: 1,
+          likedUserIds: [],
+          dislikedUserIds: [],
+          tags: parsedTags,
           comments: []
         };
 
-        await savePostDB(newPost);
-        posts.unshift(newPost);
-        closeUploadModal();
-        renderPosts();
-        btn.disabled = false;
-        btn.textContent = 'Опубликовать на магахоствидео';
-        showToast('Материал успешно опубликован!');
+        try {
+          await DatabaseEngine.savePost(newPost);
+          AppState.posts.unshift(newPost);
+          closeUploadModal();
+          showToast('Материал успешно опубликован на хостинг!');
+          renderMediaGrid();
+        } catch (err) {
+          showUploadError('Ошибка сохранения файла в хранилище: ' + err.message);
+          submitBtn.disabled = false;
+        }
       };
 
-      reader.readAsDataURL(selectedFile);
+      reader.onerror = () => {
+        showUploadError('Ошибка чтения файла с локального диска.');
+        submitBtn.disabled = false;
+      };
+
+      reader.readAsDataURL(file);
     }
 
-    // ===== ОТОБРАЖЕНИЕ ПУБЛИКАЦИЙ =====
-    function renderPosts() {
-      const grid = document.getElementById('postsGrid');
-      const empty = document.getElementById('emptyState');
+    /**
+     * ===================================================================
+     * 6. ОТОБРАЖЕНИЕ, ПОИСК И ФИЛЬТРАЦИЯ ПУБЛИКАЦИЙ
+     * ===================================================================
+     */
+    function filterMedia(category) {
+      AppState.currentCategory = category;
 
-      let filtered = posts;
+      // Обновляем плашки
+      document.querySelectorAll('#filterTabsGroup .cat-pill').forEach(btn => {
+        if (btn.getAttribute('data-category') === category) {
+          btn.className = 'cat-pill active-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-600 text-white transition-all shadow-sm';
+        } else {
+          btn.className = 'cat-pill px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border';
+        }
+      });
 
-      if (currentFilter === 'video') filtered = posts.filter(p => p.type === 'video');
-      else if (currentFilter === 'photo') filtered = posts.filter(p => p.type === 'photo');
-      else if (currentFilter === 'mine') {
-        if (!currentUser) filtered = [];
-        else filtered = posts.filter(p => p.authorId === currentUser.id);
+      const headingMap = {
+        'all': 'Все материалы',
+        'video': 'Видео ролики',
+        'photo': 'Фотографии',
+        'mine': 'Мои публикации'
+      };
+      document.getElementById('sectionHeading').textContent = headingMap[category] || 'Материалы';
+
+      renderMediaGrid();
+    }
+
+    function changeSorting(sortVal) {
+      AppState.currentSort = sortVal;
+      renderMediaGrid();
+    }
+
+    function handleLiveSearch(val) {
+      AppState.searchQuery = val.trim().toLowerCase();
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (val) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+      renderMediaGrid();
+    }
+
+    function clearSearch() {
+      document.getElementById('globalSearchInput').value = '';
+      document.getElementById('mobileSearchInput').value = '';
+      AppState.searchQuery = '';
+      document.getElementById('clearSearchBtn').classList.add('hidden');
+      renderMediaGrid();
+    }
+
+    function toggleMobileSearch() {
+      const row = document.getElementById('mobileSearchRow');
+      row.classList.toggle('hidden');
+    }
+
+    function renderMediaGrid() {
+      const grid = document.getElementById('mediaGrid');
+      const emptyState = document.getElementById('noContentState');
+
+      let list = [...AppState.posts];
+
+      // Фильтр по категории
+      if (AppState.currentCategory === 'video') {
+        list = list.filter(p => p.type === 'video');
+      } else if (AppState.currentCategory === 'photo') {
+        list = list.filter(p => p.type === 'photo');
+      } else if (AppState.currentCategory === 'mine') {
+        if (!AppState.currentUser) {
+          list = [];
+        } else {
+          list = list.filter(p => p.authorId === AppState.currentUser.id);
+        }
       }
 
-      const query = document.getElementById('searchInput')?.value?.toLowerCase();
-      if (query) {
-        filtered = filtered.filter(p => p.title.toLowerCase().includes(query) || p.authorName.toLowerCase().includes(query));
+      // Фильтр по поиску
+      if (AppState.searchQuery) {
+        list = list.filter(p => 
+          p.title.toLowerCase().includes(AppState.searchQuery) ||
+          (p.description && p.description.toLowerCase().includes(AppState.searchQuery)) ||
+          p.authorName.toLowerCase().includes(AppState.searchQuery) ||
+          (p.tags && p.tags.some(t => t.toLowerCase().includes(AppState.searchQuery)))
+        );
       }
 
-      if (filtered.length === 0) {
+      // Сортировка
+      if (AppState.currentSort === 'popular') {
+        list.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
+      } else if (AppState.currentSort === 'views') {
+        list.sort((a, b) => (b.viewsCount || 0) - (a.viewsCount || 0));
+      } else {
+        list.sort((a, b) => b.createdAt - a.createdAt);
+      }
+
+      AppState.filteredPosts = list;
+      document.getElementById('postsTotalCount').textContent = list.length;
+
+      if (list.length === 0) {
         grid.innerHTML = '';
-        empty.classList.remove('hidden');
+        emptyState.classList.remove('hidden');
         return;
       }
 
-      empty.classList.add('hidden');
-      grid.innerHTML = filtered.map(post => `
-        <div onclick="openViewModal('${post.id}')" class="glass-card rounded-2xl overflow-hidden hover:border-red-500/50 transition-all cursor-pointer flex flex-col group">
-          <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden">
-            ${post.type === 'video' 
-              ? `<video src="${post.dataUrl}" class="w-full h-full object-cover"></video><div class="absolute inset-0 bg-black/30 group-hover:bg-black/10 flex items-center justify-center transition-all"><i class="fa-solid fa-circle-play text-4xl text-white/80 group-hover:text-red-500 group-hover:scale-110 transition-all"></i></div>` 
-              : `<img src="${post.dataUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">`
-            }
-            <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-gray-300 uppercase">
-              ${post.type === 'video' ? 'видео' : 'фото'}
-            </span>
-          </div>
-          
-          <div class="p-3.5 flex flex-col flex-1 justify-between">
-            <div>
-              <h3 class="text-sm font-bold text-white line-clamp-1 group-hover:text-red-400 transition-colors">${post.title}</h3>
-              <p class="text-xs text-gray-400 line-clamp-1 mt-0.5">${post.description || 'Без описания'}</p>
-            </div>
+      emptyState.classList.add('hidden');
+
+      grid.innerHTML = list.map(post => {
+        const timeAgo = formatTimeAgo(post.createdAt);
+        const isVideo = post.type === 'video';
+
+        return `
+          <div 
+            onclick="openViewerModal('${post.id}')" 
+            class="glassmorphism rounded-2xl overflow-hidden glass-card-hover cursor-pointer border border-dark-border flex flex-col group relative">
             
-            <div class="flex items-center justify-between pt-3 mt-3 border-t border-gray-800 text-[11px] text-gray-400">
-              <div class="flex items-center gap-1.5 truncate">
-                <img src="${post.authorAvatar}" class="w-4 h-4 rounded-full">
-                <span class="truncate">${post.authorName}</span>
+            <!-- Превью медиа -->
+            <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden select-none">
+              ${isVideo 
+                ? `
+                  <video src="${post.dataBlobUrl}#t=0.5" preload="metadata" class="w-full h-full object-cover"></video>
+                  <div class="absolute inset-0 bg-black/40 group-hover:bg-black/15 transition-all flex items-center justify-center">
+                    <div class="w-12 h-12 rounded-full bg-brand-600/90 text-white flex items-center justify-center pl-0.5 group-hover:scale-110 shadow-neon-red transition-transform">
+                      <i class="fa-solid fa-play text-base"></i>
+                    </div>
+                  </div>
+                  <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded-md text-[10px] font-mono text-white flex items-center gap-1">
+                    <i class="fa-solid fa-video text-brand-400"></i> Видео
+                  </span>
+                ` 
+                : `
+                  <img src="${post.dataBlobUrl}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                  <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded-md text-[10px] font-mono text-white flex items-center gap-1">
+                    <i class="fa-solid fa-camera text-amber-400"></i> Фото
+                  </span>
+                `
+              }
+            </div>
+
+            <!-- Данные о посте -->
+            <div class="p-3.5 flex flex-col flex-1 justify-between">
+              <div>
+                <div class="flex items-center gap-2 mb-1.5">
+                  <img src="${post.authorAvatar}" class="w-5 h-5 rounded-full border border-dark-border object-cover bg-dark-card">
+                  <span class="text-[11px] font-bold text-slate-300 truncate">${post.authorName}</span>
+                  ${post.isGoogleAuthor ? '<i class="fa-brands fa-google text-[9px] text-blue-400"></i>' : ''}
+                </div>
+
+                <h3 class="text-xs sm:text-sm font-extrabold text-white line-clamp-1 group-hover:text-brand-400 transition-colors">
+                  ${post.title}
+                </h3>
+                <p class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">
+                  ${post.description || 'Без описания'}
+                </p>
               </div>
-              <div class="flex items-center gap-2">
-                <span><i class="fa-regular fa-heart mr-1"></i>${post.likes || 0}</span>
-                <span><i class="fa-regular fa-comment mr-1"></i>${post.comments?.length || 0}</span>
+
+              <!-- Нижняя полоса счетчиков -->
+              <div class="flex items-center justify-between pt-3 mt-3 border-t border-dark-border/60 text-[11px] text-slate-400">
+                <span class="text-[10px]">${timeAgo}</span>
+                <div class="flex items-center gap-3">
+                  <span class="flex items-center gap-1"><i class="fa-regular fa-heart text-brand-400"></i> ${post.likesCount || 0}</span>
+                  <span class="flex items-center gap-1"><i class="fa-regular fa-comment text-slate-400"></i> ${post.comments ? post.comments.length : 0}</span>
+                </div>
               </div>
             </div>
+
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    // ===== ПРОСМОТР, ЛАЙКИ И КОММЕНТАРИИ =====
-    async function openViewModal(id) {
-      currentViewingPostId = id;
-      const post = posts.find(p => p.id === id);
+    /**
+     * ===================================================================
+     * 7. ПОЛНОЦЕННЫЙ ПРОСМОТРЩИК, ПЛЕЕР, РЕАКЦИИ И КОММЕНТАРИИ
+     * ===================================================================
+     */
+    let currentVideoEl = null;
+
+    async function openViewerModal(postId) {
+      AppState.activePostId = postId;
+      const post = AppState.posts.find(p => p.id === postId);
       if (!post) return;
 
-      post.views = (post.views || 0) + 1;
-      await savePostDB(post);
+      // Увеличиваем просмотры
+      post.viewsCount = (post.viewsCount || 0) + 1;
+      await DatabaseEngine.savePost(post);
 
-      document.getElementById('viewAuthorName').textContent = post.authorName;
-      document.getElementById('viewAuthorAvatar').src = post.authorAvatar;
-      document.getElementById('viewPostDate').textContent = post.createdAt;
-      document.getElementById('viewPostTitle').textContent = post.title;
-      document.getElementById('viewPostDesc').textContent = post.description || '';
-      document.getElementById('viewCount').textContent = post.views;
-      document.getElementById('likeCount').textContent = post.likes || 0;
+      // Заполняем интерфейс
+      document.getElementById('viewerAuthorName').textContent = post.authorName;
+      document.getElementById('viewerAuthorAvatar').src = post.authorAvatar;
+      document.getElementById('viewerPostDate').textContent = formatFullDate(post.createdAt);
+      document.getElementById('viewerPostTitle').textContent = post.title;
+      document.getElementById('viewerPostDescription').textContent = post.description || '';
+      document.getElementById('viewerViewsCount').textContent = post.viewsCount;
+      document.getElementById('viewerLikesCount').textContent = post.likesCount || 0;
+      document.getElementById('viewerDislikesCount').textContent = post.dislikesCount || 0;
 
-      // Кнопка удаления для автора
-      const delBtn = document.getElementById('deletePostBtn');
-      if (currentUser && currentUser.id === post.authorId) {
+      // Google бейдж
+      const gBadge = document.getElementById('viewerAuthorBadge');
+      if (post.isGoogleAuthor) gBadge.classList.remove('hidden');
+      else gBadge.classList.add('hidden');
+
+      // Кнопка удаления публикации для владельца
+      const delBtn = document.getElementById('viewerDeleteBtn');
+      if (AppState.currentUser && AppState.currentUser.id === post.authorId) {
         delBtn.classList.remove('hidden');
       } else {
         delBtn.classList.add('hidden');
       }
 
-      // Отрисовка медиа
-      const mediaBox = document.getElementById('mediaViewerContainer');
-      if (post.type === 'video') {
-        mediaBox.innerHTML = `<video controls autoplay class="w-full max-h-[480px]"><source src="${post.dataUrl}">Ваш браузер не поддерживает видео.</video>`;
+      // Теги
+      const tagsBox = document.getElementById('viewerTagsRow');
+      if (post.tags && post.tags.length > 0) {
+        tagsBox.innerHTML = post.tags.map(t => `
+          <span class="px-2 py-0.5 rounded-lg bg-dark-card border border-dark-border text-[10px] text-slate-300 font-mono">#${t}</span>
+        `).join('');
       } else {
-        mediaBox.innerHTML = `<img src="${post.dataUrl}" class="w-full max-h-[480px] object-contain">`;
+        tagsBox.innerHTML = '';
       }
 
-      updateLikeUI(post);
+      // Монтирование плеера или картинки
+      const stage = document.getElementById('mediaStage');
+      const badge = document.getElementById('playerBadgeType');
+      const controls = document.getElementById('customVideoControls');
+
+      if (post.type === 'video') {
+        badge.textContent = 'Видео';
+        badge.className = 'px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-brand-600 text-white';
+        controls.classList.remove('hidden');
+
+        stage.innerHTML = `
+          <video 
+            id="activePlayingVideo" 
+            src="${post.dataBlobUrl}" 
+            playsinline 
+            class="max-h-full max-w-full w-auto h-auto object-contain cursor-pointer"
+            onclick="toggleVideoPlay()"></video>
+        `;
+        currentVideoEl = document.getElementById('activePlayingVideo');
+        initVideoListeners(currentVideoEl);
+      } else {
+        badge.textContent = 'Фото';
+        badge.className = 'px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-600 text-white';
+        controls.classList.add('hidden');
+        stage.innerHTML = `
+          <img src="${post.dataBlobUrl}" class="max-h-full max-w-full w-auto h-auto object-contain select-none">
+        `;
+        currentVideoEl = null;
+      }
+
+      updateReactionUI(post);
       renderComments(post);
 
-      document.getElementById('viewModal').classList.remove('hidden');
+      document.getElementById('viewerModal').classList.remove('hidden');
     }
 
-    function closeViewModal() {
-      const mediaBox = document.getElementById('mediaViewerContainer');
-      mediaBox.innerHTML = '';
-      document.getElementById('viewModal').classList.add('hidden');
-      currentViewingPostId = null;
-    }
-
-    function updateLikeUI(post) {
-      const icon = document.getElementById('likeIcon');
-      if (currentUser && post.likedBy?.includes(currentUser.id)) {
-        icon.className = 'fa-solid fa-heart text-base text-red-500';
-      } else {
-        icon.className = 'fa-regular fa-heart text-base';
+    function closeViewerModal() {
+      if (currentVideoEl) {
+        currentVideoEl.pause();
+        currentVideoEl = null;
       }
-      document.getElementById('likeCount').textContent = post.likes || 0;
+      document.getElementById('mediaStage').innerHTML = '';
+      document.getElementById('viewerModal').classList.add('hidden');
+      AppState.activePostId = null;
+      renderMediaGrid();
     }
 
-    async function toggleLike() {
-      if (!currentUser) {
+    // Инициализация кастомных контролов видео
+    function initVideoListeners(vid) {
+      if (!vid) return;
+
+      vid.ontimeupdate = () => {
+        if (!vid.duration) return;
+        const percent = (vid.currentTime / vid.duration) * 100;
+        document.getElementById('videoTimeline').value = percent;
+        document.getElementById('videoTimeDisplay').textContent = 
+          formatTimeSeconds(vid.currentTime) + ' / ' + formatTimeSeconds(vid.duration);
+      };
+
+      vid.onplay = () => {
+        document.getElementById('btnPlayPause').innerHTML = '<i class="fa-solid fa-pause"></i>';
+      };
+
+      vid.onpause = () => {
+        document.getElementById('btnPlayPause').innerHTML = '<i class="fa-solid fa-play"></i>';
+      };
+
+      vid.onended = () => {
+        document.getElementById('btnPlayPause').innerHTML = '<i class="fa-solid fa-rotate-right"></i>';
+      };
+
+      // Автостарт
+      vid.play().catch(() => {});
+    }
+
+    function toggleVideoPlay() {
+      if (!currentVideoEl) return;
+      if (currentVideoEl.paused) currentVideoEl.play();
+      else currentVideoEl.pause();
+    }
+
+    function seekVideo(val) {
+      if (!currentVideoEl || !currentVideoEl.duration) return;
+      currentVideoEl.currentTime = (val / 100) * currentVideoEl.duration;
+    }
+
+    function toggleVideoMute() {
+      if (!currentVideoEl) return;
+      currentVideoEl.muted = !currentVideoEl.muted;
+      document.getElementById('btnMute').innerHTML = currentVideoEl.muted 
+        ? '<i class="fa-solid fa-volume-xmark text-brand-400"></i>' 
+        : '<i class="fa-solid fa-volume-high"></i>';
+    }
+
+    function changeVideoVolume(vol) {
+      if (!currentVideoEl) return;
+      currentVideoEl.volume = vol;
+      currentVideoEl.muted = false;
+    }
+
+    function changePlaybackRate(rate) {
+      if (!currentVideoEl) return;
+      currentVideoEl.playbackRate = parseFloat(rate);
+    }
+
+    function toggleFullscreen() {
+      const stage = document.getElementById('mediaStage');
+      if (!document.fullscreenElement) {
+        stage.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Лайки и Дизлайки
+    async function handleLikeToggle() {
+      if (!AppState.currentUser) {
         openAuthModal();
         return;
       }
-      const post = posts.find(p => p.id === currentViewingPostId);
+      const post = AppState.posts.find(p => p.id === AppState.activePostId);
       if (!post) return;
 
-      post.likedBy = post.likedBy || [];
-      const idx = post.likedBy.indexOf(currentUser.id);
+      post.likedUserIds = post.likedUserIds || [];
+      post.dislikedUserIds = post.dislikedUserIds || [];
+
+      const uid = AppState.currentUser.id;
+      const idx = post.likedUserIds.indexOf(uid);
+
       if (idx > -1) {
-        post.likedBy.splice(idx, 1);
-        post.likes = Math.max(0, (post.likes || 1) - 1);
+        // Убрать лайк
+        post.likedUserIds.splice(idx, 1);
+        post.likesCount = Math.max(0, (post.likesCount || 1) - 1);
       } else {
-        post.likedBy.push(currentUser.id);
-        post.likes = (post.likes || 0) + 1;
+        // Поставить лайк
+        post.likedUserIds.push(uid);
+        post.likesCount = (post.likesCount || 0) + 1;
+        // Если стоял дизлайк - убираем
+        const disIdx = post.dislikedUserIds.indexOf(uid);
+        if (disIdx > -1) {
+          post.dislikedUserIds.splice(disIdx, 1);
+          post.dislikesCount = Math.max(0, (post.dislikesCount || 1) - 1);
+        }
       }
 
-      await savePostDB(post);
-      updateLikeUI(post);
-      renderPosts();
+      await DatabaseEngine.savePost(post);
+      updateReactionUI(post);
     }
 
-    async function handleAddComment(e) {
+    async function handleDislikeToggle() {
+      if (!AppState.currentUser) {
+        openAuthModal();
+        return;
+      }
+      const post = AppState.posts.find(p => p.id === AppState.activePostId);
+      if (!post) return;
+
+      post.likedUserIds = post.likedUserIds || [];
+      post.dislikedUserIds = post.dislikedUserIds || [];
+
+      const uid = AppState.currentUser.id;
+      const idx = post.dislikedUserIds.indexOf(uid);
+
+      if (idx > -1) {
+        // Снять дизлайк
+        post.dislikedUserIds.splice(idx, 1);
+        post.dislikesCount = Math.max(0, (post.dislikesCount || 1) - 1);
+      } else {
+        // Поставить дизлайк
+        post.dislikedUserIds.push(uid);
+        post.dislikesCount = (post.dislikesCount || 0) + 1;
+        // Если стоял лайк - убираем
+        const likeIdx = post.likedUserIds.indexOf(uid);
+        if (likeIdx > -1) {
+          post.likedUserIds.splice(likeIdx, 1);
+          post.likesCount = Math.max(0, (post.likesCount || 1) - 1);
+        }
+      }
+
+      await DatabaseEngine.savePost(post);
+      updateReactionUI(post);
+    }
+
+    function updateReactionUI(post) {
+      const uid = AppState.currentUser?.id;
+      const hasLiked = uid && post.likedUserIds?.includes(uid);
+      const hasDisliked = uid && post.dislikedUserIds?.includes(uid);
+
+      const likeIcon = document.getElementById('viewerLikeIcon');
+      const likeBtn = document.getElementById('viewerLikeBtn');
+      if (hasLiked) {
+        likeIcon.className = 'fa-solid fa-heart text-brand-500 text-sm';
+        likeBtn.classList.add('border-brand-500/60', 'bg-brand-950/30');
+      } else {
+        likeIcon.className = 'fa-regular fa-heart text-sm';
+        likeBtn.classList.remove('border-brand-500/60', 'bg-brand-950/30');
+      }
+
+      const disIcon = document.getElementById('viewerDislikeIcon');
+      const disBtn = document.getElementById('viewerDislikeBtn');
+      if (hasDisliked) {
+        disIcon.className = 'fa-solid fa-thumbs-down text-slate-200 text-sm';
+        disBtn.classList.add('border-slate-400/60', 'bg-slate-800/40');
+      } else {
+        disIcon.className = 'fa-regular fa-thumbs-down text-sm';
+        disBtn.classList.remove('border-slate-400/60', 'bg-slate-800/40');
+      }
+
+      document.getElementById('viewerLikesCount').textContent = post.likesCount || 0;
+      document.getElementById('viewerDislikesCount').textContent = post.dislikesCount || 0;
+    }
+
+    // Комментарии
+    async function handleSendComment(e) {
       e.preventDefault();
-      if (!currentUser) {
+      if (!AppState.currentUser) {
         openAuthModal();
         return;
       }
 
-      const input = document.getElementById('commentInput');
+      const input = document.getElementById('commentTextInput');
       const text = input.value.trim();
+      const alertBox = document.getElementById('commentAlert');
+
       if (!text) return;
 
-      if (!Moderation.check(text)) {
-        alert("Комментарий заблокирован фильтром: мат и порно-контент строго запрещены!");
+      // Модерация комментария
+      if (!ModerationEngine.isClean(text)) {
+        alertBox.textContent = 'Комментарий отклонён фильтром цензуры (маты и 18+ запрещены)!';
+        alertBox.classList.remove('hidden');
         return;
       }
 
-      const post = posts.find(p => p.id === currentViewingPostId);
+      alertBox.classList.add('hidden');
+
+      const post = AppState.posts.find(p => p.id === AppState.activePostId);
       if (!post) return;
 
       post.comments = post.comments || [];
-      post.comments.push({
+      const newComment = {
         id: 'c_' + Date.now(),
-        authorName: currentUser.name,
-        authorAvatar: currentUser.avatar,
+        authorId: AppState.currentUser.id,
+        authorName: AppState.currentUser.name,
+        authorAvatar: AppState.currentUser.avatar,
+        isGoogle: AppState.currentUser.isGoogle || false,
         text: text,
-        date: 'Только что'
-      });
+        createdAt: Date.now()
+      };
 
-      await savePostDB(post);
+      post.comments.push(newComment);
+      await DatabaseEngine.savePost(post);
+
       input.value = '';
       renderComments(post);
-      renderPosts();
+      showToast('Комментарий добавлен');
     }
 
     function renderComments(post) {
-      const list = document.getElementById('commentsList');
-      if (!post.comments || post.comments.length === 0) {
-        list.innerHTML = `<p class="text-xs text-gray-500 py-3 text-center">Комментариев пока нет. Будьте первым!</p>`;
+      const box = document.getElementById('commentsContainer');
+      const comments = post.comments || [];
+
+      if (comments.length === 0) {
+        box.innerHTML = `
+          <div class="text-center py-8 text-slate-500 text-xs">
+            <i class="fa-regular fa-comments text-2xl mb-1 block text-slate-600"></i>
+            Здесь пока нет комментариев. Напишите первым!
+          </div>
+        `;
         return;
       }
 
-      list.innerHTML = post.comments.map(c => `
-        <div class="flex items-start gap-2.5 bg-[#161b22] p-2.5 rounded-xl border border-gray-800">
-          <img src="${c.authorAvatar}" class="w-6 h-6 rounded-full border border-gray-700 mt-0.5">
-          <div class="flex-1">
+      box.innerHTML = comments.map(c => `
+        <div class="flex items-start gap-2.5 bg-dark-card/60 p-2.5 rounded-2xl border border-dark-border/60">
+          <img src="${c.authorAvatar}" class="w-7 h-7 rounded-xl object-cover border border-dark-border mt-0.5">
+          <div class="flex-1 overflow-hidden">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-gray-300">${c.authorName}</span>
-              <span class="text-[10px] text-gray-500">${c.date}</span>
+              <span class="text-xs font-bold text-slate-200 flex items-center gap-1">
+                ${c.authorName}
+                ${c.isGoogle ? '<i class="fa-brands fa-google text-[8px] text-blue-400"></i>' : ''}
+              </span>
+              <span class="text-[10px] text-slate-500">${formatTimeAgo(c.createdAt)}</span>
             </div>
-            <p class="text-xs text-gray-300 mt-0.5">${c.text}</p>
+            <p class="text-xs text-slate-300 mt-1 break-words leading-relaxed">${c.text}</p>
           </div>
         </div>
       `).join('');
     }
 
-    async function deleteCurrentPost() {
-      if (!confirm('Вы действительно хотите удалить эту публикацию с хостинга?')) return;
-      await deletePostDB(currentViewingPostId);
-      posts = posts.filter(p => p.id !== currentViewingPostId);
-      closeViewModal();
-      renderPosts();
-      showToast('Публикация удалена!');
+    // Удаление своей публикации
+    async function deleteCurrentViewingPost() {
+      if (!confirm('Вы точно хотите удалить этот материал с магахоствидео?')) return;
+      const pid = AppState.activePostId;
+      await DatabaseEngine.deletePost(pid);
+      AppState.posts = AppState.posts.filter(p => p.id !== pid);
+      closeViewerModal();
+      showToast('Публикация успешно удалена!');
+      renderMediaGrid();
     }
 
-    function filterCategory(cat) {
-      currentFilter = cat;
-      ['all', 'video', 'photo', 'mine'].forEach(c => {
-        const btn = document.getElementById('tab-' + c);
-        if (c === cat) {
-          btn.className = 'px-4 py-1.5 rounded-full bg-red-600 text-white font-medium whitespace-nowrap transition-colors';
-        } else {
-          btn.className = 'px-4 py-1.5 rounded-full bg-[#21262d] text-gray-300 hover:bg-gray-800 whitespace-nowrap transition-colors';
-        }
+    // Скачивание текущего медиафайла
+    function downloadCurrentMedia() {
+      const post = AppState.posts.find(p => p.id === AppState.activePostId);
+      if (!post) return;
+      const a = document.createElement('a');
+      a.href = post.dataBlobUrl;
+      a.download = post.title.replace(/\s+/g, '_') + (post.type === 'video' ? '.mp4' : '.jpg');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('Скачивание началось');
+    }
+
+    // Поделиться ссылкой
+    function shareCurrentMedia() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('Ссылка скопирована в буфер обмена!');
+      }).catch(() => {
+        showToast('Поделитесь ссылкой: ' + url);
       });
-      renderPosts();
     }
 
-    function handleSearch() {
-      renderPosts();
-    }
-
+    /**
+     * ===================================================================
+     * 8. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ (УВЕДОМЛЕНИЯ, ФОРМАТИРОВАНИЕ ДАТ)
+     * ===================================================================
+     */
     function showToast(msg) {
-      const t = document.createElement('div');
-      t.className = 'fixed bottom-5 right-5 bg-gradient-to-r from-red-600 to-rose-600 text-white px-4 py-2.5 rounded-xl text-xs font-semibold shadow-2xl z-50 transition-all';
-      t.textContent = msg;
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), 3000);
+      const toast = document.getElementById('toastNotification');
+      const text = document.getElementById('toastMessage');
+      text.textContent = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3500);
     }
 
-    // Инициализация при старте
+    function dismissBanner() {
+      document.getElementById('welcomeBanner').classList.add('hidden');
+    }
+
+    function formatTimeSeconds(sec) {
+      if (isNaN(sec)) return "00:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+    }
+
+    function formatTimeAgo(timestamp) {
+      if (!timestamp) return 'Недавно';
+      const now = Date.now();
+      const diff = Math.floor((now - timestamp) / 1000);
+
+      if (diff < 60) return 'только что';
+      if (diff < 3600) return Math.floor(diff / 60) + ' мин. назад';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' ч. назад';
+      return Math.floor(diff / 86400) + ' дн. назад';
+    }
+
+    function formatFullDate(timestamp) {
+      if (!timestamp) return '';
+      const d = new Date(timestamp);
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    /**
+     * ===================================================================
+     * 9. ТОЧКА ВХОДА И СТАРТОВАЯ ИНИЦИАЛИЗАЦИЯ САЙТА
+     * ===================================================================
+     */
     window.addEventListener('DOMContentLoaded', async () => {
-      await initDB();
-      posts = await getAllPostsDB();
-      updateAuthUI();
-      renderPosts();
+      try {
+        await DatabaseEngine.init();
+        initUserSession();
+        AppState.posts = await DatabaseEngine.getAllPosts();
+        renderMediaGrid();
+      } catch (e) {
+        console.error('Ошибка старта приложения:', e);
+      }
     });
   </script>
 </body>
