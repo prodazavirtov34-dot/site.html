@@ -27,9 +27,10 @@
             </div>
         </div>
 
-        <!-- АВТОРИЗАЦИЯ ТВИЧ (ПРЯМАЯ ССЫЛКА) -->
+        <!-- АВТОРИЗАЦИЯ ТВИЧ (ПРЯМАЯ ССЫЛКА НА ТВИЧ) -->
         <div id="auth-container">
-            <a id="twitch-login-btn" href="#" class="twitch-purple text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg inline-flex items-center space-x-2.5 transition transform active:scale-95 text-sm no-underline cursor-pointer">
+            <a href="https://id.twitch.tv/oauth2/authorize?client_id=66s05bbnnw3g0qkykye9ck3f0k3ui3&redirect_uri=https://sitehtml-e5pj.vercel.app/&response_type=token&scope=channel:read:redemptions%20channel:manage:redemptions%20user:read:email&force_verify=true" 
+               class="twitch-purple text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg inline-flex items-center space-x-2.5 transition transform active:scale-95 text-sm no-underline cursor-pointer">
                 <i class="fa-brands fa-twitch text-lg"></i>
                 <span>Войти через Twitch</span>
             </a>
@@ -106,12 +107,6 @@
 
     <script>
         const CLIENT_ID = '66s05bbnnw3g0qkykye9ck3f0k3ui3';
-        const REDIRECT_URI = window.location.origin + window.location.pathname;
-
-        // Автоматически генерируем правильную ссылку на авторизацию Твича
-        const scopes = ['channel:read:redemptions', 'channel:manage:redemptions', 'user:read:email'].join('%20');
-        const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}&force_verify=true`;
-        document.getElementById('twitch-login-btn').href = authUrl;
 
         let lots = JSON.parse(localStorage.getItem('twitch_auction_lots')) || [];
         let processedTransactions = new Set(JSON.parse(localStorage.getItem('twitch_processed_tx')) || []);
@@ -165,7 +160,7 @@
 
         function logout() {
             localStorage.removeItem('twitch_token');
-            window.location.href = REDIRECT_URI;
+            window.location.href = window.location.origin + window.location.pathname;
         }
 
         function saveState() {
