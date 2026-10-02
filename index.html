@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Channel Points Auction & Roulette</title>
+    <title>Twitch PointAuction & Roulette</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -11,7 +11,6 @@
         body { font-family: 'Inter', sans-serif; background-color: #0e0e10; color: #efeff1; }
         .twitch-purple { background-color: #9146FF; }
         .twitch-purple:hover { background-color: #772ce8; }
-        .twitch-text { color: #9146FF; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -28,7 +27,7 @@
             </div>
         </div>
 
-        <!-- АВТОРИЗАЦИЯ TWITCH -->
+        <!-- АВТОРИЗАЦИЯ ТВИТЧ -->
         <div id="auth-container">
             <button onclick="loginWithTwitch()" class="twitch-purple text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-2.5 transition transform active:scale-95 cursor-pointer">
                 <i class="fa-brands fa-twitch text-lg"></i>
@@ -40,16 +39,16 @@
     <!-- ОСНОВНОЙ КОНТЕНТ -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        <!-- ЛЕВАЯ КОЛОНКА: УПРАВЛЕНИЕ ЛОТАМИ И СИМУЛЯТОР -->
+        <!-- ЛЕВАЯ КОЛОНКА -->
         <div class="space-y-6">
             <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-plus-circle text-purple-400"></i> Добавить лот
                 </h2>
-                <form id="add-lot-form" onsubmit="addLot(event)" class="space-y-4">
+                <form onsubmit="addLot(event)" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1">Название лота / Идея</label>
-                        <input type="text" id="lot-title" required placeholder="Например: Пройти хоррор в VR" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <label class="block text-xs font-medium text-zinc-400 mb-1">Название лота</label>
+                        <input type="text" id="lot-title" required placeholder="Например: Играем в Доту" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-zinc-400 mb-1">Начальная ставка (баллы 🪙)</label>
@@ -59,34 +58,31 @@
                 </form>
             </div>
 
-            <!-- СИМУЛЯТОР СТАВОК ЗРИТЕЛЕЙ ЗА БАЛЛЫ -->
+            <!-- СИМУЛЯТОР БАЛЛОВ -->
             <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-bolt text-amber-400"></i> Тест баллов (Симулятор)
+                    <i class="fa-solid fa-bolt text-amber-400"></i> Симулятор ставок
                 </h2>
-                <p class="text-xs text-zinc-400 mb-4">Эмуляция списания баллов зрителями (без дубликатов 1 балла).</p>
-                
+                <p class="text-xs text-zinc-400 mb-4">Тест списания баллов без дублей.</p>
                 <div class="space-y-3">
                     <input type="text" id="sim-user" placeholder="Ник зрителя (@Username)" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
                     <div class="grid grid-cols-2 gap-2">
                         <input type="number" id="sim-amount" placeholder="Баллы" value="500" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
-                        <select id="sim-lot-select" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
-                            <!-- Заполняется динамически -->
-                        </select>
+                        <select id="sim-lot-select" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"></select>
                     </div>
                     <button onclick="simulateRedemption()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-2 rounded-xl transition cursor-pointer text-sm">
-                        Симулировать ставку баллами
+                        Закинуть баллы
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- ЦЕНТРАЛЬНАЯ КОЛОНКА: СПИСОК ЛОТОВ И АУКЦИОН -->
+        <!-- ПРАВАЯ КОЛОНКА -->
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-purple-400"></i> Активные лоты аукциона
+                        <i class="fa-solid fa-list-check text-purple-400"></i> Активные лоты
                     </h2>
                     <div class="flex items-center gap-2">
                         <button onclick="spinRoulette()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
@@ -95,31 +91,27 @@
                         <button onclick="clearLots()" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-3 py-2 rounded-xl text-xs transition cursor-pointer">Очистить</button>
                     </div>
                 </div>
-
                 <div id="lots-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                    <!-- Сюда динамически рендерятся лоты -->
-                    <div class="text-center py-10 text-zinc-500 text-sm">Список лотов пуст. Добавьте первый лот слева!</div>
+                    <div class="text-center py-10 text-zinc-500 text-sm">Список лотов пуст.</div>
                 </div>
             </div>
 
-            <!-- БЛОК РУЛЕТКИ / РЕЗУЛЬТАТА -->
+            <!-- РУЛЕТКА -->
             <div id="roulette-box" class="hidden bg-[#18181b] border border-purple-500/50 rounded-2xl p-6 text-center shadow-2xl relative overflow-hidden">
-                <div class="absolute -right-10 -top-10 w-40 h-40 bg-purple-600/10 rounded-full blur-3xl"></div>
                 <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 mb-1">Победитель рулетки</h3>
-                <div id="roulette-winner" class="text-3xl font-extrabold text-white mt-2 animate-bounce">Выберите победителя...</div>
+                <div id="roulette-winner" class="text-3xl font-extrabold text-white mt-2 animate-bounce">Крутим...</div>
             </div>
         </div>
-
     </main>
 
     <script>
         const CLIENT_ID = 'jwk4v6qrymwe3odjf13oaif4';
+        // Четко берем чистый базовый URL без лишних путей Nightbot
         const REDIRECT_URI = window.location.origin + window.location.pathname;
 
         let lots = JSON.parse(localStorage.getItem('twitch_auction_lots')) || [];
         let processedTransactions = new Set(JSON.parse(localStorage.getItem('twitch_processed_tx')) || []);
 
-        // Проверка OAuth при загрузке страницы
         window.onload = function() {
             const hash = window.location.hash.substring(1);
             const params = new URLSearchParams(hash);
@@ -140,11 +132,8 @@
 
         function loginWithTwitch() {
             const scopes = [
-                'clips:edit', 'channel:bot', 'channel:edit:commercial', 
-                'channel:manage:broadcast', 'channel:manage:moderators', 
-                'channel:manage:redemptions', 'channel:read:editors', 
-                'channel:read:redemptions', 'channel:read:subscriptions', 
-                'channel:read:vips', 'moderation:read', 'user:read:email'
+                'channel:read:redemptions', 'channel:manage:redemptions', 
+                'user:read:email', 'channel:read:subscriptions'
             ].join('%20');
 
             const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}&force_verify=true`;
@@ -167,14 +156,16 @@
                             <img src="${user.profile_image_url}" class="w-8 h-8 rounded-full border border-purple-500" alt="Avatar">
                             <div class="text-left">
                                 <div class="text-xs font-bold text-white">${user.display_name}</div>
-                                <div class="text-[10px] text-emerald-400">● Онлайн-эфир</div>
+                                <div class="text-[10px] text-emerald-400">● Авторизован</div>
                             </div>
                             <button onclick="logout()" class="ml-3 text-zinc-400 hover:text-red-400 text-xs"><i class="fa-solid fa-right-from-bracket"></i></button>
                         </div>
                     `;
+                } else {
+                    logout();
                 }
             } catch (err) {
-                console.error('Ошибка получения профиля Twitch:', err);
+                console.error(err);
                 logout();
             }
         }
@@ -195,13 +186,7 @@
             const bid = parseInt(document.getElementById('lot-bid').value) || 0;
             if(!title) return;
 
-            lots.push({
-                id: Date.now(),
-                title: title,
-                bid: bid,
-                leader: 'Нет ставок'
-            });
-
+            lots.push({ id: Date.now(), title: title, bid: bid, leader: 'Нет ставок' });
             document.getElementById('lot-title').value = '';
             saveState();
             renderLots();
@@ -210,25 +195,22 @@
         function renderLots() {
             const listEl = document.getElementById('lots-list');
             const selectEl = document.getElementById('sim-lot-select');
-            
             selectEl.innerHTML = '';
 
             if (lots.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-10 text-zinc-500 text-sm">Список лотов пуст. Добавьте первый лот слева!</div>`;
+                listEl.innerHTML = `<div class="text-center py-10 text-zinc-500 text-sm">Список лотов пуст.</div>`;
                 return;
             }
 
             listEl.innerHTML = '';
             lots.forEach((lot, index) => {
-                // Заполнение селекта для симулятора
                 const opt = document.createElement('option');
                 opt.value = lot.id;
                 opt.textContent = lot.title;
                 selectEl.appendChild(opt);
 
-                // Отрисовка карточки лота
                 const card = document.createElement('div');
-                card.className = `bg-[#0e0e10] border ${index === 0 ? 'border-purple-500/50 shadow-lg shadow-purple-900/10' : 'border-[#26262c]'} rounded-xl p-4 flex items-center justify-between gap-4`;
+                card.className = `bg-[#0e0e10] border ${index === 0 ? 'border-purple-500/50' : 'border-[#26262c]'} rounded-xl p-4 flex items-center justify-between gap-4`;
                 card.innerHTML = `
                     <div class="flex-1 min-w-0">
                         <h4 class="font-bold text-white text-sm truncate">${lot.title}</h4>
@@ -237,9 +219,7 @@
                     <div class="text-right">
                         <div class="text-sm font-extrabold text-amber-400">${lot.bid} 🪙</div>
                     </div>
-                    <div class="flex items-center gap-1">
-                        <button onclick="removeLot(${lot.id})" class="text-zinc-500 hover:text-red-400 p-2 rounded-lg transition"><i class="fa-solid fa-trash text-xs"></i></button>
-                    </div>
+                    <button onclick="removeLot(${lot.id})" class="text-zinc-500 hover:text-red-400 p-2"><i class="fa-solid fa-trash text-xs"></i></button>
                 `;
                 listEl.appendChild(card);
             });
@@ -250,12 +230,8 @@
             const amount = parseInt(document.getElementById('sim-amount').value) || 0;
             const lotId = parseInt(document.getElementById('sim-lot-select').value);
 
-            if (!usernameInput || amount <= 0 || !lotId) {
-                alert('Заполните ник зрителя и корректную сумму баллов!');
-                return;
-            }
+            if (!usernameInput || amount <= 0 || !lotId) return;
 
-            // Уникальный ID транзакции для предотвращения дублей
             const txId = `${usernameInput}_${amount}_${lotId}_${Date.now()}`;
             if (processedTransactions.has(txId)) return;
             processedTransactions.add(txId);
@@ -277,7 +253,7 @@
         }
 
         function clearLots() {
-            if(confirm('Очистить все лоты?')) {
+            if(confirm('Очистить лоты?')) {
                 lots = [];
                 processedTransactions.clear();
                 saveState();
@@ -287,11 +263,7 @@
         }
 
         function spinRoulette() {
-            if (lots.length === 0) {
-                alert('Нет лотов для рулетки!');
-                return;
-            }
-
+            if (lots.length === 0) return;
             const rouletteBox = document.getElementById('roulette-box');
             const winnerEl = document.getElementById('roulette-winner');
             rouletteBox.classList.remove('hidden');
@@ -301,13 +273,12 @@
                 const randomLot = lots[Math.floor(Math.random() * lots.length)];
                 winnerEl.textContent = `${randomLot.title} (@${randomLot.leader})`;
                 counter++;
-                if (counter > 15) {
+                if (counter > 12) {
                     clearInterval(interval);
-                    // Финальный выбор пропорционально ставкам (или случайный из топ лотов)
                     const winner = lots[Math.floor(Math.random() * lots.length)];
                     winnerEl.textContent = `🎉 ПОБЕДИТЕЛЬ: ${winner.title} — @${winner.leader} (${winner.bid} 🪙)!`;
                 }
-            }, 100);
+            }, 80);
         }
     </script>
 </body>
