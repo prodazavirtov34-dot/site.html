@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>магахоствидео — Стриминг, Кейсы & Медиа</title>
+  <title>магахоствидео — Кинотеатр & Стрим Хаб</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,28 +12,20 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              50: '#fff1f2', 100: '#ffe4e6', 200: '#fecdd3', 300: '#fda4af',
-              400: '#fb7185', 500: '#f43f5e', 600: '#e11d48', 700: '#be123c',
-              800: '#9f1239', 900: '#881337', 950: '#4c0519'
-            },
-            twitch: {
-              500: '#9146FF',
-              600: '#772ce8'
-            },
-            dark: {
-              bg: '#05070d',
-              surface: '#0b101d',
-              card: '#10172b',
-              border: '#1c2844',
-              hover: '#18233f'
+            brand: { 5050: '#fff1f2', 500: '#f43f5e', 600: '#e11d48', 700: '#be123c', 950: '#4c0519' },
+            twitch: { 500: '#9146FF', 600: '#772ce8' },
+            cyber: {
+              bg: '#030508',
+              surface: '#0a0f1d',
+              card: '#111827',
+              border: '#1f293d',
+              gold: '#fbbf24'
             }
           },
           boxShadow: {
-            'neon-red': '0 0 25px -4px rgba(225, 29, 72, 0.45)',
-            'neon-twitch': '0 0 35px -4px rgba(145, 70, 255, 0.55)',
-            'neon-degicie': '0 0 35px -4px rgba(245, 158, 11, 0.65)',
-            'neon-gold': '0 0 25px -4px rgba(234, 179, 8, 0.35)'
+            'glow-red': '0 0 30px -5px rgba(225, 29, 72, 0.5)',
+            'glow-gold': '0 0 35px -5px rgba(251, 191, 36, 0.6)',
+            'glow-twitch': '0 0 35px -5px rgba(145, 70, 255, 0.6)'
           }
         }
       }
@@ -42,149 +34,135 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   
   <style>
-    ::-webkit-scrollbar { width: 7px; height: 7px; }
-    ::-webkit-scrollbar-track { background: #05070d; }
-    ::-webkit-scrollbar-thumb { background: #1c2844; border-radius: 6px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #030508; }
+    ::-webkit-scrollbar-thumb { background: #1f293d; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
 
-    .glassmorphism {
-      background: rgba(11, 16, 29, 0.88);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(28, 40, 68, 0.85);
+    body {
+      background-color: #030508;
+      color: #f3f4f6;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* Плавные анимации карточек */
-    .card-zoom {
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .card-zoom:hover {
-      transform: translateY(-6px) scale(1.01);
-      box-shadow: 0 20px 40px -10px rgba(225, 29, 72, 0.4);
-      border-color: rgba(244, 63, 94, 0.7);
+    .glass-panel {
+      background: rgba(10, 15, 29, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(31, 41, 61, 0.8);
     }
 
-    .degicie-card {
-      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    .cyber-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #111827;
+      border: 1px solid #1f293d;
     }
-    .degicie-card:hover {
-      transform: translateY(-6px) scale(1.01);
-      box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.55) !important;
-      border-color: rgba(245, 158, 11, 0.9) !important;
+    .cyber-card:hover {
+      transform: translateY(-6px);
+      border-color: #f43f5e;
+      box-shadow: 0 20px 40px -10px rgba(244, 63, 94, 0.35);
     }
 
-    /* Плавное появление модалок */
-    @keyframes modalFadeIn {
-      from { opacity: 0; transform: scale(0.95); }
+    .cyber-card-gold:hover {
+      transform: translateY(-6px);
+      border-color: #fbbf24 !important;
+      box-shadow: 0 20px 40px -10px rgba(251, 191, 36, 0.45) !important;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.97); }
       to { opacity: 1; transform: scale(1); }
     }
-    .animate-modal {
-      animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .maga-ad-gradient {
-      background: linear-gradient(135deg, #10172b 0%, #1e1122 50%, #0b101d 100%);
+    .animate-enter {
+      animation: fadeIn 0.2s ease-out forwards;
     }
 
     input[type=range] { accent-color: #e11d48; }
   </style>
 </head>
-<body class="bg-dark-bg text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-brand-600 selection:text-white">
+<body class="min-h-screen flex flex-col selection:bg-rose-600 selection:text-white">
 
-  <!-- ========================================== -->
-  <!-- 1. ШАПКА САЙТА (HEADER)                    -->
-  <!-- ========================================== -->
-  <header class="sticky top-0 z-40 glassmorphism border-b border-dark-border px-3 sm:px-6 py-3.5 transition-all">
-    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-3">
+  <!-- ================= ГЛАВНАЯ ШАПКА ================= -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-cyber-border px-4 py-3">
+    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-4">
       
       <!-- ЛОГОТИП -->
       <div class="flex items-center gap-3 cursor-pointer select-none group" onclick="switchMainTab('hosting')">
-        <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-700 via-brand-500 to-amber-500 flex items-center justify-center shadow-neon-red group-hover:scale-110 transition-transform duration-300">
-          <i class="fa-solid fa-bolt text-white text-xl"></i>
-          <span class="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-          </span>
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-rose-600 via-rose-500 to-amber-500 flex items-center justify-center shadow-glow-red group-hover:scale-110 transition-transform">
+          <i class="fa-solid fa-play text-white text-lg ml-0.5"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-brand-400 bg-clip-text text-transparent">
+            <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-slate-200 to-rose-400 bg-clip-text text-transparent">
               магахоствидео
             </span>
-            <span class="bg-brand-600/30 text-brand-400 border border-brand-500/40 text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase">PRO</span>
+            <span class="bg-rose-600/20 text-rose-400 border border-rose-500/30 text-[9px] font-black px-1.5 py-0.5 rounded uppercase">ULTRA</span>
           </div>
-          <span class="text-[10px] text-slate-400 font-mono tracking-wider block -mt-1 hidden xs:block">ХОСТИНГ • КЕЙСЫ • СТРИМЫ</span>
+          <span class="text-[10px] text-slate-400 font-mono tracking-wider block -mt-1 hidden xs:block">KINO & STREAM HUB</span>
         </div>
       </div>
 
-      <!-- НАВИГАЦИЯ ПО РАЗДЕЛАМ -->
-      <div class="hidden md:flex items-center gap-1.5 bg-dark-surface p-1.5 rounded-2xl border border-dark-border shadow-inner">
-        <button onclick="switchMainTab('hosting')" id="navTabHosting" class="px-5 py-2 rounded-xl text-xs font-black bg-brand-600 text-white shadow-neon-red transition-all duration-300 transform hover:scale-105">
-          <i class="fa-solid fa-photo-film mr-1.5"></i>Видеохостинг
+      <!-- ПЕРЕКЛЮЧАТЕЛЬ РАЗДЕЛОВ -->
+      <div class="hidden md:flex items-center gap-1 bg-cyber-surface p-1 rounded-2xl border border-cyber-border">
+        <button onclick="switchMainTab('hosting')" id="navTabHosting" class="px-5 py-2 rounded-xl text-xs font-black bg-rose-600 text-white shadow-glow-red transition-all">
+          <i class="fa-solid fa-film mr-1.5"></i>Кинозал и Хостинг
         </button>
-        <button onclick="switchMainTab('streaming')" id="navTabStreaming" class="px-5 py-2 rounded-xl text-xs font-black text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-1.5">
+        <button onclick="switchMainTab('streaming')" id="navTabStreaming" class="px-5 py-2 rounded-xl text-xs font-black text-slate-400 hover:text-white transition-all flex items-center gap-1.5">
           <i class="fa-brands fa-twitch text-twitch-500"></i>Стриминг & Кейсы
         </button>
       </div>
 
-      <!-- КНОПКИ ВЕРХА -->
+      <!-- КНОПКИ ДЕЙСТВИЙ -->
       <div class="flex items-center gap-2 sm:gap-3">
-        
-        <button onclick="switchMainTab('streaming')" class="md:hidden p-2.5 rounded-2xl bg-twitch-500/20 border border-twitch-500/40 text-twitch-500 font-bold text-xs flex items-center gap-1">
+        <button onclick="switchMainTab('streaming')" class="md:hidden p-2.5 rounded-2xl bg-twitch-500/20 text-twitch-500 border border-twitch-500/40 font-bold text-xs">
           <i class="fa-brands fa-twitch text-sm"></i>
         </button>
 
-        <button 
-          onclick="triggerUploadCheck()" 
-          class="flex items-center gap-2 bg-gradient-to-r from-brand-600 via-rose-600 to-amber-600 hover:from-brand-500 hover:to-rose-500 text-white px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm shadow-neon-red active:scale-95 transition-all duration-300 transform hover:scale-105">
+        <button onclick="triggerUploadCheck()" class="flex items-center gap-2 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm shadow-glow-red transition-all">
           <i class="fa-solid fa-cloud-arrow-up"></i>
           <span>Залить</span>
         </button>
 
         <div id="userProfileBar" class="flex items-center"></div>
-
       </div>
 
     </div>
   </header>
 
-  <!-- ========================================== -->
-  <!-- 2. ВКЛАДКА 1: ВИДЕОХОСТИНГ И КАТЕГОРИИ      -->
-  <!-- ========================================== -->
+  <!-- ================= РАЗДЕЛ 1: ХОСТИНГ И ФИЛЬМЫ ================= -->
   <div id="sectionHostingView" class="flex flex-col flex-1">
     
-    <nav class="bg-dark-surface/60 border-b border-dark-border/80 px-4 py-2.5 sticky top-[69px] z-30 backdrop-blur-md">
+    <!-- КАТЕГОРИИ И ФИЛЬТРЫ -->
+    <nav class="bg-cyber-surface/90 border-b border-cyber-border px-4 py-3 sticky top-[65px] z-40 backdrop-blur-md">
       <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
         
         <div class="flex items-center gap-2.5 flex-shrink-0" id="filterTabsGroup">
-          <button onclick="filterMedia('all')" data-category="all" class="cat-pill px-4 py-2 rounded-xl text-xs font-black bg-brand-600 text-white shadow-neon-red transition-all duration-300 transform hover:scale-105">
-            <i class="fa-solid fa-layer-group mr-1.5"></i>Все
+          <button onclick="filterMedia('all')" data-category="all" class="cat-pill px-4 py-2 rounded-xl text-xs font-black bg-rose-600 text-white shadow-glow-red transition-all">
+            <i class="fa-solid fa-globe mr-1.5"></i>Все
           </button>
           
-          <!-- ВКЛАДКА ФИЛЬМЫ ОТ DEGICIE С ЯРКОЙ АНИМАЦИЕЙ -->
-          <button onclick="filterMedia('degicie_movies')" data-category="degicie_movies" class="cat-pill px-4 py-2 rounded-xl text-xs font-black bg-dark-card text-amber-300 hover:bg-dark-hover transition-all duration-300 transform hover:scale-105 border border-amber-500/50 flex items-center gap-1.5">
+          <button onclick="filterMedia('degicie_movies')" data-category="degicie_movies" class="cat-pill px-4 py-2 rounded-xl text-xs font-black bg-cyber-card text-amber-300 hover:bg-cyber-border transition-all border border-amber-500/50 flex items-center gap-1.5">
             <i class="fa-solid fa-crown text-yellow-400"></i>
             <span>Фильмы от degicie</span>
-            <span class="bg-amber-500 text-black text-[9px] px-1.5 py-0.2 rounded font-black">PRO</span>
           </button>
 
-          <button onclick="filterMedia('trend')" data-category="trend" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all duration-300 transform hover:scale-105 border border-dark-border">
+          <button onclick="filterMedia('trend')" data-category="trend" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-cyber-card text-slate-300 hover:bg-cyber-border transition-all border border-cyber-border">
             <i class="fa-solid fa-fire mr-1.5 text-amber-400"></i>В тренде
           </button>
-          <button onclick="filterMedia('video')" data-category="video" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all duration-300 transform hover:scale-105 border border-dark-border">
-            <i class="fa-solid fa-clapperboard mr-1.5 text-brand-400"></i>Видео
+          <button onclick="filterMedia('video')" data-category="video" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-cyber-card text-slate-300 hover:bg-cyber-border transition-all border border-cyber-border">
+            <i class="fa-solid fa-clapperboard mr-1.5 text-rose-400"></i>Видео
           </button>
-          <button onclick="filterMedia('photo')" data-category="photo" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all duration-300 transform hover:scale-105 border border-dark-border">
+          <button onclick="filterMedia('photo')" data-category="photo" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-cyber-card text-slate-300 hover:bg-cyber-border transition-all border border-cyber-border">
             <i class="fa-solid fa-camera mr-1.5 text-cyan-400"></i>Фото
           </button>
-          <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all duration-300 transform hover:scale-105 border border-dark-border">
-            <i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои
+          <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-cyber-card text-slate-300 hover:bg-cyber-border transition-all border border-cyber-border">
+            <i class="fa-solid fa-user mr-1.5 text-emerald-400"></i>Мои
           </button>
         </div>
 
         <div class="flex items-center gap-2 flex-shrink-0 text-xs">
-          <input type="text" id="hostingSearchInput" oninput="handleLiveSearch(this.value)" placeholder="Поиск по хостингу..." class="bg-dark-card border border-dark-border text-slate-200 rounded-xl px-3.5 py-2 text-xs placeholder-slate-500 focus:outline-none focus:border-brand-500 w-44 sm:w-60 transition-all">
-          <select id="sortSelector" onchange="changeSorting(this.value)" class="bg-dark-card border border-dark-border text-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-500 hidden sm:block">
+          <input type="text" id="hostingSearchInput" oninput="handleLiveSearch(this.value)" placeholder="Поиск..." class="bg-cyber-card border border-cyber-border text-slate-200 rounded-xl px-3.5 py-2 text-xs placeholder-slate-500 focus:outline-none focus:border-rose-500 w-44 sm:w-60">
+          <select id="sortSelector" onchange="changeSorting(this.value)" class="bg-cyber-card border border-cyber-border text-slate-300 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-rose-500 hidden sm:block">
             <option value="newest">Свежие</option>
             <option value="popular">По лайкам</option>
             <option value="views">По просмотрам</option>
@@ -198,122 +176,121 @@
     <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8">
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <div id="sectionAccentDot" class="w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red"></div>
+          <div id="sectionAccentDot" class="w-2.5 h-6 bg-gradient-to-b from-rose-500 to-amber-500 rounded-full shadow-glow-red"></div>
           <h2 id="sectionHeading" class="text-lg sm:text-xl font-black text-white tracking-tight">Все публикации</h2>
-          <span id="postsTotalCount" class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-dark-surface border border-dark-border text-slate-300">0</span>
+          <span id="postsTotalCount" class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-cyber-surface border border-cyber-border text-slate-300">0</span>
         </div>
       </div>
 
       <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 sm:gap-6"></div>
 
-      <div id="noContentState" class="hidden text-center py-20 px-4">
-        <div class="w-20 h-20 mx-auto rounded-3xl bg-dark-surface border border-dark-border flex items-center justify-center text-slate-500 text-3xl mb-4 shadow-2xl">
+      <div id="noContentState" class="hidden text-center py-24 px-4">
+        <div class="w-20 h-20 mx-auto rounded-3xl bg-cyber-surface border border-cyber-border flex items-center justify-center text-slate-500 text-3xl mb-4">
           <i class="fa-solid fa-photo-film"></i>
         </div>
-        <h3 class="text-xl font-black text-slate-200" id="noContentTitle">Пока ничего не загружено</h3>
+        <h3 class="text-xl font-black text-slate-200" id="noContentTitle">Здесь пока пусто</h3>
         <p class="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto mt-1 mb-5" id="noContentDesc">Залейте первое видео или фото!</p>
-        <button onclick="triggerUploadCheck()" class="bg-brand-600 hover:bg-brand-500 text-white font-black text-xs px-6 py-3 rounded-2xl shadow-neon-red transition-all transform hover:scale-105">Загрузить</button>
+        <button onclick="triggerUploadCheck()" class="bg-rose-600 hover:bg-rose-500 text-white font-black text-xs px-6 py-3 rounded-2xl shadow-glow-red">Загрузить файл</button>
       </div>
     </main>
   </div>
 
-  <!-- ========================================== -->
-  <!-- 3. ВКЛАДКА 2: СТРИМИНГ И КЕЙСЫ             -->
-  <!-- ========================================== -->
+  <!-- ================= РАЗДЕЛ 2: СТРИМИНГ И КЕЙСЫ ================= -->
   <div id="sectionStreamingView" class="flex flex-col flex-1 hidden">
     <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       
-      <div class="glassmorphism rounded-3xl border border-twitch-500/50 p-6 sm:p-8 shadow-2xl shadow-twitch-500/20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+      <!-- TWITCH БАННЕР -->
+      <div class="glass-panel rounded-3xl border border-twitch-500/50 p-6 sm:p-8 shadow-glow-twitch relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
         <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-twitch-500/20 rounded-full blur-3xl pointer-events-none"></div>
         
         <div class="max-w-2xl z-10">
-          <div class="inline-flex items-center gap-2 bg-twitch-500/20 border border-twitch-500/40 text-twitch-500 text-xs font-black px-3 py-1 rounded-full mb-3">
-            <i class="fa-brands fa-twitch"></i> ТРАНСЛЯЦИИ ON-AIR
+          <div class="inline-flex items-center gap-2 bg-twitch-500/20 border border-twitch-500/40 text-twitch-500 text-xs font-black px-3.5 py-1 rounded-full mb-3">
+            <i class="fa-brands fa-twitch"></i> TWITCH СТРИМЫ & АУКЦИОНЫ
           </div>
-          <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">Стримлю на Twitch & Аукционы на ножи!</h1>
+          <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">Прокачка аккаунтов & Ножи на стримах!</h1>
           <p class="text-slate-300 text-xs sm:text-sm mt-3 leading-relaxed">
-            Каждый стрим — аукционы на крутые ножи и скины, а также профессиональная прокачка ваших аккаунтов. Залетай на эфир, участвуй и забирай топовые дропы!
+            Стримлю почти каждый день на Twitch: аукционы на крутые ножи, розыгрыши и прокачка ваших игровых аккаунтов. Залетай в эфир и в наш Telegram!
           </p>
           <div class="mt-6 flex flex-wrap items-center gap-3">
-            <a href="https://www.twitch.tv/maga_trener" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-2xl bg-twitch-500 hover:bg-twitch-600 text-white font-black text-xs sm:text-sm shadow-neon-twitch flex items-center gap-2 transition-all transform hover:scale-105">
+            <a href="https://www.twitch.tv/maga_trener" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-2xl bg-twitch-500 hover:bg-twitch-600 text-white font-black text-xs sm:text-sm shadow-glow-twitch flex items-center gap-2 transition-all">
               <i class="fa-brands fa-twitch text-base"></i> Открыть Twitch (maga_trener)
             </a>
-            <a href="https://t.me/navimaga" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all transform hover:scale-105">
-              <i class="fa-brands fa-telegram text-sky-400 text-base"></i> Наш Telegram (navimaga)
+            <a href="https://t.me/navimaga" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-2xl bg-cyber-card hover:bg-cyber-border border border-cyber-border text-slate-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all">
+              <i class="fa-brands fa-telegram text-sky-400 text-base"></i> Telegram Маги (navimaga)
             </a>
           </div>
         </div>
 
-        <div class="w-full md:w-80 p-5 rounded-2xl bg-dark-card/90 border border-dark-border flex flex-col gap-3 z-10">
-          <div class="flex items-center justify-between text-xs font-bold text-slate-300 border-b border-dark-border pb-2">
+        <div class="w-full md:w-80 p-5 rounded-2xl bg-cyber-card border border-cyber-border flex flex-col gap-3 z-10">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-300 border-b border-cyber-border pb-2">
             <span>Статус канала:</span>
-            <span class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Активен</span>
+            <span class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Онлайн скоро</span>
           </div>
-          <div class="text-xs text-slate-400 space-y-1.5">
-            <div>🎮 **Игра:** CS2 / Кейсы</div>
-            <div>🔪 **Аукционы:** Почти каждый стрим</div>
-            <div>⚡ **Услуга:** Прокачка вашего аккаунта</div>
+          <div class="text-xs text-slate-400 space-y-1.5 font-medium">
+            <div>🔪 Аукционы на ножи: <b>Почти каждый стрим</b></div>
+            <div>⚡ Услуга: <b>Прокачка аккаунтов Твич</b></div>
           </div>
           <a href="https://www.twitch.tv/maga_trener" target="_blank" class="w-full py-2.5 rounded-xl bg-twitch-500 hover:bg-twitch-600 text-white font-black text-xs text-center transition-colors">
-            Смотреть стрим
+            Перейти на трансляцию
           </a>
         </div>
       </div>
 
+      <!-- ВИТРИНА КЕЙСОВ -->
       <div>
         <div class="flex items-center justify-between mb-5">
           <div class="flex items-center gap-3">
-            <div class="w-2.5 h-6 bg-amber-500 rounded-full shadow-neon-degicie"></div>
-            <h2 class="text-lg sm:text-xl font-black text-white tracking-tight">Проверенные сайты с кейсами & ТГК</h2>
+            <div class="w-2.5 h-6 bg-amber-500 rounded-full shadow-glow-gold"></div>
+            <h2 class="text-lg sm:text-xl font-black text-white tracking-tight">Сайты с кейсами & ТГК канал</h2>
           </div>
-          <a href="https://t.me/navicas" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl transition-all transform hover:scale-105">
+          <a href="https://t.me/navicas" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-3.5 py-2 rounded-xl">
             <i class="fa-brands fa-telegram"></i> ТГК с кейсами (navicas)
           </a>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           
-          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+          <div class="cyber-card cyber-card-gold rounded-2xl overflow-hidden flex flex-col">
             <div class="aspect-[3/4] bg-black relative overflow-hidden">
               <img src="banner_upgrader.jpg" alt="Upgrader" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500'" class="w-full h-full object-cover">
               <span class="absolute top-2 left-2 bg-black/85 text-yellow-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-yellow-500/40">Upgrader</span>
             </div>
-            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+            <div class="p-4 flex flex-col flex-1 justify-between bg-cyber-card">
               <div class="text-xs font-extrabold text-white">Апгрейд скинов CS2</div>
-              <a href="https://upgrader.gg" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs text-center transition-colors">Перейти</a>
+              <a href="https://upgrader.gg" target="_blank" class="mt-3 w-full py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs text-center transition-colors">Перейти</a>
             </div>
           </div>
 
-          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+          <div class="cyber-card cyber-card-gold rounded-2xl overflow-hidden flex flex-col">
             <div class="aspect-[3/4] bg-black relative overflow-hidden">
               <img src="banner_caser.jpg" alt="Caser" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500'" class="w-full h-full object-cover">
               <span class="absolute top-2 left-2 bg-black/85 text-emerald-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-emerald-500/40">Caser</span>
             </div>
-            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+            <div class="p-4 flex flex-col flex-1 justify-between bg-cyber-card">
               <div class="text-xs font-extrabold text-white">Открытие кейсов</div>
-              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs text-center transition-colors">Открыть через ТГК</a>
+              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs text-center transition-colors">Открыть через ТГК</a>
             </div>
           </div>
 
-          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+          <div class="cyber-card cyber-card-gold rounded-2xl overflow-hidden flex flex-col">
             <div class="aspect-[3/4] bg-black relative overflow-hidden">
               <img src="banner_dastskin.jpg" alt="Dastskin" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500'" class="w-full h-full object-cover">
               <span class="absolute top-2 left-2 bg-black/85 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-amber-500/40">Dastskin</span>
             </div>
-            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+            <div class="p-4 flex flex-col flex-1 justify-between bg-cyber-card">
               <div class="text-xs font-extrabold text-white">Лучшие дропы</div>
-              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs text-center transition-colors">Перейти в ТГК</a>
+              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs text-center transition-colors">Перейти в ТГК</a>
             </div>
           </div>
 
-          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+          <div class="cyber-card cyber-card-gold rounded-2xl overflow-hidden flex flex-col">
             <div class="aspect-[3/4] bg-black relative overflow-hidden">
               <img src="banner_bulldrop.jpg" alt="Bulldrop" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500'" class="w-full h-full object-cover">
               <span class="absolute top-2 left-2 bg-black/85 text-purple-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-purple-500/40">Bulldrop</span>
             </div>
-            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+            <div class="p-4 flex flex-col flex-1 justify-between bg-cyber-card">
               <div class="text-xs font-extrabold text-white">Промокод МАГА (+20%)</div>
-              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs text-center transition-colors">Забрать бонус</a>
+              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs text-center transition-colors">Забрать бонус</a>
             </div>
           </div>
 
@@ -323,17 +300,15 @@
     </main>
   </div>
 
-  <!-- ========================================== -->
-  <!-- 4. ФУТЕР                                   -->
-  <!-- ========================================== -->
-  <footer class="glassmorphism border-t border-dark-border mt-auto py-8 px-4 text-xs text-slate-400">
+  <!-- ================= ФУТЕР ================= -->
+  <footer class="glass-panel border-t border-cyber-border mt-auto py-8 px-4 text-xs text-slate-400">
     <div class="max-w-[1700px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black text-sm shadow-neon-red">М</div>
+        <div class="w-8 h-8 rounded-xl bg-rose-600 flex items-center justify-center text-white font-black text-sm shadow-glow-red">М</div>
         <div>
           <span class="font-black text-slate-200">магахоствидео 2026</span>
           <span class="text-slate-600 mx-1.5">•</span>
-          <span>Твич стримы & Кейсы</span>
+          <span>Все права защищены</span>
         </div>
       </div>
 
@@ -343,97 +318,111 @@
         <a href="https://www.twitch.tv/maga_trener" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-twitch mr-1 text-twitch-500"></i> twitch.tv/maga_trener</a>
       </div>
 
-      <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-300 transition-colors transform hover:scale-105">
+      <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2.5 rounded-xl bg-cyber-card hover:bg-cyber-border border border-cyber-border text-slate-300 transition-colors">
         <i class="fa-solid fa-arrow-up mr-1"></i> Наверх
       </button>
     </div>
   </footer>
 
-  <!-- МОДАЛКИ (АВТОРИЗАЦИЯ, ЗАГРУЗКА, ПЛЕЕР) -->
+  <!-- ================= МОДАЛКИ (ВХОД, ЗАГРУЗКА, ПЛЕЕР) ================= -->
   <div id="authModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glassmorphism max-w-md w-full rounded-3xl border border-dark-border p-6 sm:p-8 shadow-2xl relative animate-modal">
-      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border"><i class="fa-solid fa-xmark"></i></button>
+    <div class="glass-panel max-w-md w-full rounded-3xl border border-cyber-border p-6 sm:p-8 shadow-2xl relative animate-enter">
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-cyber-card flex items-center justify-center border border-cyber-border"><i class="fa-solid fa-xmark"></i></button>
       <div class="text-center mb-6">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-neon-red mb-3">М</div>
-        <h3 id="authModalTitle" class="text-xl font-black text-white">Регистрация</h3>
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-rose-600 to-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-glow-red mb-3">М</div>
+        <h3 class="text-xl font-black text-white">Авторизация</h3>
       </div>
-      <div class="grid grid-cols-2 p-1 bg-dark-card rounded-2xl border border-dark-border mb-5 text-xs font-black">
-        <button id="tabRegister" onclick="switchAuthTab('register')" class="py-2.5 rounded-xl bg-brand-600 text-white shadow">Регистрация</button>
-        <button id="tabLogin" onclick="switchAuthTab('login')" class="py-2.5 rounded-xl text-slate-400 hover:text-white">Вход</button>
+      <div class="grid grid-cols-2 p-1 bg-cyber-card rounded-2xl border border-cyber-border mb-5 text-xs font-black">
+        <button id="tabRegister" onclick="switchAuthTab('register')" class="py-2.5 rounded-xl bg-rose-600 text-white shadow">Регистрация</button>
+        <button id="tabLogin" onclick="switchAuthTab('login')" class="py-2.5 rounded-xl text-slate-400">Вход</button>
       </div>
       <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
-        <input type="text" id="regUsername" required maxlength="20" placeholder="Ваш ник (например: degicie)" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-        <input type="password" id="regPassword" required minlength="4" placeholder="Пароль" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-        <div id="regErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
-        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs transition-all shadow-neon-red">Создать аккаунт</button>
+        <input type="text" id="regUsername" required maxlength="20" placeholder="Ваш ник (например: degicie)" class="w-full bg-cyber-surface border border-cyber-border rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-rose-500">
+        <input type="password" id="regPassword" required minlength="4" placeholder="Пароль" class="w-full bg-cyber-surface border border-cyber-border rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-rose-500">
+        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-black py-3.5 rounded-xl text-xs transition-all shadow-glow-red">Создать аккаунт</button>
       </form>
       <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-4 hidden">
-        <input type="text" id="loginUsername" required placeholder="Ваш ник" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-        <input type="password" id="loginPassword" required placeholder="Пароль" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-        <div id="loginErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
-        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs transition-all shadow-neon-red">Войти</button>
+        <input type="text" id="loginUsername" required placeholder="Ваш ник" class="w-full bg-cyber-surface border border-cyber-border rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-rose-500">
+        <input type="password" id="loginPassword" required placeholder="Пароль" class="w-full bg-cyber-surface border border-cyber-border rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-rose-500">
+        <button type="submit" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-black py-3.5 rounded-xl text-xs transition-all shadow-glow-red">Войти</button>
       </form>
     </div>
   </div>
 
   <div id="uploadModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glassmorphism max-w-lg w-full rounded-3xl border border-dark-border p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto animate-modal">
-      <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border"><i class="fa-solid fa-xmark"></i></button>
-      <h3 class="text-lg font-black text-white mb-4">Залить медиафайл</h3>
+    <div class="glass-panel max-w-lg w-full rounded-3xl border border-cyber-border p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto animate-enter">
+      <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-cyber-card flex items-center justify-center border border-cyber-border"><i class="fa-solid fa-xmark"></i></button>
+      <h3 class="text-lg font-black text-white mb-4">Загрузить медиафайл</h3>
       <form id="uploadForm" onsubmit="processMediaUpload(event)" class="space-y-4">
-        <div id="dropArea" onclick="document.getElementById('nativeFileInput').click()" class="border-2 border-dashed border-dark-border hover:border-brand-500 bg-dark-surface/50 rounded-2xl p-6 text-center cursor-pointer transition-all">
+        <div id="dropArea" onclick="document.getElementById('nativeFileInput').click()" class="border-2 border-dashed border-cyber-border hover:border-rose-500 bg-cyber-surface/50 rounded-2xl p-6 text-center cursor-pointer transition-all">
           <input type="file" id="nativeFileInput" accept="video/*,image/*" class="hidden" onchange="onFileChosen(this.files[0])"/>
-          <div id="dropPrompt"><i class="fa-solid fa-file-video text-3xl text-brand-500 mb-2"></i><p class="text-xs font-bold text-slate-200">Выберите видео или фото</p></div>
+          <div id="dropPrompt"><i class="fa-solid fa-cloud-arrow-up text-3xl text-rose-500 mb-2"></i><p class="text-xs font-bold text-slate-200">Нажмите для выбора видео или фото</p></div>
           <div id="dropPreviewBox" class="hidden text-xs text-emerald-400 font-bold"></div>
         </div>
-        <div id="degicieMovieOptionBox" class="p-3 rounded-2xl bg-dark-card border border-amber-500/40 flex items-center justify-between">
-          <div class="text-xs font-black text-amber-300"><i class="fa-solid fa-crown mr-1"></i>Фильм от degicie</div>
+        <div id="degicieMovieOptionBox" class="p-3.5 rounded-2xl bg-cyber-card border border-amber-500/40 flex items-center justify-between">
+          <div class="text-xs font-black text-amber-300"><i class="fa-solid fa-crown mr-1.5"></i>Фильм от degicie</div>
           <input type="checkbox" id="isDegicieMovieCheck" class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
         </div>
-        <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Название" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-        <textarea id="uploadDescInput" rows="2" maxlength="300" placeholder="Описание" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500 resize-none"></textarea>
-        <div id="uploadFormAlert" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
-        <button type="submit" id="uploadSubmitBtn" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-2xl text-xs transition-all shadow-neon-red">Опубликовать</button>
+        <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Название публикации" class="w-full bg-cyber-surface border border-cyber-border rounded-xl px-3.5 py-3 text-xs text-white focus:outline-none focus:border-rose-500">
+        <textarea id="uploadDescInput" rows="2" maxlength="300" placeholder="Описание..." class="w-full bg-cyber-surface border border-cyber-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-rose-500 resize-none"></textarea>
+        <button type="submit" id="uploadSubmitBtn" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-black py-3.5 rounded-xl text-xs transition-all shadow-glow-red">Опубликовать</button>
       </form>
     </div>
   </div>
 
-  <div id="viewerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-0 sm:p-4">
-    <div class="glassmorphism w-full max-w-6xl h-full sm:h-[92vh] sm:rounded-3xl border border-dark-border shadow-2xl flex flex-col lg:flex-row overflow-hidden animate-modal">
-      <div class="lg:w-2/3 bg-black flex flex-col justify-center items-center relative border-b lg:border-b-0 lg:border-r border-dark-border">
-        <button onclick="closeViewerModal()" class="absolute top-4 right-4 z-30 w-8 h-8 rounded-full bg-black/80 hover:bg-rose-600 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
-        <div id="mediaStage" class="w-full h-full flex items-center justify-center max-h-[70vh] lg:max-h-full"></div>
+  <!-- РАБОЧИЙ ПОЛНОРАЗМЕРНЫЙ ПЛЕЕР -->
+  <div id="viewerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-2xl hidden flex items-center justify-center p-0 sm:p-4">
+    <div class="glass-panel w-full max-w-6xl h-full sm:h-[92vh] sm:rounded-3xl border border-cyber-border shadow-2xl flex flex-col lg:flex-row overflow-hidden animate-enter">
+      
+      <!-- ПЛЕЕР -->
+      <div class="lg:w-2/3 bg-black flex flex-col justify-center items-center relative border-b lg:border-b-0 lg:border-r border-cyber-border">
+        <button onclick="closeViewerModal()" class="absolute top-4 right-4 z-30 w-9 h-9 rounded-full bg-black/80 hover:bg-rose-600 text-white flex items-center justify-center text-xs transition-colors">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+        <div id="mediaStage" class="w-full h-full flex items-center justify-center bg-black"></div>
       </div>
-      <div class="lg:w-1/3 flex flex-col bg-dark-surface overflow-hidden">
-        <div class="p-4 border-b border-dark-border">
+
+      <!-- ИНФО И КОММЕНТАРИИ -->
+      <div class="lg:w-1/3 flex flex-col bg-cyber-surface overflow-hidden">
+        <div class="p-4 border-b border-cyber-border">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2.5">
-              <img id="viewerAuthorAvatar" src="" class="w-9 h-9 rounded-xl object-cover bg-dark-card">
+              <img id="viewerAuthorAvatar" src="" class="w-9 h-9 rounded-xl object-cover bg-cyber-card border border-cyber-border">
               <div><h4 id="viewerAuthorName" class="text-xs font-bold text-white"></h4><div id="viewerPostDate" class="text-[10px] text-slate-400"></div></div>
             </div>
-            <button id="viewerDeleteBtn" onclick="deleteCurrentViewingPost()" class="hidden text-brand-400 text-xs px-2.5 py-1 rounded-lg bg-brand-950/60 border border-brand-800">Удалить</button>
+            <button id="viewerDeleteBtn" onclick="deleteCurrentViewingPost()" class="hidden text-rose-400 text-xs px-2.5 py-1 rounded-lg bg-rose-950/60 border border-rose-800">Удалить</button>
           </div>
-          <h2 id="viewerPostTitle" class="text-sm font-black text-white"></h2>
-          <p id="viewerPostDescription" class="text-xs text-slate-300 mt-1 max-h-20 overflow-y-auto"></p>
+          <h2 id="viewerPostTitle" class="text-sm sm:text-base font-black text-white"></h2>
+          <p id="viewerPostDescription" class="text-xs text-slate-300 mt-1 max-h-24 overflow-y-auto"></p>
+          <div class="flex items-center justify-between pt-3 mt-3 border-t border-cyber-border text-xs">
+            <button onclick="handleLikeToggle()" id="viewerLikeBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyber-card border border-cyber-border text-xs">
+              <i id="viewerLikeIcon" class="fa-regular fa-heart"></i>
+              <span id="viewerLikesCount">0</span>
+            </button>
+            <span class="text-[11px] text-slate-400"><i class="fa-regular fa-eye mr-1"></i><span id="viewerViewsCount">0</span> просмотров</span>
+          </div>
         </div>
+
         <div class="flex-1 p-4 overflow-y-auto space-y-2.5" id="commentsContainer"></div>
-        <div class="p-3 bg-dark-surface border-t border-dark-border">
+
+        <div class="p-3 bg-cyber-surface border-t border-cyber-border">
           <form onsubmit="handleSendComment(event)" class="flex gap-2">
-            <input type="text" id="commentTextInput" maxlength="150" placeholder="Комментарий..." class="flex-1 bg-dark-card border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-            <button type="submit" class="p-2.5 rounded-xl bg-brand-600 text-white text-xs"><i class="fa-solid fa-paper-plane"></i></button>
+            <input type="text" id="commentTextInput" maxlength="150" placeholder="Написать отзыв..." class="flex-1 bg-cyber-card border border-cyber-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-rose-500">
+            <button type="submit" class="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs"><i class="fa-solid fa-paper-plane"></i></button>
           </form>
         </div>
       </div>
+
     </div>
   </div>
 
   <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
-    <div class="glassmorphism bg-dark-card text-white px-4 py-3 rounded-2xl border border-brand-500 text-xs font-bold shadow-neon-red flex items-center gap-2">
-      <i class="fa-solid fa-circle-check text-brand-400"></i><span id="toastMessage"></span>
+    <div class="glass-panel bg-cyber-card text-white px-4 py-3 rounded-2xl border border-rose-500 text-xs font-bold shadow-glow-red flex items-center gap-2">
+      <i class="fa-solid fa-circle-check text-rose-400"></i><span id="toastMessage"></span>
     </div>
   </div>
 
-  <!-- СКРИПТ -->
+  <!-- СКРИПТ (ПЛЕР И БАЗА ИЗОЛИРОВАНЫ ДЛЯ ИДЕАЛЬНОЙ РАБОТЫ) -->
   <script>
     const ModerationEngine = {
       banned: ['порно', 'porno', 'porn', 'xxx', 'секс', 'sex', 'nsfw', 'сиськи', 'член', 'хуй', 'пизда', 'ебать', 'бля', 'сука', 'мудак', 'залупа', 'дрочить', 'хентай', 'голая', 'голый'],
@@ -467,7 +456,7 @@
     }
 
     const DatabaseEngine = {
-      dbName: 'MagaHostStreamHub_DB',
+      dbName: 'MagaHostUltra_DB',
       version: 1,
       db: null,
       init() {
@@ -551,10 +540,10 @@
     function renderUserProfileBar() {
       const bar = document.getElementById('userProfileBar');
       if (!AppState.currentUser) {
-        bar.innerHTML = `<button onclick="openAuthModal()" class="flex items-center gap-1.5 bg-dark-card hover:bg-dark-hover text-slate-200 border border-dark-border px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all transform hover:scale-105"><i class="fa-solid fa-right-to-bracket text-brand-400"></i><span>Вход</span></button>`;
+        bar.innerHTML = `<button onclick="openAuthModal()" class="flex items-center gap-1.5 bg-cyber-card hover:bg-cyber-border text-slate-200 border border-cyber-border px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all"><i class="fa-solid fa-right-to-bracket text-rose-500"></i><span>Вход</span></button>`;
       } else {
         const isDegicie = AppState.currentUser.username.toLowerCase() === 'degicie';
-        bar.innerHTML = `<div class="flex items-center gap-2 bg-dark-surface border ${isDegicie ? 'border-amber-500/60 shadow-neon-degicie' : 'border-dark-border'} py-1 px-2.5 rounded-2xl"><img src="${AppState.currentUser.avatar}" class="w-7 h-7 rounded-xl object-cover"><span class="text-xs font-bold text-white max-w-[90px] truncate hidden xs:inline">${AppState.currentUser.username}</span><button onclick="handleUserLogout()" class="p-1 text-slate-400 hover:text-brand-400 text-xs ml-1"><i class="fa-solid fa-arrow-right-from-bracket"></i></button></div>`;
+        bar.innerHTML = `<div class="flex items-center gap-2 bg-cyber-surface border ${isDegicie ? 'border-amber-500/60 shadow-glow-gold' : 'border-cyber-border'} py-1 px-2.5 rounded-2xl"><img src="${AppState.currentUser.avatar}" class="w-7 h-7 rounded-xl object-cover"><span class="text-xs font-bold text-white max-w-[90px] truncate hidden xs:inline">${AppState.currentUser.username}</span><button onclick="handleUserLogout()" class="p-1 text-slate-400 hover:text-rose-400 text-xs ml-1"><i class="fa-solid fa-arrow-right-from-bracket"></i></button></div>`;
       }
     }
 
@@ -567,13 +556,13 @@
       if (tab === 'hosting') {
         hView.classList.remove('hidden');
         sView.classList.add('hidden');
-        tH.className = 'px-5 py-2 rounded-xl text-xs font-black bg-brand-600 text-white shadow-neon-red transition-all duration-300 transform hover:scale-105';
-        tS.className = 'px-5 py-2 rounded-xl text-xs font-black text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center gap-1.5';
+        tH.className = 'px-5 py-2 rounded-xl text-xs font-black bg-rose-600 text-white shadow-glow-red transition-all';
+        tS.className = 'px-5 py-2 rounded-xl text-xs font-black text-slate-400 hover:text-white transition-all flex items-center gap-1.5';
       } else {
         hView.classList.add('hidden');
         sView.classList.remove('hidden');
-        tS.className = 'px-5 py-2 rounded-xl text-xs font-black bg-twitch-500 text-white shadow-neon-twitch transition-all duration-300 transform hover:scale-105 flex items-center gap-1.5';
-        tH.className = 'px-5 py-2 rounded-xl text-xs font-black text-slate-300 hover:text-white transition-all duration-300 transform hover:scale-105';
+        tS.className = 'px-5 py-2 rounded-xl text-xs font-black bg-twitch-500 text-white shadow-glow-twitch transition-all flex items-center gap-1.5';
+        tH.className = 'px-5 py-2 rounded-xl text-xs font-black text-slate-400 hover:text-white transition-all';
       }
     }
 
@@ -582,8 +571,8 @@
     function switchAuthTab(tab) {
       const tabR = document.getElementById('tabRegister'); const tabL = document.getElementById('tabLogin');
       const fR = document.getElementById('formRegister'); const fL = document.getElementById('formLogin');
-      if (tab === 'register') { tabR.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow'; tabL.className = 'py-2.5 rounded-xl text-slate-400'; fR.classList.remove('hidden'); fL.classList.add('hidden'); }
-      else { tabL.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow'; tabR.className = 'py-2.5 rounded-xl text-slate-400'; fL.classList.remove('hidden'); fR.classList.add('hidden'); }
+      if (tab === 'register') { tabR.className = 'py-2.5 rounded-xl bg-rose-600 text-white shadow'; tabL.className = 'py-2.5 rounded-xl text-slate-400'; fR.classList.remove('hidden'); fL.classList.add('hidden'); }
+      else { tabL.className = 'py-2.5 rounded-xl bg-rose-600 text-white shadow'; tabR.className = 'py-2.5 rounded-xl text-slate-400'; fL.classList.remove('hidden'); fR.classList.add('hidden'); }
     }
 
     async function handleRegisterSubmit(e) {
@@ -614,7 +603,7 @@
       if (!file) return;
       AppState.selectedUploadFile = file;
       document.getElementById('dropPrompt').classList.add('hidden');
-      document.getElementById('dropPreviewBox').textContent = `Выбран: ${file.name}`;
+      document.getElementById('dropPreviewBox').textContent = `Выбран файл: ${file.name}`;
       document.getElementById('dropPreviewBox').classList.remove('hidden');
       const tIn = document.getElementById('uploadTitleInput');
       if (!tIn.value) tIn.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
@@ -671,19 +660,19 @@
       grid.innerHTML = list.map(post => {
         const isDeg = post.isDegicieMovie || post.authorName.toLowerCase() === 'degicie';
         return `
-          <div onclick="openViewerModal('${post.id}')" class="glassmorphism rounded-2xl overflow-hidden ${isDeg ? 'degicie-card border-amber-500/60 shadow-neon-degicie' : 'card-zoom border-dark-border'} cursor-pointer flex flex-col group">
+          <div onclick="openViewerModal('${post.id}')" class="cyber-card rounded-2xl overflow-hidden ${isDeg ? 'border-amber-500/60 shadow-glow-gold' : ''} cursor-pointer flex flex-col group">
             <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden">
               <img src="${post.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-              ${isDeg ? '<span class="absolute top-2 left-2 bg-gradient-to-r from-amber-500 to-amber-700 text-white text-[9px] font-black px-2.5 py-0.5 rounded-lg shadow flex items-center gap-1"><i class="fa-solid fa-crown text-[8px]"></i> Фильм degicie</span>' : ''}
-              <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">${post.type === 'video' ? 'Видео' : 'Фото'}</span>
+              ${isDeg ? '<span class="absolute top-2 left-2 bg-amber-500 text-black text-[9px] font-black px-2 py-0.5 rounded shadow">Фильм degicie</span>' : ''}
+              <span class="absolute bottom-2 right-2 bg-black/80 px-2.5 py-0.5 rounded text-[10px] font-mono text-white">${post.type === 'video' ? 'Видео' : 'Фото'}</span>
             </div>
-            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card/40">
+            <div class="p-3.5 flex flex-col flex-1 justify-between bg-cyber-card">
               <div>
                 <div class="flex items-center gap-2 mb-1"><img src="${post.authorAvatar}" class="w-5 h-5 rounded-full"><span class="text-[11px] font-bold ${isDeg ? 'text-amber-300' : 'text-slate-300'} truncate">${post.authorName}</span></div>
                 <h3 class="text-xs sm:text-sm font-extrabold text-white line-clamp-1">${post.title}</h3>
               </div>
-              <div class="flex items-center justify-between pt-2.5 mt-2 border-t border-dark-border/60 text-[11px] text-slate-400">
-                <span><i class="fa-regular fa-heart text-brand-400 mr-1"></i>${post.likesCount || 0}</span>
+              <div class="flex items-center justify-between pt-2.5 mt-2 border-t border-cyber-border text-[11px] text-slate-400">
+                <span><i class="fa-regular fa-heart text-rose-500 mr-1"></i>${post.likesCount || 0}</span>
                 <span><i class="fa-regular fa-comment mr-1"></i>${post.comments ? post.comments.length : 0}</span>
               </div>
             </div>
@@ -692,6 +681,7 @@
       }).join('');
     }
 
+    // ИДЕАЛЬНО РАБОЧИЙ ПЛЕЕР С BLOB
     async function openViewerModal(postId) {
       AppState.activePostId = postId;
       const post = AppState.posts.find(p => p.id === postId);
@@ -710,13 +700,19 @@
       if (AppState.currentActiveBlobUrl) URL.revokeObjectURL(AppState.currentActiveBlobUrl);
       AppState.currentActiveBlobUrl = URL.createObjectURL(post.mediaBlob);
 
-      stage.innerHTML = post.type === 'video' ? `<video src="${AppState.currentActiveBlobUrl}" controls autoplay playsinline class="max-h-[70vh] w-auto object-contain"></video>` : `<img src="${AppState.currentActiveBlobUrl}" class="max-h-[70vh] w-auto object-contain">`;
+      if (post.type === 'video') {
+        stage.innerHTML = `<video src="${AppState.currentActiveBlobUrl}" controls autoplay playsinline class="max-h-[75vh] max-w-full w-auto object-contain"></video>`;
+      } else {
+        stage.innerHTML = `<img src="${AppState.currentActiveBlobUrl}" class="max-h-[75vh] max-w-full w-auto object-contain">`;
+      }
+
       renderComments(post);
       document.getElementById('viewerModal').classList.remove('hidden');
     }
 
     function closeViewerModal() {
-      document.getElementById('mediaStage').innerHTML = '';
+      const stage = document.getElementById('mediaStage');
+      stage.innerHTML = '';
       if (AppState.currentActiveBlobUrl) { URL.revokeObjectURL(AppState.currentActiveBlobUrl); AppState.currentActiveBlobUrl = null; }
       document.getElementById('viewerModal').classList.add('hidden');
       renderMediaGrid();
@@ -751,7 +747,7 @@
     function renderComments(post) {
       const box = document.getElementById('commentsContainer');
       const list = post.comments || [];
-      box.innerHTML = list.length === 0 ? '<p class="text-xs text-slate-500 text-center py-4">Нет отзывов</p>' : list.map(c => `<div class="bg-dark-card/60 p-2.5 rounded-xl border border-dark-border/60"><div class="flex items-center gap-2 mb-1"><img src="${c.authorAvatar}" class="w-5 h-5 rounded-full"><span class="text-xs font-bold text-slate-200">${c.authorName}</span></div><p class="text-xs text-slate-300">${c.text}</p></div>`).join('');
+      box.innerHTML = list.length === 0 ? '<p class="text-xs text-slate-500 text-center py-4">Нет отзывов</p>' : list.map(c => `<div class="bg-cyber-surface p-2.5 rounded-xl border border-cyber-border"><div class="flex items-center gap-2 mb-1"><img src="${c.authorAvatar}" class="w-5 h-5 rounded-full"><span class="text-xs font-bold text-slate-200">${c.authorName}</span></div><p class="text-xs text-slate-300">${c.text}</p></div>`).join('');
     }
 
     async function deleteCurrentViewingPost() {
@@ -764,25 +760,6 @@
     function filterMedia(cat) {
       AppState.currentCategory = cat;
       switchMainTab('hosting');
-
-      // Плавная подсветка активной кнопки вкладки
-      document.querySelectorAll('#filterTabsGroup .cat-pill').forEach(btn => {
-        const c = btn.getAttribute('data-category');
-        if (c === cat) {
-          if (c === 'degicie_movies') {
-            btn.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-amber-600 via-degicie-500 to-amber-700 text-white shadow-neon-degicie border border-amber-400/50 flex items-center gap-1.5 scale-105 transition-all';
-          } else {
-            btn.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-black bg-brand-600 text-white shadow-neon-red transition-all scale-105';
-          }
-        } else {
-          if (c === 'degicie_movies') {
-            btn.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-black bg-dark-card text-amber-300 hover:bg-dark-hover transition-all border border-amber-500/40 flex items-center gap-1.5';
-          } else {
-            btn.className = 'cat-pill px-4 py-2 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border';
-          }
-        }
-      });
-
       renderMediaGrid();
     }
 
