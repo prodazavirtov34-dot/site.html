@@ -15,6 +15,7 @@
 </head>
 <body class="min-h-screen flex flex-col">
 
+    <!-- ХЭДЕР -->
     <header class="bg-[#18181b] border-b border-[#26262c] px-6 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <div class="twitch-purple text-white p-2.5 rounded-xl font-bold text-xl flex items-center justify-center shadow-lg shadow-purple-900/30">
@@ -22,10 +23,11 @@
             </div>
             <div>
                 <h1 class="font-extrabold text-xl tracking-tight text-white">Twitch PointAuction</h1>
-                <p class="text-xs text-zinc-400">Аукцион за баллы канала</p>
+                <p class="text-xs text-zinc-400">Аукцион за баллы канала & Рулетка</p>
             </div>
         </div>
 
+        <!-- АВТОРИЗАЦИЯ ТВИЧ -->
         <div id="auth-container">
             <button onclick="loginWithTwitch()" class="twitch-purple text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg flex items-center space-x-2.5 transition transform active:scale-95 cursor-pointer">
                 <i class="fa-brands fa-twitch text-lg"></i>
@@ -34,7 +36,10 @@
         </div>
     </header>
 
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- ЛЕВАЯ КОЛОНКА -->
         <div class="space-y-6">
             <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -43,7 +48,7 @@
                 <form onsubmit="addLot(event)" class="space-y-4">
                     <div>
                         <label class="block text-xs font-medium text-zinc-400 mb-1">Название лота</label>
-                        <input type="text" id="lot-title" required placeholder="Например: Пройти игру" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <input type="text" id="lot-title" required placeholder="Например: Играем в Доту" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-zinc-400 mb-1">Начальная ставка (баллы 🪙)</label>
@@ -53,21 +58,26 @@
                 </form>
             </div>
 
+            <!-- СИМУЛЯТОР БАЛЛОВ -->
             <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
                 <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
                     <i class="fa-solid fa-bolt text-amber-400"></i> Симулятор ставок
                 </h2>
+                <p class="text-xs text-zinc-400 mb-4">Тест списания баллов без дублей.</p>
                 <div class="space-y-3">
                     <input type="text" id="sim-user" placeholder="Ник зрителя (@Username)" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
                     <div class="grid grid-cols-2 gap-2">
                         <input type="number" id="sim-amount" placeholder="Баллы" value="500" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
                         <select id="sim-lot-select" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"></select>
                     </div>
-                    <button onclick="simulateRedemption()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-2 rounded-xl transition cursor-pointer text-sm">Закинуть баллы</button>
+                    <button onclick="simulateRedemption()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-2 rounded-xl transition cursor-pointer text-sm">
+                        Закинуть баллы
+                    </button>
                 </div>
             </div>
         </div>
 
+        <!-- ПРАВАЯ КОЛОНКА -->
         <div class="lg:col-span-2 space-y-6">
             <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
                 <div class="flex items-center justify-between mb-4">
@@ -75,7 +85,9 @@
                         <i class="fa-solid fa-list-check text-purple-400"></i> Активные лоты
                     </h2>
                     <div class="flex items-center gap-2">
-                        <button onclick="spinRoulette()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer">Крутить рулетку</button>
+                        <button onclick="spinRoulette()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-rotate"></i> Крутить рулетку
+                        </button>
                         <button onclick="clearLots()" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-3 py-2 rounded-xl text-xs transition cursor-pointer">Очистить</button>
                     </div>
                 </div>
@@ -84,6 +96,7 @@
                 </div>
             </div>
 
+            <!-- РУЛЕТКА -->
             <div id="roulette-box" class="hidden bg-[#18181b] border border-purple-500/50 rounded-2xl p-6 text-center shadow-2xl relative overflow-hidden">
                 <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 mb-1">Победитель рулетки</h3>
                 <div id="roulette-winner" class="text-3xl font-extrabold text-white mt-2 animate-bounce">Крутим...</div>
@@ -92,7 +105,7 @@
     </main>
 
     <script>
-        const CLIENT_ID = 'jwk4v6qrymwe3odjf13oaif4';
+        const CLIENT_ID = '66s05bbnnw3g0qkykye9ck3f0k3ui3';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
 
         let lots = JSON.parse(localStorage.getItem('twitch_auction_lots')) || [];
@@ -117,7 +130,12 @@
         };
 
         function loginWithTwitch() {
-            const scopes = ['channel:read:redemptions', 'channel:manage:redemptions', 'user:read:email'].join('%20');
+            const scopes = [
+                'channel:read:redemptions', 
+                'channel:manage:redemptions', 
+                'user:read:email'
+            ].join('%20');
+
             const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}&force_verify=true`;
             window.location.href = authUrl;
         }
@@ -125,7 +143,10 @@
         async function fetchUserProfile(token) {
             try {
                 const response = await fetch('https://api.twitch.tv/helix/users', {
-                    headers: { 'Client-ID': CLIENT_ID, 'Authorization': `Bearer ${token}` }
+                    headers: {
+                        'Client-ID': CLIENT_ID,
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
                 const data = await response.json();
                 if (data.data && data.data.length > 0) {
@@ -140,8 +161,12 @@
                             <button onclick="logout()" class="ml-3 text-zinc-400 hover:text-red-400 text-xs"><i class="fa-solid fa-right-from-bracket"></i></button>
                         </div>
                     `;
-                } else { logout(); }
-            } catch (err) { logout(); }
+                } else {
+                    logout();
+                }
+            } catch (err) {
+                logout();
+            }
         }
 
         function logout() {
@@ -159,6 +184,7 @@
             const title = document.getElementById('lot-title').value.trim();
             const bid = parseInt(document.getElementById('lot-bid').value) || 0;
             if(!title) return;
+
             lots.push({ id: Date.now(), title: title, bid: bid, leader: 'Нет ставок' });
             document.getElementById('lot-title').value = '';
             saveState();
@@ -169,10 +195,12 @@
             const listEl = document.getElementById('lots-list');
             const selectEl = document.getElementById('sim-lot-select');
             selectEl.innerHTML = '';
+
             if (lots.length === 0) {
                 listEl.innerHTML = `<div class="text-center py-10 text-zinc-500 text-sm">Список лотов пуст.</div>`;
                 return;
             }
+
             listEl.innerHTML = '';
             lots.forEach((lot, index) => {
                 const opt = document.createElement('option');
@@ -200,6 +228,7 @@
             const usernameInput = document.getElementById('sim-user').value.trim();
             const amount = parseInt(document.getElementById('sim-amount').value) || 0;
             const lotId = parseInt(document.getElementById('sim-lot-select').value);
+
             if (!usernameInput || amount <= 0 || !lotId) return;
 
             const txId = `${usernameInput}_${amount}_${lotId}_${Date.now()}`;
