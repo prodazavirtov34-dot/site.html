@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>магахоствидео — Кино & Медиа Хостинг</title>
+  <title>магахоствидео — Стриминг, Кейсы & Медиа</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -17,10 +17,9 @@
               400: '#fb7185', 500: '#f43f5e', 600: '#e11d48', 700: '#be123c',
               800: '#9f1239', 900: '#881337', 950: '#4c0519'
             },
-            degicie: {
-              400: '#fbbf24',
-              500: '#f59e0b',
-              600: '#d97706'
+            twitch: {
+              500: '#9146FF',
+              600: '#772ce8'
             },
             dark: {
               bg: '#05070d',
@@ -32,8 +31,8 @@
           },
           boxShadow: {
             'neon-red': '0 0 25px -4px rgba(225, 29, 72, 0.45)',
-            'neon-degicie': '0 0 30px -4px rgba(245, 158, 11, 0.45)',
-            'neon-gold': '0 0 25px -4px rgba(234, 179, 8, 0.35)'
+            'neon-twitch': '0 0 30px -4px rgba(145, 70, 255, 0.45)',
+            'neon-degicie': '0 0 30px -4px rgba(245, 158, 11, 0.45)'
           }
         }
       }
@@ -48,7 +47,7 @@
     ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
 
     .glassmorphism {
-      background: rgba(11, 16, 29, 0.85);
+      background: rgba(11, 16, 29, 0.88);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(28, 40, 68, 0.85);
@@ -66,10 +65,6 @@
     .degicie-card:hover {
       box-shadow: 0 18px 32px -10px rgba(245, 158, 11, 0.4) !important;
       border-color: rgba(245, 158, 11, 0.7) !important;
-    }
-
-    .banner-glow {
-      background: linear-gradient(135deg, rgba(234, 179, 8, 0.12) 0%, rgba(11, 16, 29, 0.95) 100%);
     }
 
     .maga-ad-gradient {
@@ -93,7 +88,7 @@
     <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-3">
       
       <!-- ЛОГОТИП -->
-      <div class="flex items-center gap-3 cursor-pointer select-none group" onclick="filterMedia('all')">
+      <div class="flex items-center gap-3 cursor-pointer select-none group" onclick="switchMainTab('hosting')">
         <div class="relative w-11 h-11 rounded-2xl bg-gradient-to-tr from-brand-700 via-brand-500 to-amber-500 flex items-center justify-center shadow-neon-red group-hover:scale-105 transition-transform duration-300">
           <i class="fa-solid fa-bolt text-white text-xl"></i>
           <span class="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
@@ -106,38 +101,27 @@
             <span class="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-slate-100 to-brand-400 bg-clip-text text-transparent">
               магахоствидео
             </span>
-            <span class="bg-brand-600/30 text-brand-400 border border-brand-500/40 text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase">VIP</span>
+            <span class="bg-brand-600/30 text-brand-400 border border-brand-500/40 text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase">PRO</span>
           </div>
-          <span class="text-[10px] text-slate-400 font-mono tracking-wider block -mt-1 hidden xs:block">ВИДЕО • ФОТО • ФИЛЬМЫ</span>
+          <span class="text-[10px] text-slate-400 font-mono tracking-wider block -mt-1 hidden xs:block">ХОСТИНГ • КЕЙСЫ • СТРИМЫ</span>
         </div>
       </div>
 
-      <!-- ЖИВОЙ ПОИСК -->
-      <div class="flex-1 max-w-xl mx-2 hidden md:block">
-        <div class="relative flex items-center">
-          <i class="fa-solid fa-magnifying-glass absolute left-4 text-slate-400 text-sm"></i>
-          <input 
-            type="text" 
-            id="globalSearchInput" 
-            oninput="handleLiveSearch(this.value)"
-            placeholder="Искать видео, фильмы degicie, фото, авторов..." 
-            class="w-full pl-11 pr-10 py-2.5 bg-dark-surface border border-dark-border rounded-2xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all shadow-inner"
-          />
-          <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-3.5 text-slate-500 hover:text-white hidden">
-            <i class="fa-solid fa-xmark text-sm"></i>
-          </button>
-        </div>
+      <!-- НАВИГАЦИЯ ПО РАЗДЕЛАМ (ХОСТИНГ / СТРИМИНГ) -->
+      <div class="hidden md:flex items-center gap-1 bg-dark-surface p-1 rounded-2xl border border-dark-border">
+        <button onclick="switchMainTab('hosting')" id="navTabHosting" class="px-4 py-2 rounded-xl text-xs font-black bg-brand-600 text-white shadow transition-all">
+          <i class="fa-solid fa-photo-film mr-1.5"></i>Видеохостинг
+        </button>
+        <button onclick="switchMainTab('streaming')" id="navTabStreaming" class="px-4 py-2 rounded-xl text-xs font-black text-slate-300 hover:text-white transition-all flex items-center gap-1.5">
+          <i class="fa-brands fa-twitch text-twitch-500"></i>Стриминг & Кейсы
+        </button>
       </div>
 
       <!-- КНОПКИ ВЕРХА -->
       <div class="flex items-center gap-2 sm:gap-3">
         
-        <button 
-          onclick="playRandomPost()" 
-          title="Случайное медиа" 
-          class="p-2.5 sm:px-3 sm:py-2 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-amber-400 hover:text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-all">
-          <i class="fa-solid fa-dice text-base"></i>
-          <span class="hidden lg:inline">Мне повезёт!</span>
+        <button onclick="switchMainTab('streaming')" class="md:hidden p-2.5 rounded-2xl bg-twitch-500/20 border border-twitch-500/40 text-twitch-500 font-bold text-xs flex items-center gap-1">
+          <i class="fa-brands fa-twitch text-sm"></i>
         </button>
 
         <button 
@@ -155,169 +139,194 @@
   </header>
 
   <!-- ========================================== -->
-  <!-- 2. ВЕРХНИЙ РЕКЛАМНЫЙ БАННЕР (UPGRADER)     -->
+  <!-- 2. ВКЛАДКА 1: ВИДЕОХОСТИНГ И КАТЕГОРИИ      -->
   <!-- ========================================== -->
-  <div id="topAdBanner" class="max-w-[1700px] w-full mx-auto px-3 sm:px-6 pt-3 pb-1">
-    <div class="relative w-full rounded-2xl overflow-hidden border border-yellow-500/40 banner-glow shadow-neon-gold group">
-      
-      <span class="absolute top-2 left-2 z-20 bg-black/85 text-yellow-400 border border-yellow-500/40 text-[9px] font-black px-2 py-0.5 rounded tracking-widest uppercase">
-        ⚡ РЕКЛАМА UPGRADER
-      </span>
+  <div id="sectionHostingView" class="flex flex-col flex-1">
+    
+    <!-- ПОДХОСТИНГОВЫЙ НАВИГАТОР -->
+    <nav class="bg-dark-surface/60 border-b border-dark-border/80 px-4 py-2.5 sticky top-[69px] z-30 backdrop-blur-md">
+      <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+        
+        <div class="flex items-center gap-2 flex-shrink-0" id="filterTabsGroup">
+          <button onclick="filterMedia('all')" data-category="all" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all">
+            <i class="fa-solid fa-layer-group mr-1.5"></i>Все
+          </button>
+          <button onclick="filterMedia('degicie_movies')" data-category="degicie_movies" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-600 via-degicie-500 to-amber-700 text-white hover:brightness-110 shadow-neon-degicie transition-all border border-amber-400/50 flex items-center gap-1.5">
+            <i class="fa-solid fa-crown text-yellow-200"></i>
+            <span>Фильмы от degicie</span>
+          </button>
+          <button onclick="filterMedia('trend')" data-category="trend" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+            <i class="fa-solid fa-fire mr-1.5 text-amber-400"></i>В тренде
+          </button>
+          <button onclick="filterMedia('video')" data-category="video" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+            <i class="fa-solid fa-clapperboard mr-1.5 text-brand-400"></i>Видео
+          </button>
+          <button onclick="filterMedia('photo')" data-category="photo" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+            <i class="fa-solid fa-camera mr-1.5 text-cyan-400"></i>Фото
+          </button>
+          <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
+            <i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои
+          </button>
+        </div>
 
-      <button 
-        onclick="document.getElementById('topAdBanner').style.display='none'" 
-        title="Скрыть рекламу"
-        class="absolute top-2 right-2 z-20 w-6 h-6 rounded-full bg-black/80 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center text-xs transition-colors">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
+        <div class="flex items-center gap-2 flex-shrink-0 text-xs">
+          <input type="text" id="hostingSearchInput" oninput="handleLiveSearch(this.value)" placeholder="Поиск по хостингу..." class="bg-dark-card border border-dark-border text-slate-200 rounded-xl px-3 py-1.5 text-xs placeholder-slate-500 focus:outline-none focus:border-brand-500 w-44 sm:w-60">
+          <select id="sortSelector" onchange="changeSorting(this.value)" class="bg-dark-card border border-dark-border text-slate-300 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500 hidden sm:block">
+            <option value="newest">Свежие</option>
+            <option value="popular">По лайкам</option>
+            <option value="views">По просмотрам</option>
+          </select>
+        </div>
 
-      <a href="https://upgrader.gg" target="_blank" rel="noopener noreferrer" class="block relative w-full h-24 sm:h-32 md:h-36 overflow-hidden">
-        <img 
-          src="banner.jpg" 
-          alt="UPGRADER — Апгрейд скинов" 
-          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600';"
-          class="w-full h-full object-cover object-center group-hover:scale-[1.02] transition-transform duration-500 brightness-95 group-hover:brightness-105"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
-      </a>
+      </div>
+    </nav>
 
-    </div>
+    <!-- СЕТКА МЕДИА -->
+    <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div id="sectionAccentDot" class="w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red"></div>
+          <h2 id="sectionHeading" class="text-lg sm:text-xl font-black text-white tracking-tight">Все публикации</h2>
+          <span id="postsTotalCount" class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-dark-surface border border-dark-border text-slate-300">0</span>
+        </div>
+      </div>
+
+      <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 sm:gap-6"></div>
+
+      <div id="noContentState" class="hidden text-center py-20 px-4">
+        <div class="w-20 h-20 mx-auto rounded-3xl bg-dark-surface border border-dark-border flex items-center justify-center text-slate-500 text-3xl mb-4 shadow-2xl">
+          <i class="fa-solid fa-photo-film"></i>
+        </div>
+        <h3 class="text-xl font-black text-slate-200" id="noContentTitle">Пока ничего не загружено</h3>
+        <p class="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto mt-1 mb-5" id="noContentDesc">Залейте первое видео или фото!</p>
+        <button onclick="triggerUploadCheck()" class="bg-brand-600 hover:bg-brand-500 text-white font-black text-xs px-6 py-3 rounded-2xl shadow-neon-red">Загрузить</button>
+      </div>
+    </main>
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. НАВИГАЦИЯ ПО КАТЕГОРИЯМ + ВЫБОР DEGICIE -->
+  <!-- 3. ВКЛАДКА 2: СТРИМИНГ И КЕЙСЫ (МАГА ХАБ)    -->
   <!-- ========================================== -->
-  <nav class="bg-dark-surface/60 border-b border-dark-border/80 px-4 py-2.5 sticky top-[69px] z-30 backdrop-blur-md">
-    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
+  <div id="sectionStreamingView" class="flex flex-col flex-1 hidden">
+    <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
       
-      <div class="flex items-center gap-2 flex-shrink-0" id="filterTabsGroup">
-        <button onclick="filterMedia('all')" data-category="all" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all">
-          <i class="fa-solid fa-layer-group mr-1.5"></i>Все
-        </button>
-
-        <!-- ЭКСКЛЮЗИВНАЯ ВКЛАДКА ФИЛЬМОВ ОТ DEGICIE -->
-        <button onclick="filterMedia('degicie_movies')" data-category="degicie_movies" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-600 via-degicie-500 to-amber-700 text-white hover:brightness-110 shadow-neon-degicie transition-all border border-amber-400/50 flex items-center gap-1.5">
-          <i class="fa-solid fa-crown text-yellow-200"></i>
-          <span>Фильмы от degicie</span>
-          <span class="bg-black/50 text-[10px] px-1.5 py-0.2 rounded-md font-mono">PRO</span>
-        </button>
-
-        <button onclick="filterMedia('trend')" data-category="trend" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
-          <i class="fa-solid fa-fire mr-1.5 text-amber-400"></i>В тренде
-        </button>
-        <button onclick="filterMedia('video')" data-category="video" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
-          <i class="fa-solid fa-clapperboard mr-1.5 text-brand-400"></i>Видео
-        </button>
-        <button onclick="filterMedia('photo')" data-category="photo" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
-          <i class="fa-solid fa-camera mr-1.5 text-cyan-400"></i>Фотографии
-        </button>
-        <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
-          <i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои публикации
-        </button>
-      </div>
-
-      <div class="flex items-center gap-2 flex-shrink-0 text-xs">
-        <span class="text-slate-400 hidden lg:inline">Сортировка:</span>
-        <select id="sortSelector" onchange="changeSorting(this.value)" class="bg-dark-card border border-dark-border text-slate-300 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-brand-500">
-          <option value="newest">Свежие публикации</option>
-          <option value="popular">По лайкам</option>
-          <option value="views">По просмотрам</option>
-        </select>
-      </div>
-
-    </div>
-  </nav>
-
-  <!-- ========================================== -->
-  <!-- 4. ОСНОВНОЙ КОНТЕНТНЫЙ БЛОК                -->
-  <!-- ========================================== -->
-  <main class="flex-1 max-w-[1700px] w-full mx-auto p-4 sm:p-6 lg:p-8">
-    
-    <div class="flex items-center justify-between mb-6">
-      <div class="flex items-center gap-3">
-        <div id="sectionAccentDot" class="w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red"></div>
-        <h2 id="sectionHeading" class="text-lg sm:text-xl font-black text-white tracking-tight">Все публикации</h2>
-        <span id="postsTotalCount" class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-dark-surface border border-dark-border text-slate-300">0</span>
-      </div>
-
-      <div class="text-[11px] text-slate-400 flex items-center gap-2">
-        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        <span>Платформа онлайн</span>
-      </div>
-    </div>
-
-    <!-- СЕТКА КАРТОЧЕК -->
-    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-5 sm:gap-6"></div>
-
-    <!-- БЛОК ПУСТОГО ХОСТИНГА -->
-    <div id="noContentState" class="hidden text-center py-20 px-4">
-      <div class="w-20 h-20 mx-auto rounded-3xl bg-dark-surface border border-dark-border flex items-center justify-center text-slate-500 text-3xl mb-4 shadow-2xl">
-        <i class="fa-solid fa-photo-film"></i>
-      </div>
-      <h3 class="text-xl font-black text-slate-200" id="noContentTitle">Пока ничего не загружено</h3>
-      <p class="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto mt-1 mb-5" id="noContentDesc">
-        Зарегистрируйтесь под уникальным ником и залейте первый ролик прямо сейчас!
-      </p>
-      <button onclick="triggerUploadCheck()" class="bg-brand-600 hover:bg-brand-500 text-white font-black text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-neon-red transition-all">
-        <i class="fa-solid fa-plus mr-1.5"></i> Загрузить первое медиа
-      </button>
-    </div>
-
-  </main>
-
-  <!-- ============================================================== -->
-  <!-- 5. НИЖНИЙ РЕКЛАМНЫЙ БАННЕР (МАГА РЕКОМЕНДУЕТ / СПОНСОР)         -->
-  <!-- ============================================================== -->
-  <section id="bottomMagaBanner" class="max-w-[1700px] w-full mx-auto px-3 sm:px-6 mb-8">
-    <div class="relative w-full rounded-3xl overflow-hidden border border-brand-500/40 maga-ad-gradient p-4 sm:p-6 shadow-2xl shadow-rose-950/40 flex flex-col md:flex-row items-center justify-between gap-6 group">
-      
-      <span class="absolute top-3 left-3 bg-brand-600 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full tracking-widest uppercase shadow">
-        ⭐ СПОНСОР ХОСТИНГА
-      </span>
-
-      <button 
-        onclick="document.getElementById('bottomMagaBanner').style.display='none'" 
-        title="Закрыть рекламу"
-        class="absolute top-3 right-3 w-7 h-7 rounded-full bg-black/60 hover:bg-rose-600 text-slate-300 hover:text-white flex items-center justify-center text-xs transition-colors">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <div class="flex-1 text-center md:text-left pt-6 md:pt-0 max-w-2xl">
-        <div class="inline-flex items-center gap-1.5 text-amber-400 font-bold text-xs uppercase tracking-widest mb-1.5">
-          <i class="fa-solid fa-crown text-sm"></i> Главный амбассадор проекта
+      <!-- ГЛАВНЫЙ СТРИМ-БЛОК TWITCH -->
+      <div class="glassmorphism rounded-3xl border border-twitch-500/50 p-6 sm:p-8 shadow-2xl shadow-twitch-500/20 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8">
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-twitch-500/20 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div class="max-w-2xl z-10">
+          <div class="inline-flex items-center gap-2 bg-twitch-500/20 border border-twitch-500/40 text-twitch-500 text-xs font-black px-3 py-1 rounded-full mb-3">
+            <i class="fa-brands fa-twitch"></i> ТРАНСЛЯЦИИ ON-AIR
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-black text-white tracking-tight">Стримлю на Twitch & Аукционы на ножи!</h1>
+          <p class="text-slate-300 text-xs sm:text-sm mt-3 leading-relaxed">
+            Каждый стрим — аукционы на крутые ножи и скины, а также профессиональная прокачка ваших аккаунтов. Залетай на эфир, участвуй и забирай топовые дропы!
+          </p>
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <a href="https://www.twitch.tv/maga_trener" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-2xl bg-twitch-500 hover:bg-twitch-600 text-white font-black text-xs sm:text-sm shadow-neon-twitch flex items-center gap-2 transition-all">
+              <i class="fa-brands fa-twitch text-base"></i> Открыть Twitch (maga_trener)
+            </a>
+            <a href="https://t.me/navimaga" target="_blank" rel="noopener noreferrer" class="px-6 py-3 rounded-2xl bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-200 font-bold text-xs sm:text-sm flex items-center gap-2 transition-all">
+              <i class="fa-brands fa-telegram text-sky-400 text-base"></i> Наш Telegram (navimaga)
+            </a>
+          </div>
         </div>
-        <h3 class="text-xl sm:text-2xl font-black text-white leading-tight">
-          «Качайте хостинг, смотрите фильмы degicie и заливайте контент!»
-        </h3>
-        <p class="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
-          Только чистые ролики, топовые фото, премьеры кино и моментальная скорость без лагов. Мага лично гарантирует максимальную отдачу каждому автору!
-        </p>
-        <div class="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-3">
-          <button onclick="triggerUploadCheck()" class="bg-gradient-to-r from-brand-600 to-amber-600 hover:from-brand-500 hover:to-amber-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-neon-red transition-all">
-            Залить ролик для Маги
-          </button>
-          <span class="text-[11px] text-slate-400 font-mono">#магахоствидео #degicie_cinema #газвпол</span>
+
+        <div class="w-full md:w-80 p-5 rounded-2xl bg-dark-card/90 border border-dark-border flex flex-col gap-3 z-10">
+          <div class="flex items-center justify-between text-xs font-bold text-slate-300 border-b border-dark-border pb-2">
+            <span>Статус канала:</span>
+            <span class="text-emerald-400 flex items-center gap-1.5"><i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Активен</span>
+          </div>
+          <div class="text-xs text-slate-400 space-y-1.5">
+            <div>🎮 **Игра:** CS2 / Кейсы</div>
+            <div>🔪 **Аукционы:** Почти каждый стрим</div>
+            <div>⚡ **Услуга:** Прокачка вашего аккаунта</div>
+          </div>
+          <a href="https://www.twitch.tv/maga_trener" target="_blank" class="w-full py-2.5 rounded-xl bg-twitch-500 hover:bg-twitch-600 text-white font-black text-xs text-center transition-colors">
+            Смотреть стрим
+          </a>
         </div>
       </div>
 
-      <div class="relative w-48 sm:w-56 h-64 sm:h-72 rounded-2xl overflow-hidden border-2 border-brand-500/50 shadow-neon-red flex-shrink-0 bg-black">
-        <img 
-          src="maga_ad.jpg" 
-          alt="Магахост Реклама" 
-          onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500';"
-          class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-        <div class="absolute bottom-2 inset-x-2 text-center bg-black/60 backdrop-blur-sm py-1 rounded-lg border border-white/10">
-          <span class="text-xs font-black text-amber-400 tracking-wide uppercase">Мага одобряет 👍</span>
+      <!-- ВИТРИНА БАННЕРОВ САЙТОВ С КЕЙСАМИ -->
+      <div>
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-3">
+            <div class="w-2.5 h-6 bg-amber-500 rounded-full shadow-neon-degicie"></div>
+            <h2 class="text-lg sm:text-xl font-black text-white tracking-tight">Проверенные сайты с кейсами & ТГК</h2>
+          </div>
+          <a href="https://t.me/navicas" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-3 py-1.5 rounded-xl">
+            <i class="fa-brands fa-telegram"></i> ТГК с кейсами (navicas)
+          </a>
+        </div>
+
+        <!-- Сетка баннеров -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          
+          <!-- Баннер 1: Upgrader -->
+          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+            <div class="aspect-[3/4] bg-black relative overflow-hidden">
+              <img src="banner_upgrader.jpg" alt="Upgrader" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500'" class="w-full h-full object-cover">
+              <span class="absolute top-2 left-2 bg-black/85 text-yellow-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-yellow-500/40">Upgrader</span>
+            </div>
+            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+              <div class="text-xs font-extrabold text-white">Апгрейд скинов CS2</div>
+              <a href="https://upgrader.gg" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs text-center transition-colors">
+                Перейти на сайт
+              </a>
+            </div>
+          </div>
+
+          <!-- Баннер 2: Caser -->
+          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+            <div class="aspect-[3/4] bg-black relative overflow-hidden">
+              <img src="banner_caser.jpg" alt="Caser" onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500'" class="w-full h-full object-cover">
+              <span class="absolute top-2 left-2 bg-black/85 text-emerald-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-emerald-500/40">Caser</span>
+            </div>
+            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+              <div class="text-xs font-extrabold text-white">Открытие кейсов</div>
+              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs text-center transition-colors">
+                Открыть через ТГК
+              </a>
+            </div>
+          </div>
+
+          <!-- Баннер 3: Dastskin -->
+          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+            <div class="aspect-[3/4] bg-black relative overflow-hidden">
+              <img src="banner_dastskin.jpg" alt="Dastskin" onerror="this.src='https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500'" class="w-full h-full object-cover">
+              <span class="absolute top-2 left-2 bg-black/85 text-amber-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-amber-500/40">Dastskin</span>
+            </div>
+            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+              <div class="text-xs font-extrabold text-white">Лучшие дропы</div>
+              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-bold text-xs text-center transition-colors">
+                Перейти в ТГК
+              </a>
+            </div>
+          </div>
+
+          <!-- Баннер 4: Bulldrop -->
+          <div class="glassmorphism rounded-2xl overflow-hidden border border-dark-border card-zoom flex flex-col">
+            <div class="aspect-[3/4] bg-black relative overflow-hidden">
+              <img src="banner_bulldrop.jpg" alt="Bulldrop" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500'" class="w-full h-full object-cover">
+              <span class="absolute top-2 left-2 bg-black/85 text-purple-400 text-[9px] font-black px-2 py-0.5 rounded uppercase border border-purple-500/40">Bulldrop</span>
+            </div>
+            <div class="p-3.5 flex flex-col flex-1 justify-between bg-dark-card">
+              <div class="text-xs font-extrabold text-white">Промокод МАГА (+20%)</div>
+              <a href="https://t.me/navicas" target="_blank" class="mt-3 w-full py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs text-center transition-colors">
+                Забрать бонус
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
 
-    </div>
-  </section>
+    </main>
+  </div>
 
   <!-- ========================================== -->
-  <!-- 6. ФУТЕР                                   -->
+  <!-- 4. ФУТЕР                                   -->
   <!-- ========================================== -->
   <footer class="glassmorphism border-t border-dark-border mt-auto py-8 px-4 text-xs text-slate-400">
     <div class="max-w-[1700px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -326,14 +335,14 @@
         <div>
           <span class="font-black text-slate-200">магахоствидео 2026</span>
           <span class="text-slate-600 mx-1.5">•</span>
-          <span>Народная платформа & Кинозал degicie</span>
+          <span>Твич стримы & Кейсы</span>
         </div>
       </div>
 
       <div class="flex flex-wrap items-center justify-center gap-6 text-slate-400">
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-brand-500"></i> Анти-мат фильтр</span>
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-rose-500"></i> Без 18+ и порно</span>
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-crown text-amber-500"></i> Авторский зал degicie</span>
+        <a href="https://t.me/navimaga" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-telegram mr-1 text-sky-400"></i> t.me/navimaga</a>
+        <a href="https://t.me/navicas" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-telegram mr-1 text-amber-400"></i> t.me/navicas</a>
+        <a href="https://www.twitch.tv/maga_trener" target="_blank" class="hover:text-white transition-colors"><i class="fa-brands fa-twitch mr-1 text-twitch-500"></i> twitch.tv/maga_trener</a>
       </div>
 
       <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-300 transition-colors">
@@ -342,288 +351,102 @@
     </div>
   </footer>
 
-  <!-- ============================================================== -->
-  <!-- 7. МОДАЛЬНОЕ ОКНО: АВТОРИЗАЦИЯ (РЕГИСТРАЦИЯ И ВХОД)             -->
-  <!-- ============================================================== -->
+  <!-- МОДАЛКИ (АВТОРИЗАЦИЯ, ЗАГРУЗКА, ПЛЕЕР) -->
   <div id="authModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glassmorphism max-w-md w-full rounded-3xl border border-dark-border p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95">
-      
-      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
+    <div class="glassmorphism max-w-md w-full rounded-3xl border border-dark-border p-6 sm:p-8 shadow-2xl relative">
+      <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border"><i class="fa-solid fa-xmark"></i></button>
       <div class="text-center mb-6">
-        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-neon-red mb-3">
-          М
-        </div>
-        <h3 id="authModalTitle" class="text-xl sm:text-2xl font-black text-white">Регистрация аккаунта</h3>
-        <p class="text-xs text-slate-400 mt-1">Никнейм навсегда привязывается к вам</p>
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-gradient-to-tr from-brand-600 to-amber-500 flex items-center justify-center text-white text-2xl font-black shadow-neon-red mb-3">М</div>
+        <h3 id="authModalTitle" class="text-xl font-black text-white">Регистрация</h3>
       </div>
-
       <div class="grid grid-cols-2 p-1 bg-dark-card rounded-2xl border border-dark-border mb-5 text-xs font-black">
         <button id="tabRegister" onclick="switchAuthTab('register')" class="py-2.5 rounded-xl bg-brand-600 text-white shadow">Регистрация</button>
         <button id="tabLogin" onclick="switchAuthTab('login')" class="py-2.5 rounded-xl text-slate-400 hover:text-white">Вход</button>
       </div>
-
-      <!-- РЕГИСТРАЦИЯ -->
       <form id="formRegister" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Придумайте имя (Ник) *</label>
-          <div class="relative">
-            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
-            <input 
-              type="text" 
-              id="regUsername" 
-              required 
-              maxlength="20"
-              placeholder="Например: Maga05 или degicie" 
-              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Придумайте пароль *</label>
-          <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
-            <input 
-              type="password" 
-              id="regPassword" 
-              required 
-              minlength="4"
-              placeholder="Минимум 4 символа" 
-              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
-            />
-          </div>
-        </div>
-
-        <div id="regErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300 flex items-center gap-2">
-          <i class="fa-solid fa-triangle-exclamation flex-shrink-0"></i>
-          <span id="regErrorText"></span>
-        </div>
-
-        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs sm:text-sm transition-all shadow-neon-red">
-          Зарегистрироваться
-        </button>
+        <input type="text" id="regUsername" required maxlength="20" placeholder="Ваш ник (например: degicie)" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        <input type="password" id="regPassword" required minlength="4" placeholder="Пароль" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        <div id="regErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs transition-all shadow-neon-red">Создать аккаунт</button>
       </form>
-
-      <!-- ВХОД -->
       <form id="formLogin" onsubmit="handleLoginSubmit(event)" class="space-y-4 hidden">
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Ваш никнейм</label>
-          <div class="relative">
-            <i class="fa-solid fa-user absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
-            <input 
-              type="text" 
-              id="loginUsername" 
-              required 
-              placeholder="Имя" 
-              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Пароль</label>
-          <div class="relative">
-            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
-            <input 
-              type="password" 
-              id="loginPassword" 
-              required 
-              placeholder="Пароль" 
-              class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
-            />
-          </div>
-        </div>
-
-        <div id="loginErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300 flex items-center gap-2">
-          <i class="fa-solid fa-triangle-exclamation flex-shrink-0"></i>
-          <span id="loginErrorText"></span>
-        </div>
-
-        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs sm:text-sm transition-all shadow-neon-red">
-          Войти
-        </button>
+        <input type="text" id="loginUsername" required placeholder="Ваш ник" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        <input type="password" id="loginPassword" required placeholder="Пароль" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        <div id="loginErrorBox" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
+        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-xl text-xs transition-all shadow-neon-red">Войти</button>
       </form>
-
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- 8. МОДАЛЬНОЕ ОКНО: ЗАГРУЗКА МЕДИА С ПРАВАМИ DEGICIE             -->
-  <!-- ============================================================== -->
   <div id="uploadModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glassmorphism max-w-lg w-full rounded-3xl border border-dark-border p-6 sm:p-7 shadow-2xl relative max-h-[92vh] overflow-y-auto">
-      
-      <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 rounded-2xl bg-brand-600/20 border border-brand-500/40 text-brand-500 flex items-center justify-center text-lg">
-          <i class="fa-solid fa-cloud-arrow-up"></i>
-        </div>
-        <div>
-          <h3 class="text-lg font-black text-white">Залить на хостинг</h3>
-          <p class="text-xs text-slate-400">Видео, фильмы и фото сохраняются моментально</p>
-        </div>
-      </div>
-
+    <div class="glassmorphism max-w-lg w-full rounded-3xl border border-dark-border p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto">
+      <button onclick="closeUploadModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg w-8 h-8 rounded-full bg-dark-card flex items-center justify-center border border-dark-border"><i class="fa-solid fa-xmark"></i></button>
+      <h3 class="text-lg font-black text-white mb-4">Залить медиафайл</h3>
       <form id="uploadForm" onsubmit="processMediaUpload(event)" class="space-y-4">
-        
-        <!-- DROPZONE -->
-        <div 
-          id="dropArea" 
-          onclick="document.getElementById('nativeFileInput').click()"
-          class="border-2 border-dashed border-dark-border hover:border-brand-500 bg-dark-surface/50 rounded-2xl p-6 text-center cursor-pointer transition-all">
+        <div id="dropArea" onclick="document.getElementById('nativeFileInput').click()" class="border-2 border-dashed border-dark-border hover:border-brand-500 bg-dark-surface/50 rounded-2xl p-6 text-center cursor-pointer">
           <input type="file" id="nativeFileInput" accept="video/*,image/*" class="hidden" onchange="onFileChosen(this.files[0])"/>
-          <div id="dropPrompt">
-            <i class="fa-solid fa-file-video text-3xl text-brand-500 mb-2"></i>
-            <p class="text-xs font-bold text-slate-200">Выберите видео, фильм или фото с диска</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">MP4, WebM, MOV, JPG, PNG, GIF</p>
-          </div>
+          <div id="dropPrompt"><i class="fa-solid fa-file-video text-3xl text-brand-500 mb-2"></i><p class="text-xs font-bold text-slate-200">Выберите видео или фото</p></div>
           <div id="dropPreviewBox" class="hidden text-xs text-emerald-400 font-bold"></div>
         </div>
-
-        <!-- ОПЦИЯ: ВЫЛОЖИТЬ КАК ФИЛЬМ DEGICIE -->
-        <div id="degicieMovieOptionBox" class="p-3 rounded-2xl bg-gradient-to-r from-amber-950/40 via-dark-card to-dark-surface border border-amber-500/40 flex items-center justify-between">
-          <div class="flex items-center gap-2.5">
-            <i class="fa-solid fa-crown text-amber-400 text-base"></i>
-            <div>
-              <div class="text-xs font-black text-amber-300">Опубликовать как Фильм от degicie</div>
-              <div class="text-[10px] text-slate-400">Доступно только пользователю с ником degicie</div>
-            </div>
-          </div>
+        <div id="degicieMovieOptionBox" class="p-3 rounded-2xl bg-dark-card border border-amber-500/40 flex items-center justify-between">
+          <div class="text-xs font-black text-amber-300"><i class="fa-solid fa-crown mr-1"></i>Фильм от degicie</div>
           <input type="checkbox" id="isDegicieMovieCheck" class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
         </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Название фильма / ролика *</label>
-          <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Придумайте название публикации" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Описание и сюжет</label>
-          <textarea id="uploadDescInput" rows="2" maxlength="300" placeholder="О чем этот фильм или видео..." class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500 resize-none"></textarea>
-        </div>
-
+        <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Название" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        <textarea id="uploadDescInput" rows="2" maxlength="300" placeholder="Описание" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500 resize-none"></textarea>
         <div id="uploadFormAlert" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
-
-        <button type="submit" id="uploadSubmitBtn" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-2xl text-xs sm:text-sm transition-all shadow-neon-red">
-          Опубликовать на магахоствидео
-        </button>
+        <button type="submit" id="uploadSubmitBtn" class="w-full bg-brand-600 hover:bg-brand-500 text-white font-black py-3.5 rounded-2xl text-xs transition-all shadow-neon-red">Опубликовать</button>
       </form>
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- 9. ПОЛНОРАЗМЕРНЫЙ ПЛЕЕР / ПРОСМОТРЩИК И КОММЕНТАРИИ            -->
-  <!-- ============================================================== -->
   <div id="viewerModal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-0 sm:p-4">
     <div class="glassmorphism w-full max-w-6xl h-full sm:h-[92vh] sm:rounded-3xl border border-dark-border shadow-2xl flex flex-col lg:flex-row overflow-hidden">
-      
-      <!-- МЕДИА ЗОНА -->
       <div class="lg:w-2/3 bg-black flex flex-col justify-center items-center relative border-b lg:border-b-0 lg:border-r border-dark-border">
-        
-        <div class="absolute top-4 left-4 z-30 flex items-center gap-2">
-          <span id="viewerTypeBadge" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-brand-600 text-white">Видео</span>
-          <span id="viewerDegicieSpecialTag" class="hidden px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 to-amber-700 text-white shadow-neon-degicie">
-            <i class="fa-solid fa-crown mr-1"></i>Фильм degicie
-          </span>
-        </div>
-
-        <button onclick="closeViewerModal()" class="absolute top-4 right-4 z-30 w-8 h-8 rounded-full bg-black/80 hover:bg-rose-600 text-white flex items-center justify-center text-xs transition-colors">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-
+        <button onclick="closeViewerModal()" class="absolute top-4 right-4 z-30 w-8 h-8 rounded-full bg-black/80 hover:bg-rose-600 text-white flex items-center justify-center text-xs"><i class="fa-solid fa-xmark"></i></button>
         <div id="mediaStage" class="w-full h-full flex items-center justify-center max-h-[70vh] lg:max-h-full"></div>
       </div>
-
-      <!-- ИНФОРМАЦИЯ И КОММЕНТАРИИ -->
       <div class="lg:w-1/3 flex flex-col bg-dark-surface overflow-hidden">
-        
         <div class="p-4 border-b border-dark-border">
           <div class="flex items-center justify-between mb-3">
             <div class="flex items-center gap-2.5">
-              <img id="viewerAuthorAvatar" src="" class="w-9 h-9 rounded-xl object-cover border border-dark-border bg-dark-card">
-              <div>
-                <div class="flex items-center gap-1.5">
-                  <h4 id="viewerAuthorName" class="text-xs sm:text-sm font-bold text-white leading-tight"></h4>
-                  <span id="viewerDegicieAuthorBadge" class="hidden badge-degicie text-[9px] text-black font-black px-1.5 py-0.2 rounded font-mono">РЕЖИССЁР</span>
-                </div>
-                <div id="viewerPostDate" class="text-[10px] text-slate-400 mt-0.5"></div>
-              </div>
+              <img id="viewerAuthorAvatar" src="" class="w-9 h-9 rounded-xl object-cover bg-dark-card">
+              <div><h4 id="viewerAuthorName" class="text-xs font-bold text-white"></h4><div id="viewerPostDate" class="text-[10px] text-slate-400"></div></div>
             </div>
-
-            <button id="viewerDeleteBtn" onclick="deleteCurrentViewingPost()" class="hidden text-brand-400 text-xs px-2.5 py-1 rounded-lg bg-brand-950/60 border border-brand-800">
-              <i class="fa-solid fa-trash-can mr-1"></i>Удалить
-            </button>
+            <button id="viewerDeleteBtn" onclick="deleteCurrentViewingPost()" class="hidden text-brand-400 text-xs px-2.5 py-1 rounded-lg bg-brand-950/60 border border-brand-800">Удалить</button>
           </div>
-
-          <h2 id="viewerPostTitle" class="text-sm sm:text-base font-black text-white"></h2>
-          <p id="viewerPostDescription" class="text-xs text-slate-300 mt-1 whitespace-pre-line max-h-20 overflow-y-auto"></p>
-
-          <div class="flex items-center justify-between pt-3 mt-3 border-t border-dark-border/80 text-xs">
-            <div class="flex items-center gap-2">
-              <button onclick="handleLikeToggle()" id="viewerLikeBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-dark-card border border-dark-border text-xs transition-all">
-                <i id="viewerLikeIcon" class="fa-regular fa-heart"></i>
-                <span id="viewerLikesCount">0</span>
-              </button>
-
-              <button onclick="copyShareLink()" class="p-2 rounded-xl bg-dark-card border border-dark-border text-slate-300 hover:text-white" title="Поделиться">
-                <i class="fa-solid fa-share-nodes"></i>
-              </button>
-            </div>
-            
-            <span class="text-[11px] text-slate-400"><i class="fa-regular fa-eye mr-1"></i><span id="viewerViewsCount">0</span></span>
-          </div>
+          <h2 id="viewerPostTitle" class="text-sm font-black text-white"></h2>
+          <p id="viewerPostDescription" class="text-xs text-slate-300 mt-1 max-h-20 overflow-y-auto"></p>
         </div>
-
-        <!-- КОММЕНТАРИИ -->
         <div class="flex-1 p-4 overflow-y-auto space-y-2.5" id="commentsContainer"></div>
-
-        <!-- ПОЛЕ ОТПРАВКИ -->
         <div class="p-3 bg-dark-surface border-t border-dark-border">
           <form onsubmit="handleSendComment(event)" class="flex gap-2">
-            <input type="text" id="commentTextInput" maxlength="150" placeholder="Написать отзыв к фильму/видео..." class="flex-1 bg-dark-card border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
-            <button type="submit" class="p-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs transition-colors">
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
+            <input type="text" id="commentTextInput" maxlength="150" placeholder="Комментарий..." class="flex-1 bg-dark-card border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+            <button type="submit" class="p-2.5 rounded-xl bg-brand-600 text-white text-xs"><i class="fa-solid fa-paper-plane"></i></button>
           </form>
         </div>
-
       </div>
-
     </div>
   </div>
 
-  <!-- TOAST УВЕДОМЛЕНИЕ -->
   <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
     <div class="glassmorphism bg-dark-card text-white px-4 py-3 rounded-2xl border border-brand-500 text-xs font-bold shadow-neon-red flex items-center gap-2">
-      <i class="fa-solid fa-circle-check text-brand-400 text-sm"></i>
-      <span id="toastMessage"></span>
+      <i class="fa-solid fa-circle-check text-brand-400"></i><span id="toastMessage"></span>
     </div>
   </div>
 
-  <!-- ============================================================== -->
-  <!-- 10. JAVASCRIPT ДВИЖОК ХОСТИНГА (БЕЗ ЛАГОВ, ПРАВА DEGICIE)       -->
-  <!-- ============================================================== -->
+  <!-- СКРИПТ -->
   <script>
-    // 1. АНТИ-МАТ И АНТИ-18+
     const ModerationEngine = {
       banned: ['порно', 'porno', 'porn', 'xxx', 'секс', 'sex', 'nsfw', 'сиськи', 'член', 'хуй', 'пизда', 'ебать', 'бля', 'сука', 'мудак', 'залупа', 'дрочить', 'хентай', 'голая', 'голый'],
       isClean(text) {
         if (!text) return true;
         const low = text.toLowerCase();
-        for (let w of this.banned) {
-          if (low.includes(w)) return false;
-        }
+        for (let w of this.banned) { if (low.includes(w)) return false; }
         return true;
       }
     };
 
-    // 2. СВЕРХБЫСТРАЯ ГЕНЕРАЦИЯ ОБЛОЖКИ (ЧТОБЫ НЕ ЛАГАЛО)
     function createVideoThumbnail(file) {
       return new Promise((resolve) => {
         const video = document.createElement('video');
@@ -631,32 +454,24 @@
         video.src = URL.createObjectURL(file);
         video.muted = true;
         video.playsInline = true;
-
-        video.onloadedmetadata = () => {
-          video.currentTime = Math.min(1.0, video.duration / 2 || 0.1);
-        };
-
+        video.onloadedmetadata = () => { video.currentTime = Math.min(1.0, video.duration / 2 || 0.1); };
         video.onseeked = () => {
           const canvas = document.createElement('canvas');
-          canvas.width = 480;
-          canvas.height = 270;
+          canvas.width = 480; canvas.height = 270;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           const thumbUrl = canvas.toDataURL('image/jpeg', 0.65);
           URL.revokeObjectURL(video.src);
           resolve(thumbUrl);
         };
-
         video.onerror = () => resolve('');
       });
     }
 
-    // 3. БАЗА ДАННЫХ INDEXEDDB (BLOB)
     const DatabaseEngine = {
-      dbName: 'MagaHostDegicieCinema_DB',
+      dbName: 'MagaHostStreamHub_DB',
       version: 1,
       db: null,
-
       init() {
         return new Promise((resolve, reject) => {
           const req = indexedDB.open(this.dbName, this.version);
@@ -669,34 +484,25 @@
           req.onerror = (e) => reject(e);
         });
       },
-
       registerUser(username, password) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction('users', 'readwrite');
           const store = tx.objectStore('users');
           const lower = username.trim().toLowerCase();
-
           const chk = store.get(lower);
           chk.onsuccess = () => {
-            if (chk.result) {
-              resolve({ success: false, message: 'Аккаунт с таким именем уже есть!' });
-            } else {
+            if (chk.result) resolve({ success: false, message: 'Аккаунт уже занят!' });
+            else {
               const u = {
-                usernameLower: lower,
-                username: username.trim(),
-                password: password,
-                avatar: lower === 'degicie' 
-                  ? 'https://api.dicebear.com/7.x/bottts/svg?seed=degicieKing&backgroundColor=f59e0b'
-                  : `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(username)}`
+                usernameLower: lower, username: username.trim(), password: password,
+                avatar: lower === 'degicie' ? 'https://api.dicebear.com/7.x/bottts/svg?seed=degicieKing&backgroundColor=f59e0b' : `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(username)}`
               };
-              store.put(u);
-              resolve({ success: true, user: u });
+              store.put(u); resolve({ success: true, user: u });
             }
           };
-          chk.onerror = () => reject(chk.error);
+          chk.onerror = (e) => reject(e);
         });
       },
-
       loginUser(username, password) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction('users', 'readonly');
@@ -707,356 +513,175 @@
             else if (u.password !== password) resolve({ success: false, message: 'Неверный пароль!' });
             else resolve({ success: true, user: u });
           };
-          req.onerror = () => reject(req.error);
+          req.onerror = (e) => reject(e);
         });
       },
-
       savePost(post) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction('posts', 'readwrite');
           tx.objectStore('posts').put(post);
           tx.oncomplete = () => resolve(post);
-          tx.onerror = () => reject(tx.error);
+          tx.onerror = (e) => reject(e);
         });
       },
-
       getAllPosts() {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction('posts', 'readonly');
           const req = tx.objectStore('posts').getAll();
           req.onsuccess = () => resolve(req.result || []);
-          req.onerror = () => reject(req.error);
+          req.onerror = (e) => reject(e);
         });
       },
-
       deletePost(id) {
         return new Promise((resolve, reject) => {
           const tx = this.db.transaction('posts', 'readwrite');
           tx.objectStore('posts').delete(id);
           tx.oncomplete = () => resolve(true);
-          tx.onerror = () => reject(tx.error);
+          tx.onerror = (e) => reject(e);
         });
       }
     };
 
-    // 4. СОСТОЯНИЕ САЙТА
-    const AppState = {
-      currentUser: null,
-      posts: [],
-      currentCategory: 'all',
-      currentSort: 'newest',
-      searchQuery: '',
-      activePostId: null,
-      selectedUploadFile: null,
-      currentActiveBlobUrl: null
-    };
+    const AppState = { currentUser: null, posts: [], currentCategory: 'all', currentSort: 'newest', searchQuery: '', activePostId: null, selectedUploadFile: null, currentActiveBlobUrl: null };
 
     function initUserSession() {
       const stored = localStorage.getItem('magahost_active_user');
-      if (stored) {
-        try { AppState.currentUser = JSON.parse(stored); } catch (e) { AppState.currentUser = null; }
-      }
+      if (stored) { try { AppState.currentUser = JSON.parse(stored); } catch(e) { AppState.currentUser = null; } }
       renderUserProfileBar();
     }
 
     function renderUserProfileBar() {
       const bar = document.getElementById('userProfileBar');
       if (!AppState.currentUser) {
-        bar.innerHTML = `
-          <button onclick="openAuthModal()" class="flex items-center gap-1.5 bg-dark-card hover:bg-dark-hover text-slate-200 border border-dark-border px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm font-bold shadow-sm">
-            <i class="fa-solid fa-right-to-bracket text-brand-400"></i>
-            <span>Вход</span>
-          </button>
-        `;
+        bar.innerHTML = `<button onclick="openAuthModal()" class="flex items-center gap-1.5 bg-dark-card hover:bg-dark-hover text-slate-200 border border-dark-border px-3.5 py-2.5 rounded-2xl text-xs font-bold"><i class="fa-solid fa-right-to-bracket text-brand-400"></i><span>Вход</span></button>`;
       } else {
         const isDegicie = AppState.currentUser.username.toLowerCase() === 'degicie';
-        bar.innerHTML = `
-          <div class="flex items-center gap-2 bg-dark-surface border ${isDegicie ? 'border-amber-500/60 shadow-neon-degicie' : 'border-dark-border'} py-1 px-2.5 rounded-2xl">
-            <img src="${AppState.currentUser.avatar}" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl object-cover border border-brand-500/40 bg-dark-card">
-            <div class="text-left hidden xs:block">
-              <span class="text-xs font-bold text-white max-w-[90px] truncate block">${AppState.currentUser.username}</span>
-              ${isDegicie ? '<span class="text-[9px] text-amber-400 font-mono font-black -mt-0.5 block">👑 РЕЖИССЁР</span>' : ''}
-            </div>
-            <button onclick="handleUserLogout()" title="Выйти" class="p-1 text-slate-400 hover:text-brand-400 text-xs ml-1">
-              <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            </button>
-          </div>
-        `;
+        bar.innerHTML = `<div class="flex items-center gap-2 bg-dark-surface border ${isDegicie ? 'border-amber-500/60 shadow-neon-degicie' : 'border-dark-border'} py-1 px-2.5 rounded-2xl"><img src="${AppState.currentUser.avatar}" class="w-7 h-7 rounded-xl object-cover"><span class="text-xs font-bold text-white max-w-[90px] truncate hidden xs:inline">${AppState.currentUser.username}</span><button onclick="handleUserLogout()" class="p-1 text-slate-400 hover:text-brand-400 text-xs ml-1"><i class="fa-solid fa-arrow-right-from-bracket"></i></button></div>`;
       }
     }
 
-    function openAuthModal() {
-      document.getElementById('authModal').classList.remove('hidden');
-      switchAuthTab('register');
-    }
-    function closeAuthModal() {
-      document.getElementById('authModal').classList.add('hidden');
-    }
-    function switchAuthTab(tab) {
-      const tabR = document.getElementById('tabRegister');
-      const tabL = document.getElementById('tabLogin');
-      const fR = document.getElementById('formRegister');
-      const fL = document.getElementById('formLogin');
-      if (tab === 'register') {
-        tabR.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow';
-        tabL.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white';
-        fR.classList.remove('hidden'); fL.classList.add('hidden');
+    function switchMainTab(tab) {
+      const hView = document.getElementById('sectionHostingView');
+      const sView = document.getElementById('sectionStreamingView');
+      const tH = document.getElementById('navTabHosting');
+      const tS = document.getElementById('navTabStreaming');
+
+      if (tab === 'hosting') {
+        hView.classList.remove('hidden');
+        sView.classList.add('hidden');
+        tH.className = 'px-4 py-2 rounded-xl text-xs font-black bg-brand-600 text-white shadow transition-all';
+        tS.className = 'px-4 py-2 rounded-xl text-xs font-black text-slate-300 hover:text-white transition-all flex items-center gap-1.5';
       } else {
-        tabL.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow';
-        tabR.className = 'py-2.5 rounded-xl text-slate-400 hover:text-white';
-        fL.classList.remove('hidden'); fR.classList.add('hidden');
+        hView.classList.add('hidden');
+        sView.classList.remove('hidden');
+        tS.className = 'px-4 py-2 rounded-xl text-xs font-black bg-twitch-500 text-white shadow transition-all flex items-center gap-1.5';
+        tH.className = 'px-4 py-2 rounded-xl text-xs font-black text-slate-300 hover:text-white transition-all';
       }
-      document.getElementById('regErrorBox').classList.add('hidden');
-      document.getElementById('loginErrorBox').classList.add('hidden');
+    }
+
+    function openAuthModal() { document.getElementById('authModal').classList.remove('hidden'); switchAuthTab('register'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+    function switchAuthTab(tab) {
+      const tabR = document.getElementById('tabRegister'); const tabL = document.getElementById('tabLogin');
+      const fR = document.getElementById('formRegister'); const fL = document.getElementById('formLogin');
+      if (tab === 'register') { tabR.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow'; tabL.className = 'py-2.5 rounded-xl text-slate-400'; fR.classList.remove('hidden'); fL.classList.add('hidden'); }
+      else { tabL.className = 'py-2.5 rounded-xl bg-brand-600 text-white shadow'; tabR.className = 'py-2.5 rounded-xl text-slate-400'; fL.classList.remove('hidden'); fR.classList.add('hidden'); }
     }
 
     async function handleRegisterSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('regUsername').value.trim();
       const pass = document.getElementById('regPassword').value;
-      const errBox = document.getElementById('regErrorBox');
-      const errText = document.getElementById('regErrorText');
-
-      if (!ModerationEngine.isClean(name)) {
-        errText.textContent = 'Имя содержит запрещенные слова!';
-        errBox.classList.remove('hidden'); return;
-      }
-
       const res = await DatabaseEngine.registerUser(name, pass);
-      if (!res.success) {
-        errText.textContent = res.message;
-        errBox.classList.remove('hidden'); return;
-      }
-
-      AppState.currentUser = res.user;
-      localStorage.setItem('magahost_active_user', JSON.stringify(res.user));
-      renderUserProfileBar();
-      closeAuthModal();
-      showToast(`Добро пожаловать, ${res.user.username}!`);
-      renderMediaGrid();
+      if (!res.success) { alert(res.message); return; }
+      AppState.currentUser = res.user; localStorage.setItem('magahost_active_user', JSON.stringify(res.user));
+      renderUserProfileBar(); closeAuthModal(); showToast(`Добро пожаловать, ${res.user.username}!`); renderMediaGrid();
     }
 
     async function handleLoginSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('loginUsername').value.trim();
       const pass = document.getElementById('loginPassword').value;
-      const errBox = document.getElementById('loginErrorBox');
-      const errText = document.getElementById('loginErrorText');
-
       const res = await DatabaseEngine.loginUser(name, pass);
-      if (!res.success) {
-        errText.textContent = res.message;
-        errBox.classList.remove('hidden'); return;
-      }
-
-      AppState.currentUser = res.user;
-      localStorage.setItem('magahost_active_user', JSON.stringify(res.user));
-      renderUserProfileBar();
-      closeAuthModal();
-      showToast(`С возвращением, ${res.user.username}!`);
-      renderMediaGrid();
+      if (!res.success) { alert(res.message); return; }
+      AppState.currentUser = res.user; localStorage.setItem('magahost_active_user', JSON.stringify(res.user));
+      renderUserProfileBar(); closeAuthModal(); showToast(`С возвращением!`); renderMediaGrid();
     }
 
-    function handleUserLogout() {
-      if (confirm('Выйти из профиля?')) {
-        AppState.currentUser = null;
-        localStorage.removeItem('magahost_active_user');
-        renderUserProfileBar();
-        renderMediaGrid();
-      }
-    }
-
-    function triggerUploadCheck() {
-      if (!AppState.currentUser) {
-        openAuthModal();
-        showToast('Сначала зарегистрируйтесь или войдите!');
-        return;
-      }
-      openUploadModal();
-    }
-
-    // 5. ЗАГРУЗКА И ПРОВЕРКА ПРАВ НА ФИЛЬМЫ DEGICIE
-    function openUploadModal() { 
-      document.getElementById('uploadModal').classList.remove('hidden'); 
-      const isDegicie = AppState.currentUser?.username.toLowerCase() === 'degicie';
-      const check = document.getElementById('isDegicieMovieCheck');
-      check.checked = false;
-      if (isDegicie) {
-        document.getElementById('degicieMovieOptionBox').classList.remove('opacity-60');
-      } else {
-        document.getElementById('degicieMovieOptionBox').classList.add('opacity-60');
-      }
-    }
-
-    function closeUploadModal() {
-      document.getElementById('uploadModal').classList.add('hidden');
-      document.getElementById('uploadForm').reset();
-      AppState.selectedUploadFile = null;
-      document.getElementById('dropPrompt').classList.remove('hidden');
-      document.getElementById('dropPreviewBox').classList.add('hidden');
-      document.getElementById('uploadFormAlert').classList.add('hidden');
-      document.getElementById('uploadSubmitBtn').disabled = false;
-      document.getElementById('uploadSubmitBtn').innerHTML = 'Опубликовать на магахоствидео';
-    }
+    function handleUserLogout() { AppState.currentUser = null; localStorage.removeItem('magahost_active_user'); renderUserProfileBar(); renderMediaGrid(); }
+    function triggerUploadCheck() { if (!AppState.currentUser) { openAuthModal(); return; } document.getElementById('uploadModal').classList.remove('hidden'); }
+    function closeUploadModal() { document.getElementById('uploadModal').classList.add('hidden'); document.getElementById('uploadForm').reset(); AppState.selectedUploadFile = null; }
 
     function onFileChosen(file) {
       if (!file) return;
-      if (!ModerationEngine.isClean(file.name)) {
-        alert('Запрещенное название файла!'); return;
-      }
       AppState.selectedUploadFile = file;
       document.getElementById('dropPrompt').classList.add('hidden');
-      const prevBox = document.getElementById('dropPreviewBox');
-      prevBox.textContent = `Выбран файл: ${file.name} (${(file.size / (1024*1024)).toFixed(1)} МБ)`;
-      prevBox.classList.remove('hidden');
-
-      const titleInput = document.getElementById('uploadTitleInput');
-      if (!titleInput.value) {
-        titleInput.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
-      }
+      document.getElementById('dropPreviewBox').textContent = `Выбран: ${file.name}`;
+      document.getElementById('dropPreviewBox').classList.remove('hidden');
+      const tIn = document.getElementById('uploadTitleInput');
+      if (!tIn.value) tIn.value = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
     }
 
     async function processMediaUpload(e) {
       e.preventDefault();
       if (!AppState.currentUser || !AppState.selectedUploadFile) return;
-
       const title = document.getElementById('uploadTitleInput').value.trim();
       const desc = document.getElementById('uploadDescInput').value.trim();
       const isDegicieMovie = document.getElementById('isDegicieMovieCheck').checked;
-      const alertBox = document.getElementById('uploadFormAlert');
 
-      // СТРОГАЯ ПРОВЕРКА: ФИЛЬМЫ МОЖЕТ ВЫКЛАДЫВАТЬ ТОЛЬКО DEGICIE
       if (isDegicieMovie && AppState.currentUser.username.toLowerCase() !== 'degicie') {
-        alertBox.textContent = 'ОШИБКА: Раздел «Фильмы от degicie» доступен только пользователю с ником degicie!';
-        alertBox.classList.remove('hidden');
-        return;
+        alert('Раздел фильмов доступен только degicie!'); return;
       }
-
-      if (!ModerationEngine.isClean(title) || !ModerationEngine.isClean(desc)) {
-        alertBox.textContent = 'Мат и порнография строго запрещены!';
-        alertBox.classList.remove('hidden'); return;
-      }
-
-      const btn = document.getElementById('uploadSubmitBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Сохранение...';
 
       const file = AppState.selectedUploadFile;
       const isVideo = file.type.startsWith('video');
-
-      let thumbUrl = '';
-      if (isVideo) {
-        thumbUrl = await createVideoThumbnail(file);
-      } else {
-        thumbUrl = await new Promise(resolve => {
-          const r = new FileReader();
-          r.onload = () => resolve(r.result);
-          r.readAsDataURL(file);
-        });
-      }
+      let thumbUrl = isVideo ? await createVideoThumbnail(file) : await new Promise(r => { const rd = new FileReader(); rd.onload = () => r(rd.result); rd.readAsDataURL(file); });
 
       const post = {
-        id: 'post_' + Date.now(),
-        title: title,
-        description: desc,
-        type: isVideo ? 'video' : 'photo',
-        isDegicieMovie: isDegicieMovie, // Отметка о фильме degicie
-        mediaBlob: file,
-        thumbnail: thumbUrl,
-        authorName: AppState.currentUser.username,
-        authorAvatar: AppState.currentUser.avatar,
-        createdAt: Date.now(),
-        likesCount: 0,
-        viewsCount: 1,
-        likedUserIds: [],
-        comments: []
+        id: 'post_' + Date.now(), title, description: desc, type: isVideo ? 'video' : 'photo',
+        isDegicieMovie, mediaBlob: file, thumbnail: thumbUrl,
+        authorName: AppState.currentUser.username, authorAvatar: AppState.currentUser.avatar,
+        createdAt: Date.now(), likesCount: 0, viewsCount: 1, likedUserIds: [], comments: []
       };
 
       await DatabaseEngine.savePost(post);
       AppState.posts.unshift(post);
-
       closeUploadModal();
-      showToast(isDegicieMovie ? 'Фильм от degicie успешно опубликован в зал славы!' : 'Успешно опубликовано!');
-      
-      if (isDegicieMovie) {
-        filterMedia('degicie_movies');
-      } else {
-        renderMediaGrid();
-      }
+      showToast('Успешно опубликовано!');
+      if (isDegicieMovie) filterMedia('degicie_movies'); else renderMediaGrid();
     }
 
-    // 6. ОТОБРАЖЕНИЕ КАРТОЧЕК
     function renderMediaGrid() {
       const grid = document.getElementById('mediaGrid');
       const empty = document.getElementById('noContentState');
-
       let list = [...AppState.posts];
 
       if (AppState.currentCategory === 'degicie_movies') {
-        // ТОЛЬКО ФИЛЬМЫ ОТ DEGICIE
         list = list.filter(p => p.isDegicieMovie || p.authorName.toLowerCase() === 'degicie');
-        document.getElementById('noContentTitle').textContent = 'В зале degicie пока нет фильмов';
-        document.getElementById('noContentDesc').textContent = 'Только создатель с ником degicie может выкладывать сюда премьеры!';
-      } else {
-        document.getElementById('noContentTitle').textContent = 'Пока ничего не загружено';
-        document.getElementById('noContentDesc').textContent = 'Зарегистрируйтесь под уникальным ником и залейте первый ролик!';
-        
-        if (AppState.currentCategory === 'video') list = list.filter(p => p.type === 'video');
-        else if (AppState.currentCategory === 'photo') list = list.filter(p => p.type === 'photo');
-        else if (AppState.currentCategory === 'trend') list = list.filter(p => (p.likesCount || 0) > 0 || (p.viewsCount || 0) > 2);
-        else if (AppState.currentCategory === 'mine') {
-          list = AppState.currentUser ? list.filter(p => p.authorName === AppState.currentUser.username) : [];
-        }
-      }
+      } else if (AppState.currentCategory === 'video') list = list.filter(p => p.type === 'video');
+      else if (AppState.currentCategory === 'photo') list = list.filter(p => p.type === 'photo');
+      else if (AppState.currentCategory === 'trend') list = list.filter(p => (p.likesCount || 0) > 0);
+      else if (AppState.currentCategory === 'mine') list = AppState.currentUser ? list.filter(p => p.authorName === AppState.currentUser.username) : [];
 
       if (AppState.searchQuery) {
         list = list.filter(p => p.title.toLowerCase().includes(AppState.searchQuery) || p.authorName.toLowerCase().includes(AppState.searchQuery));
       }
 
-      if (AppState.currentSort === 'popular') list.sort((a,b) => (b.likesCount||0) - (a.likesCount||0));
-      else if (AppState.currentSort === 'views') list.sort((a,b) => (b.viewsCount||0) - (a.viewsCount||0));
-      else list.sort((a,b) => b.createdAt - a.createdAt);
-
-      document.getElementById('postsTotalCount').textContent = list.length;
-
-      if (list.length === 0) {
-        grid.innerHTML = '';
-        empty.classList.remove('hidden');
-        return;
-      }
-
+      if (list.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
       empty.classList.add('hidden');
 
       grid.innerHTML = list.map(post => {
-        const isDegicie = post.isDegicieMovie || post.authorName.toLowerCase() === 'degicie';
+        const isDeg = post.isDegicieMovie || post.authorName.toLowerCase() === 'degicie';
         return `
-          <div onclick="openViewerModal('${post.id}')" class="glassmorphism rounded-2xl overflow-hidden card-zoom ${isDegicie ? 'degicie-card border-amber-500/40 shadow-neon-degicie' : 'border-dark-border'} cursor-pointer flex flex-col group">
+          <div onclick="openViewerModal('${post.id}')" class="glassmorphism rounded-2xl overflow-hidden card-zoom ${isDeg ? 'degicie-card border-amber-500/40 shadow-neon-degicie' : 'border-dark-border'} cursor-pointer flex flex-col group">
             <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden">
-              <img src="${post.thumbnail || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-              
-              ${isDegicie ? `
-                <div class="absolute top-2 left-2 z-10 bg-gradient-to-r from-amber-500 to-amber-700 text-white text-[9px] font-black px-2 py-0.5 rounded shadow flex items-center gap-1">
-                  <i class="fa-solid fa-crown text-[8px]"></i> degicie премьера
-                </div>
-              ` : ''}
-
-              ${post.type === 'video' ? `
-                <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-                  <div class="w-11 h-11 rounded-full ${isDegicie ? 'bg-amber-600/90 shadow-neon-degicie' : 'bg-brand-600/90 shadow-neon-red'} text-white flex items-center justify-center pl-0.5">
-                    <i class="fa-solid fa-play text-sm"></i>
-                  </div>
-                </div>
-                <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">Видео</span>
-              ` : `<span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">Фото</span>`}
+              <img src="${post.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              ${isDeg ? '<span class="absolute top-2 left-2 bg-amber-600 text-white text-[9px] font-black px-2 py-0.5 rounded shadow">Фильм degicie</span>' : ''}
+              <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">${post.type === 'video' ? 'Видео' : 'Фото'}</span>
             </div>
-            
             <div class="p-3.5 flex flex-col flex-1 justify-between">
               <div>
-                <div class="flex items-center gap-2 mb-1">
-                  <img src="${post.authorAvatar}" class="w-5 h-5 rounded-full border border-dark-border">
-                  <span class="text-[11px] font-bold ${isDegicie ? 'text-amber-300' : 'text-slate-300'} truncate">${post.authorName}</span>
-                  ${isDegicie ? '<i class="fa-solid fa-check text-[9px] text-amber-400"></i>' : ''}
-                </div>
+                <div class="flex items-center gap-2 mb-1"><img src="${post.authorAvatar}" class="w-5 h-5 rounded-full"><span class="text-[11px] font-bold ${isDeg ? 'text-amber-300' : 'text-slate-300'} truncate">${post.authorName}</span></div>
                 <h3 class="text-xs sm:text-sm font-extrabold text-white line-clamp-1">${post.title}</h3>
               </div>
               <div class="flex items-center justify-between pt-2.5 mt-2 border-t border-dark-border/60 text-[11px] text-slate-400">
@@ -1069,16 +694,11 @@
       }).join('');
     }
 
-    // 7. ПЛЕЕР
     async function openViewerModal(postId) {
       AppState.activePostId = postId;
       const post = AppState.posts.find(p => p.id === postId);
       if (!post) return;
-
-      post.viewsCount = (post.viewsCount || 0) + 1;
-      await DatabaseEngine.savePost(post);
-
-      const isDegicie = post.isDegicieMovie || post.authorName.toLowerCase() === 'degicie';
+      post.viewsCount = (post.viewsCount || 0) + 1; await DatabaseEngine.savePost(post);
 
       document.getElementById('viewerAuthorName').textContent = post.authorName;
       document.getElementById('viewerAuthorAvatar').src = post.authorAvatar;
@@ -1087,54 +707,20 @@
       document.getElementById('viewerPostDescription').textContent = post.description || '';
       document.getElementById('viewerViewsCount').textContent = post.viewsCount;
       document.getElementById('viewerLikesCount').textContent = post.likesCount || 0;
-      document.getElementById('viewerTypeBadge').textContent = post.type === 'video' ? 'Видео' : 'Фото';
-
-      const degicieTag = document.getElementById('viewerDegicieSpecialTag');
-      const degicieBadge = document.getElementById('viewerDegicieAuthorBadge');
-      if (isDegicie) {
-        degicieTag.classList.remove('hidden');
-        degicieBadge.classList.remove('hidden');
-      } else {
-        degicieTag.classList.add('hidden');
-        degicieBadge.classList.add('hidden');
-      }
-
-      const delBtn = document.getElementById('viewerDeleteBtn');
-      if (AppState.currentUser && AppState.currentUser.username === post.authorName) {
-        delBtn.classList.remove('hidden');
-      } else {
-        delBtn.classList.add('hidden');
-      }
 
       const stage = document.getElementById('mediaStage');
       if (AppState.currentActiveBlobUrl) URL.revokeObjectURL(AppState.currentActiveBlobUrl);
-
       AppState.currentActiveBlobUrl = URL.createObjectURL(post.mediaBlob);
 
-      if (post.type === 'video') {
-        stage.innerHTML = `
-          <video src="${AppState.currentActiveBlobUrl}" controls autoplay playsinline class="max-h-[70vh] lg:max-h-full max-w-full w-auto h-auto object-contain"></video>
-        `;
-      } else {
-        stage.innerHTML = `
-          <img src="${AppState.currentActiveBlobUrl}" class="max-h-[70vh] lg:max-h-full max-w-full w-auto h-auto object-contain">
-        `;
-      }
-
-      updateLikeUI(post);
+      stage.innerHTML = post.type === 'video' ? `<video src="${AppState.currentActiveBlobUrl}" controls autoplay playsinline class="max-h-[70vh] w-auto object-contain"></video>` : `<img src="${AppState.currentActiveBlobUrl}" class="max-h-[70vh] w-auto object-contain">`;
       renderComments(post);
       document.getElementById('viewerModal').classList.remove('hidden');
     }
 
     function closeViewerModal() {
-      const stage = document.getElementById('mediaStage');
-      stage.innerHTML = '';
-      if (AppState.currentActiveBlobUrl) {
-        URL.revokeObjectURL(AppState.currentActiveBlobUrl);
-        AppState.currentActiveBlobUrl = null;
-      }
+      document.getElementById('mediaStage').innerHTML = '';
+      if (AppState.currentActiveBlobUrl) { URL.revokeObjectURL(AppState.currentActiveBlobUrl); AppState.currentActiveBlobUrl = null; }
       document.getElementById('viewerModal').classList.add('hidden');
-      AppState.activePostId = null;
       renderMediaGrid();
     }
 
@@ -1142,148 +728,54 @@
       if (!AppState.currentUser) { openAuthModal(); return; }
       const post = AppState.posts.find(p => p.id === AppState.activePostId);
       if (!post) return;
-
       post.likedUserIds = post.likedUserIds || [];
       const u = AppState.currentUser.username;
       const idx = post.likedUserIds.indexOf(u);
-
-      if (idx > -1) {
-        post.likedUserIds.splice(idx, 1);
-        post.likesCount = Math.max(0, (post.likesCount || 1) - 1);
-      } else {
-        post.likedUserIds.push(u);
-        post.likesCount = (post.likesCount || 0) + 1;
-      }
-
+      if (idx > -1) { post.likedUserIds.splice(idx, 1); post.likesCount--; }
+      else { post.likedUserIds.push(u); post.likesCount++; }
       await DatabaseEngine.savePost(post);
-      updateLikeUI(post);
-    }
-
-    function updateLikeUI(post) {
-      const u = AppState.currentUser?.username;
-      const hasLiked = u && post.likedUserIds?.includes(u);
-      const icon = document.getElementById('viewerLikeIcon');
-      if (hasLiked) icon.className = 'fa-solid fa-heart text-brand-500';
-      else icon.className = 'fa-regular fa-heart';
-      document.getElementById('viewerLikesCount').textContent = post.likesCount || 0;
+      document.getElementById('viewerLikesCount').textContent = post.likesCount;
     }
 
     async function handleSendComment(e) {
       e.preventDefault();
       if (!AppState.currentUser) { openAuthModal(); return; }
-
       const input = document.getElementById('commentTextInput');
       const text = input.value.trim();
-      if (!text) return;
-
-      if (!ModerationEngine.isClean(text)) {
-        alert('Комментарий заблокирован анти-мат фильтром!'); return;
-      }
-
+      if (!text || !ModerationEngine.isClean(text)) { alert('Мат запрещен!'); return; }
       const post = AppState.posts.find(p => p.id === AppState.activePostId);
-      if (!post) return;
-
       post.comments = post.comments || [];
-      post.comments.push({
-        id: 'c_' + Date.now(),
-        authorName: AppState.currentUser.username,
-        authorAvatar: AppState.currentUser.avatar,
-        text: text,
-        createdAt: Date.now()
-      });
-
+      post.comments.push({ authorName: AppState.currentUser.username, authorAvatar: AppState.currentUser.avatar, text, createdAt: Date.now() });
       await DatabaseEngine.savePost(post);
-      input.value = '';
-      renderComments(post);
+      input.value = ''; renderComments(post);
     }
 
     function renderComments(post) {
       const box = document.getElementById('commentsContainer');
       const list = post.comments || [];
-      if (list.length === 0) {
-        box.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Отзывов пока нет. Напишите первым!</p>`;
-        return;
-      }
-      box.innerHTML = list.map(c => `
-        <div class="bg-dark-card/60 p-2.5 rounded-xl border border-dark-border/60">
-          <div class="flex items-center gap-2 mb-1">
-            <img src="${c.authorAvatar}" class="w-5 h-5 rounded-full">
-            <span class="text-xs font-bold ${c.authorName.toLowerCase() === 'degicie' ? 'text-amber-400' : 'text-slate-200'}">${c.authorName}</span>
-          </div>
-          <p class="text-xs text-slate-300">${c.text}</p>
-        </div>
-      `).join('');
+      box.innerHTML = list.length === 0 ? '<p class="text-xs text-slate-500 text-center py-4">Нет отзывов</p>' : list.map(c => `<div class="bg-dark-card/60 p-2.5 rounded-xl border border-dark-border/60"><div class="flex items-center gap-2 mb-1"><img src="${c.authorAvatar}" class="w-5 h-5 rounded-full"><span class="text-xs font-bold text-slate-200">${c.authorName}</span></div><p class="text-xs text-slate-300">${c.text}</p></div>`).join('');
     }
 
     async function deleteCurrentViewingPost() {
-      if (!confirm('Удалить эту публикацию?')) return;
+      if (!confirm('Удалить?')) return;
       await DatabaseEngine.deletePost(AppState.activePostId);
       AppState.posts = AppState.posts.filter(p => p.id !== AppState.activePostId);
-      closeViewerModal();
-      showToast('Удалено!');
-    }
-
-    function playRandomPost() {
-      if (AppState.posts.length === 0) {
-        showToast('Пока нет загруженных материалов!');
-        return;
-      }
-      const rand = AppState.posts[Math.floor(Math.random() * AppState.posts.length)];
-      openViewerModal(rand.id);
-    }
-
-    function copyShareLink() {
-      navigator.clipboard.writeText(window.location.href).then(() => {
-        showToast('Ссылка скопирована!');
-      });
+      closeViewerModal(); showToast('Удалено!');
     }
 
     function filterMedia(cat) {
       AppState.currentCategory = cat;
-      const heading = document.getElementById('sectionHeading');
-      const dot = document.getElementById('sectionAccentDot');
-
-      document.querySelectorAll('#filterTabsGroup .cat-pill').forEach(btn => {
-        const c = btn.getAttribute('data-category');
-        if (c === cat) {
-          if (c === 'degicie_movies') {
-            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-600 via-degicie-500 to-amber-700 text-white shadow-neon-degicie border border-amber-400/50 flex items-center gap-1.5 scale-105 transition-all';
-          } else {
-            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all';
-          }
-        } else {
-          if (c === 'degicie_movies') {
-            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-black bg-dark-card text-amber-300 hover:bg-dark-hover transition-all border border-amber-500/40 flex items-center gap-1.5';
-          } else {
-            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border';
-          }
-        }
-      });
-
-      if (cat === 'degicie_movies') {
-        heading.innerHTML = '🎬 Эксклюзивные фильмы от degicie';
-        dot.className = 'w-2.5 h-6 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full shadow-neon-degicie';
-      } else {
-        heading.textContent = cat === 'trend' ? 'В тренде' : (cat === 'video' ? 'Видео ролики' : (cat === 'photo' ? 'Фотографии' : (cat === 'mine' ? 'Мои публикации' : 'Все публикации')));
-        dot.className = 'w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red';
-      }
-
+      switchMainTab('hosting');
       renderMediaGrid();
     }
 
     function changeSorting(s) { AppState.currentSort = s; renderMediaGrid(); }
     function handleLiveSearch(v) { AppState.searchQuery = v.trim().toLowerCase(); renderMediaGrid(); }
-    function clearSearch() { document.getElementById('globalSearchInput').value = ''; AppState.searchQuery = ''; renderMediaGrid(); }
-
     function showToast(msg) {
       const t = document.getElementById('toastNotification');
       document.getElementById('toastMessage').textContent = msg;
-      t.classList.remove('translate-y-24', 'opacity-0');
-      t.classList.add('translate-y-0', 'opacity-100');
-      setTimeout(() => {
-        t.classList.remove('translate-y-0', 'opacity-100');
-        t.classList.add('translate-y-24', 'opacity-0');
-      }, 3000);
+      t.classList.remove('translate-y-24', 'opacity-0'); t.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => { t.classList.remove('translate-y-0', 'opacity-100'); t.classList.add('translate-y-24', 'opacity-0'); }, 3000);
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
