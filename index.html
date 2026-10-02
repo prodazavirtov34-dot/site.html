@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>магахоствидео — Премиум Медиа Хостинг</title>
+  <title>магахоствидео — Кино & Медиа Хостинг</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -17,18 +17,23 @@
               400: '#fb7185', 500: '#f43f5e', 600: '#e11d48', 700: '#be123c',
               800: '#9f1239', 900: '#881337', 950: '#4c0519'
             },
+            degicie: {
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706'
+            },
             dark: {
-              bg: '#070a12',
-              surface: '#0d1322',
-              card: '#131b2e',
-              border: '#1f2b45',
-              hover: '#1b253d'
+              bg: '#05070d',
+              surface: '#0b101d',
+              card: '#10172b',
+              border: '#1c2844',
+              hover: '#18233f'
             }
           },
           boxShadow: {
             'neon-red': '0 0 25px -4px rgba(225, 29, 72, 0.45)',
-            'neon-gold': '0 0 25px -4px rgba(234, 179, 8, 0.35)',
-            'neon-cyan': '0 0 25px -4px rgba(6, 182, 212, 0.35)'
+            'neon-degicie': '0 0 30px -4px rgba(245, 158, 11, 0.45)',
+            'neon-gold': '0 0 25px -4px rgba(234, 179, 8, 0.35)'
           }
         }
       }
@@ -38,32 +43,42 @@
   
   <style>
     ::-webkit-scrollbar { width: 7px; height: 7px; }
-    ::-webkit-scrollbar-track { background: #070a12; }
-    ::-webkit-scrollbar-thumb { background: #1f2b45; border-radius: 6px; }
+    ::-webkit-scrollbar-track { background: #05070d; }
+    ::-webkit-scrollbar-thumb { background: #1c2844; border-radius: 6px; }
     ::-webkit-scrollbar-thumb:hover { background: #e11d48; }
 
     .glassmorphism {
-      background: rgba(13, 19, 34, 0.82);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid rgba(31, 43, 69, 0.8);
+      background: rgba(11, 16, 29, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(28, 40, 68, 0.85);
     }
 
     .card-zoom {
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .card-zoom:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 15px 30px -10px rgba(225, 29, 72, 0.3);
-      border-color: rgba(244, 63, 94, 0.5);
+      transform: translateY(-5px);
+      box-shadow: 0 18px 32px -10px rgba(225, 29, 72, 0.35);
+      border-color: rgba(244, 63, 94, 0.6);
+    }
+
+    .degicie-card:hover {
+      box-shadow: 0 18px 32px -10px rgba(245, 158, 11, 0.4) !important;
+      border-color: rgba(245, 158, 11, 0.7) !important;
     }
 
     .banner-glow {
-      background: linear-gradient(135deg, rgba(234, 179, 8, 0.15) 0%, rgba(13, 19, 34, 0.95) 100%);
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.12) 0%, rgba(11, 16, 29, 0.95) 100%);
     }
 
     .maga-ad-gradient {
-      background: linear-gradient(135deg, #131b2e 0%, #1f1224 50%, #0d1322 100%);
+      background: linear-gradient(135deg, #10172b 0%, #1e1122 50%, #0b101d 100%);
+    }
+
+    .badge-degicie {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
     }
 
     input[type=range] { accent-color: #e11d48; }
@@ -93,7 +108,7 @@
             </span>
             <span class="bg-brand-600/30 text-brand-400 border border-brand-500/40 text-[9px] font-black px-1.5 py-0.5 rounded tracking-widest uppercase">VIP</span>
           </div>
-          <span class="text-[10px] text-slate-400 font-mono tracking-wider block -mt-1 hidden xs:block">БЕЗ ЛАГОВ • БЕЗ БОТОВ</span>
+          <span class="text-[10px] text-slate-400 font-mono tracking-wider block -mt-1 hidden xs:block">ВИДЕО • ФОТО • ФИЛЬМЫ</span>
         </div>
       </div>
 
@@ -105,7 +120,7 @@
             type="text" 
             id="globalSearchInput" 
             oninput="handleLiveSearch(this.value)"
-            placeholder="Искать видео, клипы, фото, авторов..." 
+            placeholder="Искать видео, фильмы degicie, фото, авторов..." 
             class="w-full pl-11 pr-10 py-2.5 bg-dark-surface border border-dark-border rounded-2xl text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all shadow-inner"
           />
           <button id="clearSearchBtn" onclick="clearSearch()" class="absolute right-3.5 text-slate-500 hover:text-white hidden">
@@ -114,10 +129,9 @@
         </div>
       </div>
 
-      <!-- КНОПКИ ВЕРХНЕЙ ПАНЕЛИ -->
+      <!-- КНОПКИ ВЕРХА -->
       <div class="flex items-center gap-2 sm:gap-3">
         
-        <!-- Кнопка случайного видео -->
         <button 
           onclick="playRandomPost()" 
           title="Случайное медиа" 
@@ -126,7 +140,6 @@
           <span class="hidden lg:inline">Мне повезёт!</span>
         </button>
 
-        <!-- Залить файл -->
         <button 
           onclick="triggerUploadCheck()" 
           class="flex items-center gap-2 bg-gradient-to-r from-brand-600 via-rose-600 to-amber-600 hover:from-brand-500 hover:to-rose-500 text-white px-4 py-2.5 rounded-2xl font-black text-xs sm:text-sm shadow-neon-red active:scale-95 transition-all">
@@ -134,7 +147,6 @@
           <span>Залить</span>
         </button>
 
-        <!-- Профиль пользователя -->
         <div id="userProfileBar" class="flex items-center"></div>
 
       </div>
@@ -173,15 +185,23 @@
   </div>
 
   <!-- ========================================== -->
-  <!-- 3. НАВИГАЦИЯ ПО КАТЕГОРИЯМ И ТЕГАМ         -->
+  <!-- 3. НАВИГАЦИЯ ПО КАТЕГОРИЯМ + ВЫБОР DEGICIE -->
   <!-- ========================================== -->
   <nav class="bg-dark-surface/60 border-b border-dark-border/80 px-4 py-2.5 sticky top-[69px] z-30 backdrop-blur-md">
-    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
+    <div class="max-w-[1700px] mx-auto flex items-center justify-between gap-3 overflow-x-auto no-scrollbar">
       
       <div class="flex items-center gap-2 flex-shrink-0" id="filterTabsGroup">
         <button onclick="filterMedia('all')" data-category="all" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all">
           <i class="fa-solid fa-layer-group mr-1.5"></i>Все
         </button>
+
+        <!-- ЭКСКЛЮЗИВНАЯ ВКЛАДКА ФИЛЬМОВ ОТ DEGICIE -->
+        <button onclick="filterMedia('degicie_movies')" data-category="degicie_movies" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-600 via-degicie-500 to-amber-700 text-white hover:brightness-110 shadow-neon-degicie transition-all border border-amber-400/50 flex items-center gap-1.5">
+          <i class="fa-solid fa-crown text-yellow-200"></i>
+          <span>Фильмы от degicie</span>
+          <span class="bg-black/50 text-[10px] px-1.5 py-0.2 rounded-md font-mono">PRO</span>
+        </button>
+
         <button onclick="filterMedia('trend')" data-category="trend" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
           <i class="fa-solid fa-fire mr-1.5 text-amber-400"></i>В тренде
         </button>
@@ -192,7 +212,7 @@
           <i class="fa-solid fa-camera mr-1.5 text-cyan-400"></i>Фотографии
         </button>
         <button onclick="filterMedia('mine')" data-category="mine" class="cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border">
-          <i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои загрузки
+          <i class="fa-solid fa-folder-user mr-1.5 text-emerald-400"></i>Мои публикации
         </button>
       </div>
 
@@ -215,7 +235,7 @@
     
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <div class="w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red"></div>
+        <div id="sectionAccentDot" class="w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red"></div>
         <h2 id="sectionHeading" class="text-lg sm:text-xl font-black text-white tracking-tight">Все публикации</h2>
         <span id="postsTotalCount" class="text-xs font-bold px-2.5 py-0.5 rounded-lg bg-dark-surface border border-dark-border text-slate-300">0</span>
       </div>
@@ -234,8 +254,8 @@
       <div class="w-20 h-20 mx-auto rounded-3xl bg-dark-surface border border-dark-border flex items-center justify-center text-slate-500 text-3xl mb-4 shadow-2xl">
         <i class="fa-solid fa-photo-film"></i>
       </div>
-      <h3 class="text-xl font-black text-slate-200">Пока ничего не загружено</h3>
-      <p class="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto mt-1 mb-5">
+      <h3 class="text-xl font-black text-slate-200" id="noContentTitle">Пока ничего не загружено</h3>
+      <p class="text-slate-400 text-xs sm:text-sm max-w-sm mx-auto mt-1 mb-5" id="noContentDesc">
         Зарегистрируйтесь под уникальным ником и залейте первый ролик прямо сейчас!
       </p>
       <button onclick="triggerUploadCheck()" class="bg-brand-600 hover:bg-brand-500 text-white font-black text-xs sm:text-sm px-6 py-3 rounded-2xl shadow-neon-red transition-all">
@@ -262,26 +282,24 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <!-- Левая часть с текстом -->
       <div class="flex-1 text-center md:text-left pt-6 md:pt-0 max-w-2xl">
         <div class="inline-flex items-center gap-1.5 text-amber-400 font-bold text-xs uppercase tracking-widest mb-1.5">
           <i class="fa-solid fa-crown text-sm"></i> Главный амбассадор проекта
         </div>
         <h3 class="text-xl sm:text-2xl font-black text-white leading-tight">
-          «Качайте хостинг, заливайте контент от души!»
+          «Качайте хостинг, смотрите фильмы degicie и заливайте контент!»
         </h3>
         <p class="text-slate-300 text-xs sm:text-sm mt-2 leading-relaxed">
-          Только чистые ролики, топовые фото и моментальная скорость без зависаний. Мага лично гарантирует максимальную отдачу и уважение каждому автору!
+          Только чистые ролики, топовые фото, премьеры кино и моментальная скорость без лагов. Мага лично гарантирует максимальную отдачу каждому автору!
         </p>
         <div class="mt-4 flex flex-wrap items-center justify-center md:justify-start gap-3">
           <button onclick="triggerUploadCheck()" class="bg-gradient-to-r from-brand-600 to-amber-600 hover:from-brand-500 hover:to-amber-500 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-neon-red transition-all">
             Залить ролик для Маги
           </button>
-          <span class="text-[11px] text-slate-400 font-mono">#магахоствидео #газвпол</span>
+          <span class="text-[11px] text-slate-400 font-mono">#магахоствидео #degicie_cinema #газвпол</span>
         </div>
       </div>
 
-      <!-- Правая часть с фото Маги -->
       <div class="relative w-48 sm:w-56 h-64 sm:h-72 rounded-2xl overflow-hidden border-2 border-brand-500/50 shadow-neon-red flex-shrink-0 bg-black">
         <img 
           src="maga_ad.jpg" 
@@ -308,14 +326,14 @@
         <div>
           <span class="font-black text-slate-200">магахоствидео 2026</span>
           <span class="text-slate-600 mx-1.5">•</span>
-          <span>Народная платформа</span>
+          <span>Народная платформа & Кинозал degicie</span>
         </div>
       </div>
 
       <div class="flex flex-wrap items-center justify-center gap-6 text-slate-400">
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-shield-halved text-brand-500"></i> Анти-мат фильтр</span>
         <span class="flex items-center gap-1.5"><i class="fa-solid fa-ban text-rose-500"></i> Без 18+ и порно</span>
-        <span class="flex items-center gap-1.5"><i class="fa-solid fa-fingerprint text-amber-500"></i> Уникальные имена</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-crown text-amber-500"></i> Авторский зал degicie</span>
       </div>
 
       <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="p-2.5 rounded-xl bg-dark-card hover:bg-dark-hover border border-dark-border text-slate-300 transition-colors">
@@ -358,7 +376,7 @@
               id="regUsername" 
               required 
               maxlength="20"
-              placeholder="Например: Maga05" 
+              placeholder="Например: Maga05 или degicie" 
               class="w-full bg-dark-surface border border-dark-border rounded-xl pl-9 pr-3 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500"
             />
           </div>
@@ -433,7 +451,7 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- 8. МОДАЛЬНОЕ ОКНО: ЗАГРУЗКА МЕДИА С ДИСКА                       -->
+  <!-- 8. МОДАЛЬНОЕ ОКНО: ЗАГРУЗКА МЕДИА С ПРАВАМИ DEGICIE             -->
   <!-- ============================================================== -->
   <div id="uploadModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="glassmorphism max-w-lg w-full rounded-3xl border border-dark-border p-6 sm:p-7 shadow-2xl relative max-h-[92vh] overflow-y-auto">
@@ -448,12 +466,13 @@
         </div>
         <div>
           <h3 class="text-lg font-black text-white">Залить на хостинг</h3>
-          <p class="text-xs text-slate-400">Видео и фото сохраняются моментально</p>
+          <p class="text-xs text-slate-400">Видео, фильмы и фото сохраняются моментально</p>
         </div>
       </div>
 
       <form id="uploadForm" onsubmit="processMediaUpload(event)" class="space-y-4">
         
+        <!-- DROPZONE -->
         <div 
           id="dropArea" 
           onclick="document.getElementById('nativeFileInput').click()"
@@ -461,20 +480,32 @@
           <input type="file" id="nativeFileInput" accept="video/*,image/*" class="hidden" onchange="onFileChosen(this.files[0])"/>
           <div id="dropPrompt">
             <i class="fa-solid fa-file-video text-3xl text-brand-500 mb-2"></i>
-            <p class="text-xs font-bold text-slate-200">Выберите файл с вашего диска</p>
+            <p class="text-xs font-bold text-slate-200">Выберите видео, фильм или фото с диска</p>
             <p class="text-[11px] text-slate-400 mt-0.5">MP4, WebM, MOV, JPG, PNG, GIF</p>
           </div>
           <div id="dropPreviewBox" class="hidden text-xs text-emerald-400 font-bold"></div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Название ролика / фото *</label>
-          <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Придумайте название" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        <!-- ОПЦИЯ: ВЫЛОЖИТЬ КАК ФИЛЬМ DEGICIE -->
+        <div id="degicieMovieOptionBox" class="p-3 rounded-2xl bg-gradient-to-r from-amber-950/40 via-dark-card to-dark-surface border border-amber-500/40 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <i class="fa-solid fa-crown text-amber-400 text-base"></i>
+            <div>
+              <div class="text-xs font-black text-amber-300">Опубликовать как Фильм от degicie</div>
+              <div class="text-[10px] text-slate-400">Доступно только пользователю с ником degicie</div>
+            </div>
+          </div>
+          <input type="checkbox" id="isDegicieMovieCheck" class="w-5 h-5 accent-amber-500 rounded cursor-pointer">
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">Описание публикации</label>
-          <textarea id="uploadDescInput" rows="2" maxlength="300" placeholder="О чем видео..." class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500 resize-none"></textarea>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Название фильма / ролика *</label>
+          <input type="text" id="uploadTitleInput" required maxlength="90" placeholder="Придумайте название публикации" class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">Описание и сюжет</label>
+          <textarea id="uploadDescInput" rows="2" maxlength="300" placeholder="О чем этот фильм или видео..." class="w-full bg-dark-surface border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500 resize-none"></textarea>
         </div>
 
         <div id="uploadFormAlert" class="hidden p-3 rounded-xl bg-brand-950/80 border border-brand-800 text-xs text-brand-300"></div>
@@ -497,6 +528,9 @@
         
         <div class="absolute top-4 left-4 z-30 flex items-center gap-2">
           <span id="viewerTypeBadge" class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-brand-600 text-white">Видео</span>
+          <span id="viewerDegicieSpecialTag" class="hidden px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 to-amber-700 text-white shadow-neon-degicie">
+            <i class="fa-solid fa-crown mr-1"></i>Фильм degicie
+          </span>
         </div>
 
         <button onclick="closeViewerModal()" class="absolute top-4 right-4 z-30 w-8 h-8 rounded-full bg-black/80 hover:bg-rose-600 text-white flex items-center justify-center text-xs transition-colors">
@@ -514,7 +548,10 @@
             <div class="flex items-center gap-2.5">
               <img id="viewerAuthorAvatar" src="" class="w-9 h-9 rounded-xl object-cover border border-dark-border bg-dark-card">
               <div>
-                <h4 id="viewerAuthorName" class="text-xs sm:text-sm font-bold text-white leading-tight"></h4>
+                <div class="flex items-center gap-1.5">
+                  <h4 id="viewerAuthorName" class="text-xs sm:text-sm font-bold text-white leading-tight"></h4>
+                  <span id="viewerDegicieAuthorBadge" class="hidden badge-degicie text-[9px] text-black font-black px-1.5 py-0.2 rounded font-mono">РЕЖИССЁР</span>
+                </div>
                 <div id="viewerPostDate" class="text-[10px] text-slate-400 mt-0.5"></div>
               </div>
             </div>
@@ -549,7 +586,7 @@
         <!-- ПОЛЕ ОТПРАВКИ -->
         <div class="p-3 bg-dark-surface border-t border-dark-border">
           <form onsubmit="handleSendComment(event)" class="flex gap-2">
-            <input type="text" id="commentTextInput" maxlength="150" placeholder="Написать комментарий..." class="flex-1 bg-dark-card border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+            <input type="text" id="commentTextInput" maxlength="150" placeholder="Написать отзыв к фильму/видео..." class="flex-1 bg-dark-card border border-dark-border rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
             <button type="submit" class="p-2.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs transition-colors">
               <i class="fa-solid fa-paper-plane"></i>
             </button>
@@ -570,10 +607,10 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- 10. JAVASCRIPT ДВИЖОК ХОСТИНГА (БЕЗ ЛАГОВ, BLOB + INDEXEDDB)    -->
+  <!-- 10. JAVASCRIPT ДВИЖОК ХОСТИНГА (БЕЗ ЛАГОВ, ПРАВА DEGICIE)       -->
   <!-- ============================================================== -->
   <script>
-    // 1. АНТИ-МАТ И АНТИ-18+ ФИЛЬТР
+    // 1. АНТИ-МАТ И АНТИ-18+
     const ModerationEngine = {
       banned: ['порно', 'porno', 'porn', 'xxx', 'секс', 'sex', 'nsfw', 'сиськи', 'член', 'хуй', 'пизда', 'ебать', 'бля', 'сука', 'мудак', 'залупа', 'дрочить', 'хентай', 'голая', 'голый'],
       isClean(text) {
@@ -586,7 +623,7 @@
       }
     };
 
-    // 2. СВЕРХБЫСТРАЯ ГЕНЕРАЦИЯ ОБЛОЖКИ ВИДЕО (ЧТОБЫ НЕ ЛАГАЛО)
+    // 2. СВЕРХБЫСТРАЯ ГЕНЕРАЦИЯ ОБЛОЖКИ (ЧТОБЫ НЕ ЛАГАЛО)
     function createVideoThumbnail(file) {
       return new Promise((resolve) => {
         const video = document.createElement('video');
@@ -614,9 +651,9 @@
       });
     }
 
-    // 3. БАЗА ДАННЫХ INDEXEDDB (ЧИСТЫЙ BLOB)
+    // 3. БАЗА ДАННЫХ INDEXEDDB (BLOB)
     const DatabaseEngine = {
-      dbName: 'MagaHostMegaPro_DB',
+      dbName: 'MagaHostDegicieCinema_DB',
       version: 1,
       db: null,
 
@@ -648,7 +685,9 @@
                 usernameLower: lower,
                 username: username.trim(),
                 password: password,
-                avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(username)}`
+                avatar: lower === 'degicie' 
+                  ? 'https://api.dicebear.com/7.x/bottts/svg?seed=degicieKing&backgroundColor=f59e0b'
+                  : `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(username)}`
               };
               store.put(u);
               resolve({ success: true, user: u });
@@ -730,10 +769,14 @@
           </button>
         `;
       } else {
+        const isDegicie = AppState.currentUser.username.toLowerCase() === 'degicie';
         bar.innerHTML = `
-          <div class="flex items-center gap-2 bg-dark-surface border border-dark-border py-1 px-2.5 rounded-2xl">
+          <div class="flex items-center gap-2 bg-dark-surface border ${isDegicie ? 'border-amber-500/60 shadow-neon-degicie' : 'border-dark-border'} py-1 px-2.5 rounded-2xl">
             <img src="${AppState.currentUser.avatar}" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl object-cover border border-brand-500/40 bg-dark-card">
-            <span class="text-xs font-bold text-white max-w-[90px] truncate hidden xs:inline">${AppState.currentUser.username}</span>
+            <div class="text-left hidden xs:block">
+              <span class="text-xs font-bold text-white max-w-[90px] truncate block">${AppState.currentUser.username}</span>
+              ${isDegicie ? '<span class="text-[9px] text-amber-400 font-mono font-black -mt-0.5 block">👑 РЕЖИССЁР</span>' : ''}
+            </div>
             <button onclick="handleUserLogout()" title="Выйти" class="p-1 text-slate-400 hover:text-brand-400 text-xs ml-1">
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
             </button>
@@ -832,8 +875,19 @@
       openUploadModal();
     }
 
-    // 5. ЗАГРУЗКА
-    function openUploadModal() { document.getElementById('uploadModal').classList.remove('hidden'); }
+    // 5. ЗАГРУЗКА И ПРОВЕРКА ПРАВ НА ФИЛЬМЫ DEGICIE
+    function openUploadModal() { 
+      document.getElementById('uploadModal').classList.remove('hidden'); 
+      const isDegicie = AppState.currentUser?.username.toLowerCase() === 'degicie';
+      const check = document.getElementById('isDegicieMovieCheck');
+      check.checked = false;
+      if (isDegicie) {
+        document.getElementById('degicieMovieOptionBox').classList.remove('opacity-60');
+      } else {
+        document.getElementById('degicieMovieOptionBox').classList.add('opacity-60');
+      }
+    }
+
     function closeUploadModal() {
       document.getElementById('uploadModal').classList.add('hidden');
       document.getElementById('uploadForm').reset();
@@ -868,11 +922,19 @@
 
       const title = document.getElementById('uploadTitleInput').value.trim();
       const desc = document.getElementById('uploadDescInput').value.trim();
+      const isDegicieMovie = document.getElementById('isDegicieMovieCheck').checked;
+      const alertBox = document.getElementById('uploadFormAlert');
+
+      // СТРОГАЯ ПРОВЕРКА: ФИЛЬМЫ МОЖЕТ ВЫКЛАДЫВАТЬ ТОЛЬКО DEGICIE
+      if (isDegicieMovie && AppState.currentUser.username.toLowerCase() !== 'degicie') {
+        alertBox.textContent = 'ОШИБКА: Раздел «Фильмы от degicie» доступен только пользователю с ником degicie!';
+        alertBox.classList.remove('hidden');
+        return;
+      }
 
       if (!ModerationEngine.isClean(title) || !ModerationEngine.isClean(desc)) {
-        const al = document.getElementById('uploadFormAlert');
-        al.textContent = 'Мат и порнография строго запрещены!';
-        al.classList.remove('hidden'); return;
+        alertBox.textContent = 'Мат и порнография строго запрещены!';
+        alertBox.classList.remove('hidden'); return;
       }
 
       const btn = document.getElementById('uploadSubmitBtn');
@@ -898,6 +960,7 @@
         title: title,
         description: desc,
         type: isVideo ? 'video' : 'photo',
+        isDegicieMovie: isDegicieMovie, // Отметка о фильме degicie
         mediaBlob: file,
         thumbnail: thumbUrl,
         authorName: AppState.currentUser.username,
@@ -913,8 +976,13 @@
       AppState.posts.unshift(post);
 
       closeUploadModal();
-      showToast('Успешно опубликовано!');
-      renderMediaGrid();
+      showToast(isDegicieMovie ? 'Фильм от degicie успешно опубликован в зал славы!' : 'Успешно опубликовано!');
+      
+      if (isDegicieMovie) {
+        filterMedia('degicie_movies');
+      } else {
+        renderMediaGrid();
+      }
     }
 
     // 6. ОТОБРАЖЕНИЕ КАРТОЧЕК
@@ -924,11 +992,21 @@
 
       let list = [...AppState.posts];
 
-      if (AppState.currentCategory === 'video') list = list.filter(p => p.type === 'video');
-      else if (AppState.currentCategory === 'photo') list = list.filter(p => p.type === 'photo');
-      else if (AppState.currentCategory === 'trend') list = list.filter(p => (p.likesCount || 0) > 0 || (p.viewsCount || 0) > 2);
-      else if (AppState.currentCategory === 'mine') {
-        list = AppState.currentUser ? list.filter(p => p.authorName === AppState.currentUser.username) : [];
+      if (AppState.currentCategory === 'degicie_movies') {
+        // ТОЛЬКО ФИЛЬМЫ ОТ DEGICIE
+        list = list.filter(p => p.isDegicieMovie || p.authorName.toLowerCase() === 'degicie');
+        document.getElementById('noContentTitle').textContent = 'В зале degicie пока нет фильмов';
+        document.getElementById('noContentDesc').textContent = 'Только создатель с ником degicie может выкладывать сюда премьеры!';
+      } else {
+        document.getElementById('noContentTitle').textContent = 'Пока ничего не загружено';
+        document.getElementById('noContentDesc').textContent = 'Зарегистрируйтесь под уникальным ником и залейте первый ролик!';
+        
+        if (AppState.currentCategory === 'video') list = list.filter(p => p.type === 'video');
+        else if (AppState.currentCategory === 'photo') list = list.filter(p => p.type === 'photo');
+        else if (AppState.currentCategory === 'trend') list = list.filter(p => (p.likesCount || 0) > 0 || (p.viewsCount || 0) > 2);
+        else if (AppState.currentCategory === 'mine') {
+          list = AppState.currentUser ? list.filter(p => p.authorName === AppState.currentUser.username) : [];
+        }
       }
 
       if (AppState.searchQuery) {
@@ -949,34 +1027,46 @@
 
       empty.classList.add('hidden');
 
-      grid.innerHTML = list.map(post => `
-        <div onclick="openViewerModal('${post.id}')" class="glassmorphism rounded-2xl overflow-hidden card-zoom cursor-pointer border border-dark-border flex flex-col group">
-          <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden">
-            <img src="${post.thumbnail || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-            ${post.type === 'video' ? `
-              <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div class="w-11 h-11 rounded-full bg-brand-600/90 text-white flex items-center justify-center pl-0.5 shadow-neon-red">
-                  <i class="fa-solid fa-play text-sm"></i>
+      grid.innerHTML = list.map(post => {
+        const isDegicie = post.isDegicieMovie || post.authorName.toLowerCase() === 'degicie';
+        return `
+          <div onclick="openViewerModal('${post.id}')" class="glassmorphism rounded-2xl overflow-hidden card-zoom ${isDegicie ? 'degicie-card border-amber-500/40 shadow-neon-degicie' : 'border-dark-border'} cursor-pointer flex flex-col group">
+            <div class="relative bg-black aspect-video flex items-center justify-center overflow-hidden">
+              <img src="${post.thumbnail || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400'}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              
+              ${isDegicie ? `
+                <div class="absolute top-2 left-2 z-10 bg-gradient-to-r from-amber-500 to-amber-700 text-white text-[9px] font-black px-2 py-0.5 rounded shadow flex items-center gap-1">
+                  <i class="fa-solid fa-crown text-[8px]"></i> degicie премьера
                 </div>
-              </div>
-              <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">Видео</span>
-            ` : `<span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">Фото</span>`}
-          </div>
-          <div class="p-3.5 flex flex-col flex-1 justify-between">
-            <div>
-              <div class="flex items-center gap-2 mb-1">
-                <img src="${post.authorAvatar}" class="w-5 h-5 rounded-full">
-                <span class="text-[11px] font-bold text-slate-300 truncate">${post.authorName}</span>
-              </div>
-              <h3 class="text-xs sm:text-sm font-extrabold text-white line-clamp-1">${post.title}</h3>
+              ` : ''}
+
+              ${post.type === 'video' ? `
+                <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                  <div class="w-11 h-11 rounded-full ${isDegicie ? 'bg-amber-600/90 shadow-neon-degicie' : 'bg-brand-600/90 shadow-neon-red'} text-white flex items-center justify-center pl-0.5">
+                    <i class="fa-solid fa-play text-sm"></i>
+                  </div>
+                </div>
+                <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">Видео</span>
+              ` : `<span class="absolute bottom-2 right-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-white">Фото</span>`}
             </div>
-            <div class="flex items-center justify-between pt-2.5 mt-2 border-t border-dark-border/60 text-[11px] text-slate-400">
-              <span><i class="fa-regular fa-heart text-brand-400 mr-1"></i>${post.likesCount || 0}</span>
-              <span><i class="fa-regular fa-comment mr-1"></i>${post.comments ? post.comments.length : 0}</span>
+            
+            <div class="p-3.5 flex flex-col flex-1 justify-between">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <img src="${post.authorAvatar}" class="w-5 h-5 rounded-full border border-dark-border">
+                  <span class="text-[11px] font-bold ${isDegicie ? 'text-amber-300' : 'text-slate-300'} truncate">${post.authorName}</span>
+                  ${isDegicie ? '<i class="fa-solid fa-check text-[9px] text-amber-400"></i>' : ''}
+                </div>
+                <h3 class="text-xs sm:text-sm font-extrabold text-white line-clamp-1">${post.title}</h3>
+              </div>
+              <div class="flex items-center justify-between pt-2.5 mt-2 border-t border-dark-border/60 text-[11px] text-slate-400">
+                <span><i class="fa-regular fa-heart text-brand-400 mr-1"></i>${post.likesCount || 0}</span>
+                <span><i class="fa-regular fa-comment mr-1"></i>${post.comments ? post.comments.length : 0}</span>
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     // 7. ПЛЕЕР
@@ -988,6 +1078,8 @@
       post.viewsCount = (post.viewsCount || 0) + 1;
       await DatabaseEngine.savePost(post);
 
+      const isDegicie = post.isDegicieMovie || post.authorName.toLowerCase() === 'degicie';
+
       document.getElementById('viewerAuthorName').textContent = post.authorName;
       document.getElementById('viewerAuthorAvatar').src = post.authorAvatar;
       document.getElementById('viewerPostDate').textContent = new Date(post.createdAt).toLocaleDateString('ru-RU');
@@ -996,6 +1088,16 @@
       document.getElementById('viewerViewsCount').textContent = post.viewsCount;
       document.getElementById('viewerLikesCount').textContent = post.likesCount || 0;
       document.getElementById('viewerTypeBadge').textContent = post.type === 'video' ? 'Видео' : 'Фото';
+
+      const degicieTag = document.getElementById('viewerDegicieSpecialTag');
+      const degicieBadge = document.getElementById('viewerDegicieAuthorBadge');
+      if (isDegicie) {
+        degicieTag.classList.remove('hidden');
+        degicieBadge.classList.remove('hidden');
+      } else {
+        degicieTag.classList.add('hidden');
+        degicieBadge.classList.add('hidden');
+      }
 
       const delBtn = document.getElementById('viewerDeleteBtn');
       if (AppState.currentUser && AppState.currentUser.username === post.authorName) {
@@ -1099,14 +1201,14 @@
       const box = document.getElementById('commentsContainer');
       const list = post.comments || [];
       if (list.length === 0) {
-        box.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Комментариев пока нет</p>`;
+        box.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">Отзывов пока нет. Напишите первым!</p>`;
         return;
       }
       box.innerHTML = list.map(c => `
         <div class="bg-dark-card/60 p-2.5 rounded-xl border border-dark-border/60">
           <div class="flex items-center gap-2 mb-1">
             <img src="${c.authorAvatar}" class="w-5 h-5 rounded-full">
-            <span class="text-xs font-bold text-slate-200">${c.authorName}</span>
+            <span class="text-xs font-bold ${c.authorName.toLowerCase() === 'degicie' ? 'text-amber-400' : 'text-slate-200'}">${c.authorName}</span>
           </div>
           <p class="text-xs text-slate-300">${c.text}</p>
         </div>
@@ -1138,13 +1240,34 @@
 
     function filterMedia(cat) {
       AppState.currentCategory = cat;
+      const heading = document.getElementById('sectionHeading');
+      const dot = document.getElementById('sectionAccentDot');
+
       document.querySelectorAll('#filterTabsGroup .cat-pill').forEach(btn => {
-        if (btn.getAttribute('data-category') === cat) {
-          btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all';
+        const c = btn.getAttribute('data-category');
+        if (c === cat) {
+          if (c === 'degicie_movies') {
+            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-600 via-degicie-500 to-amber-700 text-white shadow-neon-degicie border border-amber-400/50 flex items-center gap-1.5 scale-105 transition-all';
+          } else {
+            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-neon-red transition-all';
+          }
         } else {
-          btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border';
+          if (c === 'degicie_movies') {
+            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-black bg-dark-card text-amber-300 hover:bg-dark-hover transition-all border border-amber-500/40 flex items-center gap-1.5';
+          } else {
+            btn.className = 'cat-pill px-4 py-1.5 rounded-xl text-xs font-bold bg-dark-card text-slate-300 hover:bg-dark-hover transition-all border border-dark-border';
+          }
         }
       });
+
+      if (cat === 'degicie_movies') {
+        heading.innerHTML = '🎬 Эксклюзивные фильмы от degicie';
+        dot.className = 'w-2.5 h-6 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full shadow-neon-degicie';
+      } else {
+        heading.textContent = cat === 'trend' ? 'В тренде' : (cat === 'video' ? 'Видео ролики' : (cat === 'photo' ? 'Фотографии' : (cat === 'mine' ? 'Мои публикации' : 'Все публикации')));
+        dot.className = 'w-2.5 h-6 bg-gradient-to-b from-brand-500 to-amber-500 rounded-full shadow-neon-red';
+      }
+
       renderMediaGrid();
     }
 
