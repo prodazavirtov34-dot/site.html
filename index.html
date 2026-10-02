@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch PointAuction & Roulette</title>
+    <title>Twitch PointAuction & Roulette — ruffatkoo</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -23,17 +23,18 @@
             </div>
             <div>
                 <h1 class="font-extrabold text-xl tracking-tight text-white">Twitch PointAuction</h1>
-                <p class="text-xs text-zinc-400">Аукцион за баллы канала & Рулетка</p>
+                <p class="text-xs text-zinc-400">Канал: <span class="text-purple-400 font-semibold">ruffatkoo</span></p>
             </div>
         </div>
 
-        <!-- АВТОРИЗАЦИЯ ПО НИКУ (БЕЗ РЕДИРЕКТОВ НА НАЙТБОТ) -->
-        <div id="auth-container">
-            <div class="flex items-center gap-2">
-                <input type="text" id="streamer-input" placeholder="Ваш ник на Twitch" class="bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
-                <button onclick="loginStreamer()" class="twitch-purple text-white font-semibold px-4 py-2 rounded-xl text-sm transition cursor-pointer">
-                    Войти
-                </button>
+        <!-- АВТОРИЗОВАННЫЙ ПРОФИЛЬ -->
+        <div class="flex items-center gap-3 bg-[#26262c] px-4 py-2 rounded-xl">
+            <div class="w-8 h-8 rounded-full twitch-purple flex items-center justify-center font-bold text-white text-sm">
+                R
+            </div>
+            <div class="text-left">
+                <div class="text-xs font-bold text-white">ruffatkoo</div>
+                <div class="text-[10px] text-emerald-400">● Эфир активен</div>
             </div>
         </div>
     </header>
@@ -107,50 +108,16 @@
     </main>
 
     <script>
-        let lots = JSON.parse(localStorage.getItem('twitch_auction_lots')) || [];
-        let processedTransactions = new Set(JSON.parse(localStorage.getItem('twitch_processed_tx')) || []);
+        let lots = JSON.parse(localStorage.getItem('twitch_auction_lots_ruffatkoo')) || [];
+        let processedTransactions = new Set(JSON.parse(localStorage.getItem('twitch_processed_tx_ruffatkoo')) || []);
 
         window.onload = function() {
-            const savedStreamer = localStorage.getItem('twitch_streamer');
-            if (savedStreamer) {
-                setStreamerUI(savedStreamer);
-            }
             renderLots();
         };
 
-        function loginStreamer() {
-            const name = document.getElementById('streamer-input').value.trim();
-            if (!name) {
-                alert('Введите ник стримера!');
-                return;
-            }
-            localStorage.setItem('twitch_streamer', name);
-            setStreamerUI(name);
-        }
-
-        function setStreamerUI(name) {
-            document.getElementById('auth-container').innerHTML = `
-                <div class="flex items-center gap-3 bg-[#26262c] px-4 py-2 rounded-xl">
-                    <div class="w-8 h-8 rounded-full twitch-purple flex items-center justify-center font-bold text-white text-sm">
-                        ${name.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="text-left">
-                        <div class="text-xs font-bold text-white">${name}</div>
-                        <div class="text-[10px] text-emerald-400">● Канал подключен</div>
-                    </div>
-                    <button onclick="logoutStreamer()" class="ml-3 text-zinc-400 hover:text-red-400 text-xs"><i class="fa-solid fa-right-from-bracket"></i></button>
-                </div>
-            `;
-        }
-
-        function logoutStreamer() {
-            localStorage.removeItem('twitch_streamer');
-            location.reload();
-        }
-
         function saveState() {
-            localStorage.setItem('twitch_auction_lots', JSON.stringify(lots));
-            localStorage.setItem('twitch_processed_tx', JSON.stringify([...processedTransactions]));
+            localStorage.setItem('twitch_auction_lots_ruffatkoo', JSON.stringify(lots));
+            localStorage.setItem('twitch_processed_tx_ruffatkoo', JSON.stringify([...processedTransactions]));
         }
 
         function addLot(e) {
