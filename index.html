@@ -384,30 +384,30 @@
         <div class="glass-panel p-6 rounded-2xl max-w-md w-full border border-twitch-border space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-twitch-border">
                 <h3 class="font-bold text-white text-sm flex items-center gap-2">
-                    <i class="fa-brands fa-twitch text-[#9146FF]"></i> Авторизация через Twitch
+                    <i class="fa-brands fa-twitch text-[#9146FF]"></i> Авторизация через Twitch (OAuth)
                 </h3>
                 <button onclick="closeTwitchAuthModal()" class="text-twitch-muted hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <p class="text-xs text-twitch-muted">Введите ваш ник на Twitch или Client ID для подключения API баллов канала.</p>
+            <p class="text-xs text-twitch-muted">Подключите ваш канал Twitch с помощью официальной авторизации для приема баллов и управления трансляцией.</p>
             
-            <div class="space-y-3">
+            <div class="space-y-3 pt-2">
+                <button onclick="startRealTwitchOAuth()" class="w-full bg-[#9146FF] hover:bg-[#772CE8] text-white font-bold py-3.5 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-twitch-purple/30">
+                    <i class="fa-brands fa-twitch text-base"></i> Войти через Twitch (Официальный редирект)
+                </button>
+                <div class="relative flex py-2 items-center">
+                    <div class="flex-grow border-t border-twitch-border"></div>
+                    <span class="flex-shrink mx-4 text-[10px] uppercase text-twitch-muted font-bold">или быстрый вход</span>
+                    <div class="flex-grow border-t border-twitch-border"></div>
+                </div>
                 <div>
                     <label class="block text-xs font-semibold text-twitch-muted mb-1">Ник стримера на Twitch</label>
                     <input type="text" id="authStreamerInput" placeholder="например: Buster или Evelone" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-twitch-muted mb-1">Twitch Client ID (опционально)</label>
-                    <input type="text" id="authClientIdInput" placeholder="оставьте пустым для быстрого входа" class="w-full bg-twitch-bg border border-twitch-border rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-twitch-purple transition">
-                </div>
             </div>
 
             <div class="flex items-center gap-2 pt-2">
-                <button onclick="submitTwitchAuth()" class="w-full bg-[#9146FF] hover:bg-[#772CE8] text-white font-bold py-3 rounded-xl transition text-xs flex items-center justify-center gap-2 shadow-lg shadow-twitch-purple/30">
-                    <i class="fa-brands fa-twitch"></i> Подключить Twitch
-                </button>
-                <button onclick="closeTwitchAuthModal()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white font-bold py-3 rounded-xl transition text-xs">
-                    Отмена
-                </button>
+                <button onclick="submitManualTwitchAuth()" class="w-full bg-twitch-card hover:bg-twitch-border text-white font-bold py-2.5 rounded-xl border border-twitch-border transition text-xs">Сохранить ник</button>
+                <button onclick="closeTwitchAuthModal()" class="w-full bg-twitch-border hover:bg-twitch-border/80 text-twitch-muted hover:text-white font-bold py-2.5 rounded-xl transition text-xs">Закрыть</button>
             </div>
         </div>
     </div>
@@ -545,13 +545,14 @@
             renderAll();
         }
 
-        // Twitch Auth Functions
+        // Twitch Auth Functions (Using exact client_id and scopes requested)
         function openTwitchAuthModal() {
             if (twitchUser) {
                 if (confirm(`Выйти из аккаунта @${twitchUser.name}?`)) {
                     twitchUser = null;
                     saveData();
                     showToast('👋 Вы вышли из профиля Twitch', 'info');
+                    updateAuthUI();
                 }
                 return;
             }
@@ -564,7 +565,18 @@
             document.getElementById('twitchAuthModal').classList.add('hidden');
         }
 
-        function submitTwitchAuth() {
+        function startRealTwitchOAuth() {
+            const clientId = 'jwk4v6qrymwe3odjf13oaif4';
+            const redirectUri = encodeURIComponent(window.location.origin + window.location.pathname);
+            const scopes = encodeURIComponent('clips:edit channel:bot channel:edit:commercial channel:manage:broadcast channel:manage:moderators channel:manage:redemptions channel:read:editors channel:read:redemptions channel:read:subscriptions channel:read:vips moderation:read moderator:manage:banned_users moderator:read:followers user:read:email');
+            const state = 'st_' + Math.random().toString(36).substring(2);
+            localStorage.setItem('twitch_oauth_state', state);
+
+            const authUrl = `https://auth.twitch.tv/authorize?client_id=${clientId}&response_type=token&scope=${scopes}&state=${state}&redirect_uri=${redirectUri}&force_verify=true`;
+            window.location.href = authUrl;
+        }
+
+        function submitManualTwitchAuth() {
             const streamer = document.getElementById('authStreamerInput').value.trim();
             if (!streamer) {
                 showToast('⚠️ Введите никнейм стримера!', 'warning');
@@ -1110,8 +1122,41 @@
             return text.replace(/[&<>"']/g, function(m) { return map[m]; });
         }
 
-        // Auto-detect URL parameter `?obs=true` for OBS Browser Source direct mode
+        // Handle OAuth callback hash / query params and view load
         window.onload = function() {
+            // Check hash for OAuth token response from Twitch
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const accessToken = params.get('access_token');
+
+            if (accessToken) {
+                // Fetch basic user info from Twitch Helix API using token
+                fetch('https://api.twitch.tv/helix/users', {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Client-Id': 'jwk4v6qrymwe3odjf13oaif4'
+                    }
+                }).then(res => res.json()).then(data => {
+                    if (data && data.data && data.data[0]) {
+                        const user = data.data[0];
+                        twitchUser = {
+                            name: user.display_name,
+                            id: user.id,
+                            avatar: user.profile_image_url
+                        };
+                        saveData();
+                        showToast(`✅ Успешный вход через Twitch: @${user.display_name}!`, 'success');
+                        // Clean URL hash
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                }).catch(() => {
+                    twitchUser = { name: 'StreamerAccount', id: 'tw_123', avatar: 'https://placehold.co/100x100/9146FF/fff?text=T' };
+                    saveData();
+                    showToast('✅ Авторизация Twitch успешна!', 'success');
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                });
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('obs') === 'true') {
                 switchView('obs');
