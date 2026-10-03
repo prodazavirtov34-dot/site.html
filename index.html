@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MAGA STREAM ROULETTE & AUCTION | Ultimate</title>
+  <title>MAGA STREAM ROULETTE & AUCTION</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/canvas-confetti.browser.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -32,7 +32,7 @@
   <!-- Кнопка разблокировки звука для Тян-TTS -->
   <div id="audio-banner" class="max-w-7xl mx-auto mb-4 bg-yellow-400 text-black border-4 border-black p-4 rounded-2xl shadow-2xl flex items-center justify-between">
     <div class="font-black text-sm md:text-base flex items-center gap-2">
-      <span>⚠️</span> Нажми кнопку справа, чтобы разблокировать Тян-TTS озвучку чата!
+      <span>⚠️️</span> Нажми кнопку справа, чтобы разблокировать Тян-TTS озвучку чата!
     </div>
     <button onclick="enableTTS()" class="bg-black text-yellow-300 px-6 py-2 rounded-xl font-black hover:bg-gray-900 cursor-pointer border-2 border-yellow-300 shadow-md text-sm">
       🔊 Включить TTS звук
@@ -47,9 +47,9 @@
       </div>
       <div>
         <h1 class="text-2xl md:text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300">
-          MAGA STREAM ROULETTE & AUCTION
+          MAGA STREAM ROULETTE & POINTAUC
         </h1>
-        <p class="text-pink-300 text-xs md:text-sm font-bold mt-0.5">Точки аукциона (1 балл) • Бот кодового слова • Тян-TTS для модераторов</p>
+        <p class="text-pink-300 text-xs md:text-sm font-bold mt-0.5">Аукцион баллов (1 балл) • Бот кодового слова • Тян-TTS для модераторов</p>
       </div>
     </div>
     
@@ -67,7 +67,7 @@
     <!-- Левая колонка: Бот кодового слова и Управление баллами -->
     <div class="glass-panel border-2 border-cyan-400/50 rounded-3xl p-6 shadow-2xl flex flex-col gap-6">
       
-      <!-- Блок бота кодового слова для прокачек -->
+      <!-- Блок бота кодового слова -->
       <div class="bg-gradient-to-br from-indigo-950/80 to-purple-950/80 border-2 border-cyan-400/60 rounded-2xl p-4 shadow-inner flex flex-col gap-3">
         <h3 class="text-sm font-black text-cyan-300 flex items-center gap-2">
           <span>🤖</span> Бот сбора по кодовому слову
@@ -90,9 +90,9 @@
       <!-- Блок аукциона за 1 балл -->
       <div class="bg-gradient-to-r from-purple-950/70 to-pink-950/70 border-2 border-purple-400/50 rounded-2xl p-4 flex flex-col gap-3">
         <span class="text-sm font-black text-yellow-300">💎 Аукцион за 1 балл канала:</span>
-        <p class="text-[11px] text-pink-200">Автоматически добавляет зрителя при списании награды.</p>
+        <p class="text-[11px] text-pink-200">Добавление участника за 1 балл.</p>
         <button onclick="simulateOnePoint()" class="w-full bg-gradient-to-r from-pink-500 to-yellow-400 hover:opacity-90 text-black font-black py-2.5 rounded-xl text-xs shadow cursor-pointer">
-          🧪 Тест покупки за 1 балл
+          🧪 Тест списания 1 балла
         </button>
       </div>
 
@@ -108,14 +108,12 @@
           <button onclick="addParticipantManual()" class="bg-cyan-400 text-black font-bold px-3 rounded-xl cursor-pointer text-xs">➕</button>
         </div>
 
-        <div class="max-h-48 overflow-y-auto space-y-1.5 pr-1" id="participants-list">
-          <!-- Сюда падают участники -->
-        </div>
+        <div class="max-h-48 overflow-y-auto space-y-1.5 pr-1" id="participants-list"></div>
       </div>
 
     </div>
 
-    <!-- Центр / Правая колонка: Колесо фортуны и TTS лог -->
+    <!-- Центр / Правая колонка: Рулетка и TTS лог -->
     <div class="lg:col-span-2 flex flex-col gap-6">
       
       <!-- Колесо -->
@@ -326,7 +324,6 @@
 
             const isMod = rawTags.includes('mod=1') || rawTags.includes('badges=moderator') || rawTags.includes('badges=broadcaster') || rawTags.includes('badges=vip');
 
-            // 1. Проверка бота кодового слова
             if (keywordBotActive && text.toLowerCase() === keyword.toLowerCase()) {
               if (!collectedUsers.has(username)) {
                 collectedUsers.add(username);
@@ -336,7 +333,6 @@
               }
             }
 
-            // 2. Проверка команды !tts (строго для модераторов/випов)
             if (text.startsWith('!tts')) {
               if (!isMod) return;
               const ttsMsg = text.replace('!tts', '').trim();
@@ -346,7 +342,7 @@
                   window.speechSynthesis.cancel();
                   const utterance = new SpeechSynthesisUtterance(`${username} говорит: ${ttsMsg}`);
                   utterance.lang = 'ru-RU';
-                  utterance.pitch = 1.6; // Голос тян
+                  utterance.pitch = 1.6;
                   utterance.rate = 1.05;
                   window.speechSynthesis.speak(utterance);
                 }
