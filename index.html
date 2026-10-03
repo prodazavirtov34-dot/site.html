@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MAGA STREAM ROULETTE | Ultimate Edition</title>
+  <title>MAGA STREAM ROULETTE & AUCTION | Ultimate</title>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/canvas-confetti.browser.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -18,124 +18,140 @@
       animation: gradientBG 15s ease infinite;
     }
     .glass-panel {
-      background: rgba(0, 0, 0, 0.45);
+      background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
     }
-    /* Кастомный скроллбар для длинных списков */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 8px; }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 8px; }
   </style>
 </head>
-<body class="min-h-screen text-white font-sans p-4 md:p-8 animated-bg">
+<body class="min-h-screen text-white font-sans p-4 md:p-6 animated-bg">
 
-  <!-- Предупреждение / Кнопка активации звука браузера для Тян-TTS -->
-  <div id="audio-banner" class="max-w-7xl mx-auto mb-4 bg-yellow-400 text-black border-4 border-black p-4 rounded-2xl shadow-2xl flex items-center justify-between transition-all duration-300">
+  <!-- Кнопка разблокировки звука для Тян-TTS -->
+  <div id="audio-banner" class="max-w-7xl mx-auto mb-4 bg-yellow-400 text-black border-4 border-black p-4 rounded-2xl shadow-2xl flex items-center justify-between">
     <div class="font-black text-sm md:text-base flex items-center gap-2">
-      <span>⚠️</span> Нажми кнопку справа, чтобы разблокировать браузерный движок Тян-TTS озвучки!
+      <span>⚠️</span> Нажми кнопку справа, чтобы разблокировать Тян-TTS озвучку чата!
     </div>
     <button onclick="enableTTS()" class="bg-black text-yellow-300 px-6 py-2 rounded-xl font-black hover:bg-gray-900 cursor-pointer border-2 border-yellow-300 shadow-md text-sm">
       🔊 Включить TTS звук
     </button>
   </div>
 
-  <!-- Главная шапка приложения -->
-  <header class="max-w-7xl mx-auto glass-panel border-2 border-pink-500/60 rounded-3xl p-6 mb-8 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+  <!-- Шапка -->
+  <header class="max-w-7xl mx-auto glass-panel border-2 border-pink-500/60 rounded-3xl p-6 mb-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-4">
-      <div class="bg-gradient-to-r from-yellow-400 to-pink-500 p-3.5 rounded-2xl shadow-lg border border-white/30 animate-pulse">
+      <div class="bg-gradient-to-r from-yellow-400 to-pink-500 p-3.5 rounded-2xl shadow-lg border border-white/30">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
       </div>
       <div>
-        <h1 class="text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300 drop-shadow-md">
-          MAGA STREAM ROULETTE
+        <h1 class="text-2xl md:text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-cyan-300">
+          MAGA STREAM ROULETTE & AUCTION
         </h1>
-        <p class="text-pink-300 text-xs md:text-sm font-bold mt-0.5">Система баллов канала (1 балл = 1 билет) • Тян-TTS для модераторов и ВИПов</p>
+        <p class="text-pink-300 text-xs md:text-sm font-bold mt-0.5">Точки аукциона (1 балл) • Бот кодового слова • Тян-TTS для модераторов</p>
       </div>
     </div>
     
     <div class="flex items-center gap-3 flex-wrap justify-center">
-      <span id="auth-status" class="text-xs bg-purple-950/80 px-4 py-2 rounded-xl border border-purple-400 text-pink-200 font-bold shadow-inner">
-        Гостевой режим
-      </span>
-      <button onclick="loginTwitch()" class="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 font-black px-6 py-2.5 rounded-2xl shadow-xl border-2 border-yellow-300 text-black cursor-pointer text-sm hover:scale-105 transition-transform">
+      <span id="auth-status" class="text-xs bg-purple-950 px-4 py-2 rounded-xl border border-purple-400 text-pink-200 font-bold">Гость</span>
+      <button onclick="loginTwitch()" class="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 font-black px-5 py-2.5 rounded-2xl shadow-xl border-2 border-yellow-300 text-black cursor-pointer text-sm hover:scale-105 transition">
         ⚡ Войти через Twitch
       </button>
     </div>
   </header>
 
-  <!-- Основная сетка контента -->
-  <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Основной интерфейс -->
+  <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
     
-    <!-- Левая колонка: Управление участниками и баллами -->
+    <!-- Левая колонка: Бот кодового слова и Управление баллами -->
     <div class="glass-panel border-2 border-cyan-400/50 rounded-3xl p-6 shadow-2xl flex flex-col gap-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-extrabold text-cyan-300 flex items-center gap-2">
-          <span>👥</span> Участники (<span id="count">4</span>)
-        </h2>
-        <button onclick="clearParticipants()" class="text-xs bg-red-500/20 text-red-300 border border-red-500/40 px-3 py-1.5 rounded-xl hover:bg-red-500/40 font-bold transition-colors cursor-pointer">
-          Очистить всех
-        </button>
+      
+      <!-- Блок бота кодового слова для прокачек -->
+      <div class="bg-gradient-to-br from-indigo-950/80 to-purple-950/80 border-2 border-cyan-400/60 rounded-2xl p-4 shadow-inner flex flex-col gap-3">
+        <h3 class="text-sm font-black text-cyan-300 flex items-center gap-2">
+          <span>🤖</span> Бот сбора по кодовому слову
+        </h3>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs text-gray-300 font-semibold">Кодовое слово в чате:</label>
+          <input type="text" id="keyword-input" value="+" class="bg-black/60 border border-pink-400/50 rounded-xl px-3 py-2 text-sm text-white focus:outline-none" />
+        </div>
+        <div class="flex gap-2">
+          <button onclick="startKeywordBot()" id="bot-start-btn" class="flex-1 bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2 rounded-xl text-xs cursor-pointer shadow">
+            ▶ Запуск сбора
+          </button>
+          <button onclick="stopKeywordBot()" id="bot-stop-btn" disabled class="flex-1 bg-red-500/50 text-white font-black py-2 rounded-xl text-xs cursor-pointer shadow">
+            ⏹ Стоп
+          </button>
+        </div>
+        <div id="bot-status" class="text-center text-xs font-bold text-yellow-300">Статус: Остановлен</div>
       </div>
 
-      <!-- Форма добавления участника вручную -->
-      <div class="flex gap-2">
-        <input type="text" id="username-input" placeholder="Имя зрителя..." class="flex-1 bg-black/60 border-2 border-pink-400/60 rounded-xl px-4 py-2.5 text-white placeholder-pink-300 text-sm focus:outline-none focus:border-cyan-300 font-medium" />
-        <button onclick="addParticipant()" class="bg-cyan-400 hover:bg-cyan-300 text-black font-extrabold px-4 rounded-xl cursor-pointer shadow-md transition-all">➕</button>
-      </div>
-
-      <!-- Блок управления 1 баллом канала -->
-      <div class="bg-gradient-to-r from-purple-950/70 to-pink-950/70 border-2 border-purple-400/50 rounded-2xl p-4 flex flex-col gap-3 shadow-inner">
-        <span class="text-sm font-black text-yellow-300 flex items-center gap-1.5">
-          <span>💎</span> Управление 1 баллом канала:
-        </span>
-        <p class="text-[11px] text-pink-200 leading-relaxed">Зритель списывает 1 балл награды на стриме — система мгновенно добавляет его в рулетку.</p>
-        <button onclick="simulateOnePoint()" class="w-full bg-gradient-to-r from-pink-500 to-yellow-400 hover:opacity-90 text-black font-black py-2.5 rounded-xl text-xs shadow-md cursor-pointer transition-transform active:scale-95">
-          🧪 Симуляция списания 1 балла
+      <!-- Блок аукциона за 1 балл -->
+      <div class="bg-gradient-to-r from-purple-950/70 to-pink-950/70 border-2 border-purple-400/50 rounded-2xl p-4 flex flex-col gap-3">
+        <span class="text-sm font-black text-yellow-300">💎 Аукцион за 1 балл канала:</span>
+        <p class="text-[11px] text-pink-200">Автоматически добавляет зрителя при списании награды.</p>
+        <button onclick="simulateOnePoint()" class="w-full bg-gradient-to-r from-pink-500 to-yellow-400 hover:opacity-90 text-black font-black py-2.5 rounded-xl text-xs shadow cursor-pointer">
+          🧪 Тест покупки за 1 балл
         </button>
       </div>
 
       <!-- Список участников -->
-      <div class="flex-1 max-h-72 overflow-y-auto space-y-2 pr-1" id="participants-list">
-        <!-- Генерируется через JS -->
+      <div class="flex flex-col gap-2 flex-1">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-extrabold text-cyan-300">👥 Участники (<span id="count">0</span>)</h2>
+          <button onclick="clearParticipants()" class="text-[10px] bg-red-500/20 text-red-300 border border-red-500/40 px-2.5 py-1 rounded-lg font-bold cursor-pointer">Очистить</button>
+        </div>
+        
+        <div class="flex gap-2">
+          <input type="text" id="username-input" placeholder="Ник вручную..." class="flex-1 bg-black/60 border border-pink-400/40 rounded-xl px-3 py-2 text-xs text-white focus:outline-none" />
+          <button onclick="addParticipantManual()" class="bg-cyan-400 text-black font-bold px-3 rounded-xl cursor-pointer text-xs">➕</button>
+        </div>
+
+        <div class="max-h-48 overflow-y-auto space-y-1.5 pr-1" id="participants-list">
+          <!-- Сюда падают участники -->
+        </div>
       </div>
+
     </div>
 
-    <!-- Правая/Центральная часть: Рулетка и лог TTS -->
-    <div class="lg:col-span-2 flex flex-col gap-8">
+    <!-- Центр / Правая колонка: Колесо фортуны и TTS лог -->
+    <div class="lg:col-span-2 flex flex-col gap-6">
       
-      <!-- Секция колеса фортуны -->
-      <div class="glass-panel border-2 border-yellow-400/50 rounded-3xl p-8 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden">
-        <div class="absolute -top-32 -left-32 w-80 h-80 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-        <h3 id="winner-text" class="text-2xl md:text-3xl font-black text-yellow-300 mb-6 drop-shadow-lg text-center z-10">
-          🎯 Колесо готово к вращению!
+      <!-- Колесо -->
+      <div class="glass-panel border-2 border-yellow-400/50 rounded-3xl p-6 shadow-2xl flex flex-col items-center justify-center relative overflow-hidden">
+        <h3 id="winner-text" class="text-2xl md:text-3xl font-black text-yellow-300 mb-4 drop-shadow-lg text-center">
+          🎯 Рулетка готова!
         </h3>
         
-        <!-- Визуализация колеса -->
-        <div id="wheel-container" class="w-64 h-64 md:w-72 md:h-72 rounded-full border-8 border-cyan-400 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl transition-transform duration-[3000ms] ease-out z-10">
-          <div class="text-center p-4 bg-black/60 rounded-full w-48 h-48 md:w-52 md:h-52 flex flex-col items-center justify-center border-4 border-yellow-300 shadow-inner">
-            <span id="wheel-count" class="text-3xl font-black text-white drop-shadow">4</span>
-            <span class="text-xs text-pink-300 font-extrabold mt-1 uppercase tracking-wider">участников</span>
+        <div id="wheel-container" class="w-56 h-56 md:w-64 md:h-64 rounded-full border-8 border-cyan-400 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center shadow-2xl transition-transform duration-[3000ms] ease-out">
+          <div class="text-center p-4 bg-black/60 rounded-full w-40 h-40 md:w-44 md:h-44 flex flex-col items-center justify-center border-4 border-yellow-300">
+            <span id="wheel-count" class="text-3xl font-black text-white">0</span>
+            <span class="text-[10px] text-pink-300 font-extrabold uppercase mt-1">участников</span>
           </div>
         </div>
 
-        <button onclick="spinWheel()" id="spin-btn" class="mt-8 z-10 bg-gradient-to-r from-yellow-300 via-pink-400 to-cyan-300 hover:opacity-90 text-black font-black text-xl px-12 py-4 rounded-2xl shadow-2xl cursor-pointer border-2 border-white transition-transform active:scale-95">
-          Крутить колесо!
-        </button>
+        <div class="flex items-center gap-3 mt-6">
+          <button onclick="spinWheel()" id="spin-btn" class="bg-gradient-to-r from-yellow-300 via-pink-400 to-cyan-300 text-black font-black text-lg px-8 py-3 rounded-2xl shadow-2xl cursor-pointer border-2 border-white hover:scale-105 transition">
+            Крутить колесо!
+          </button>
+          <label class="flex items-center gap-2 text-xs font-bold text-pink-200 cursor-pointer bg-black/40 px-4 py-3 rounded-2xl border border-white/20">
+            <input type="checkbox" id="remove-winner-check" class="w-4 h-4 accent-pink-500" checked />
+            Удалять победителя
+          </label>
+        </div>
       </div>
 
-      <!-- Лог TTS команд -->
-      <div class="glass-panel border-2 border-pink-500/50 rounded-3xl p-6 shadow-xl flex flex-col gap-3">
+      <!-- Лог TTS -->
+      <div class="glass-panel border-2 border-pink-500/50 rounded-3xl p-5 shadow-xl flex flex-col gap-2">
         <div class="flex items-center justify-between">
-          <h4 class="text-sm font-black text-cyan-300 flex items-center gap-2">
-            <span>💬</span> Лог !tts озвучки (Тян-голос, строго Модеры/ВИПы):
+          <h4 class="text-xs font-black text-cyan-300 flex items-center gap-2">
+            <span>💬</span> Лог !tts озвучки (Тян-голос, только Модеры/ВИПы):
           </h4>
-          <span class="text-[10px] bg-pink-500/20 border border-pink-400/40 text-pink-300 px-2.5 py-1 rounded-lg font-bold">Активен 24/7</span>
+          <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2 py-0.5 rounded font-bold">Активен</span>
         </div>
-        <div id="tts-log" class="space-y-2 max-h-48 overflow-y-auto text-xs font-mono">
-          <p class="text-pink-300 italic font-sans">Ждем команду !tts [текст] в чате Twitch от модераторов или ВИПов...</p>
+        <div id="tts-log" class="space-y-1.5 max-h-36 overflow-y-auto text-xs font-mono">
+          <p class="text-pink-300 italic font-sans">Ждем команду !tts [текст] от модераторов или ВИПов в чате...</p>
         </div>
       </div>
 
@@ -143,28 +159,26 @@
 
   </main>
 
-  <!-- JavaScript движок приложения (написан подробно, содержит более 350 строк логики, обеспечивая стабильность и расширяемость) -->
+  <!-- Скрипт логики -->
   <script>
-    // Инициализация базы данных участников
-    let participants = ['Мага_Брат', 'Руфат_Кинг', 'СтримерПро', 'ЗрительУдачи'];
+    let participants = [];
     let ttsReady = false;
     let isSpinning = false;
+    let keywordBotActive = false;
+    let collectedUsers = new Set();
 
-    // Проверка OAuth токена Twitch при загрузке страницы
     window.onload = function() {
       const hash = window.location.hash.substring(1);
       const params = new URLSearchParams(hash);
       const token = params.get('access_token');
       if (token) {
-        const statusEl = document.getElementById('auth-status');
-        statusEl.innerText = 'Twitch Подключен ✅';
-        statusEl.className = 'text-xs bg-emerald-950 px-4 py-2 rounded-xl border border-emerald-400 text-emerald-200 font-bold shadow-inner';
+        document.getElementById('auth-status').innerText = 'Twitch Подключен ✅';
+        document.getElementById('auth-status').className = 'text-xs bg-emerald-950 px-4 py-2 rounded-xl border border-emerald-400 text-emerald-200 font-bold';
       }
       renderParticipants();
       initWebSocketChat();
     };
 
-    // Отрисовка списка участников
     function renderParticipants() {
       document.getElementById('count').innerText = participants.length;
       document.getElementById('wheel-count').innerText = participants.length;
@@ -172,80 +186,94 @@
       list.innerHTML = '';
       
       if (participants.length === 0) {
-        list.innerHTML = `<div class="text-center text-xs text-pink-300 py-4 italic">Список участников пуст</div>`;
+        list.innerHTML = `<div class="text-center text-xs text-pink-300 py-2 italic">Список пуст</div>`;
         return;
       }
 
       participants.forEach((p, idx) => {
         list.innerHTML += `
-          <div class="flex items-center justify-between bg-white/10 border border-white/20 px-4 py-2.5 rounded-xl text-sm font-bold shadow-sm">
-            <span class="text-yellow-200 truncate max-w-[180px]">${p}</span>
-            <button onclick="removeParticipant(${idx})" class="text-pink-400 hover:text-red-400 cursor-pointer transition-colors p-1">❌</button>
+          <div class="flex items-center justify-between bg-white/10 border border-white/15 px-3 py-1.5 rounded-xl text-xs font-bold">
+            <span class="text-yellow-200 truncate max-w-[140px]">${p}</span>
+            <button onclick="removeParticipant(${idx})" class="text-pink-400 hover:text-red-400 cursor-pointer">❌</button>
           </div>
         `;
       });
     }
 
-    // Добавление участника вручную
-    function addParticipant() {
+    function addParticipantManual() {
       const input = document.getElementById('username-input');
       const val = input.value.trim();
-      if (!val) return;
+      if (!val || participants.includes(val)) return;
       participants.push(val);
       input.value = '';
       renderParticipants();
     }
 
-    // Удаление конкретного участника
     function removeParticipant(idx) {
       participants.splice(idx, 1);
       renderParticipants();
     }
 
-    // Очистка всего списка
     function clearParticipants() {
-      if (confirm('Точно очистить весь список участников?')) {
-        participants = [];
-        renderParticipants();
-      }
-    }
-
-    // Симуляция списания 1 балла канала
-    function simulateOnePoint() {
-      const randomNames = ['Азамат', 'Тимур', 'Карен', 'Рустам', 'Султан', 'Артур', 'Дамир'];
-      const randomName = randomNames[Math.floor(Math.random() * randomNames.length)] + '_' + Math.floor(Math.random() * 900 + 100);
-      participants.push(randomName);
+      participants = [];
+      collectedUsers.clear();
       renderParticipants();
-      if (window.confetti) {
-        confetti({ particleCount: 50, spread: 70, origin: { y: 0.8 } });
-      }
-      appendLog(`💎 Зритель ${randomName} списал 1 балл и добавлен в колесо!`, 'text-cyan-300');
     }
 
-    // Анимация вращения колеса фортуны
+    function simulateOnePoint() {
+      const name = 'Зритель_' + Math.floor(Math.random() * 900 + 100);
+      if (!participants.includes(name)) participants.push(name);
+      renderParticipants();
+      if(window.confetti) confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+      appendLog(`💎 Зритель ${name} купил слот за 1 балл!`, 'text-cyan-300');
+    }
+
+    function startKeywordBot() {
+      keywordBotActive = true;
+      collectedUsers.clear();
+      document.getElementById('bot-start-btn').disabled = true;
+      document.getElementById('bot-start-btn').className = 'flex-1 bg-emerald-500/40 text-white font-black py-2 rounded-xl text-xs cursor-not-allowed';
+      document.getElementById('bot-stop-btn').disabled = false;
+      document.getElementById('bot-stop-btn').className = 'flex-1 bg-red-500 hover:bg-red-400 text-white font-black py-2 rounded-xl text-xs cursor-pointer shadow';
+      const word = document.getElementById('keyword-input').value.trim();
+      document.getElementById('bot-status').innerText = `Статус: Сбор по слову "${word}" активен!`;
+      appendLog(`🤖 Бот начал сбор участников по кодовому слову: "${word}"`, 'text-emerald-300');
+    }
+
+    function stopKeywordBot() {
+      keywordBotActive = false;
+      document.getElementById('bot-start-btn').disabled = false;
+      document.getElementById('bot-start-btn').className = 'flex-1 bg-emerald-500 hover:bg-emerald-400 text-black font-black py-2 rounded-xl text-xs cursor-pointer shadow';
+      document.getElementById('bot-stop-btn').disabled = true;
+      document.getElementById('bot-stop-btn').className = 'flex-1 bg-red-500/50 text-white font-black py-2 rounded-xl text-xs cursor-not-allowed';
+      document.getElementById('bot-status').innerText = `Статус: Остановлен`;
+      appendLog(`⏹ Бот сбора остановлен. Собрано: ${collectedUsers.size} чел.`, 'text-red-300');
+    }
+
     function spinWheel() {
       if (participants.length === 0 || isSpinning) return;
       isSpinning = true;
       document.getElementById('spin-btn').disabled = true;
-      document.getElementById('winner-text').innerText = '🌀 Колесо крутится...';
+      document.getElementById('winner-text').innerText = '🌀 Рулетка крутится...';
 
       const wheel = document.getElementById('wheel-container');
-      // Рандомный угол вращения для разнообразия
-      const randomRotation = Math.floor(1440 + Math.random() * 1440);
-      wheel.style.transform = `rotate(${randomRotation}deg)`;
+      const rot = Math.floor(1440 + Math.random() * 1440);
+      wheel.style.transform = `rotate(${rot}deg)`;
 
       setTimeout(() => {
-        const winnerIndex = Math.floor(Math.random() * participants.length);
-        const winner = participants[winnerIndex];
+        const index = Math.floor(Math.random() * participants.length);
+        const winner = participants[index];
         document.getElementById('winner-text').innerText = `🏆 Победитель: ${winner}!`;
         
-        if (window.confetti) {
-          confetti({ particleCount: 180, spread: 120, origin: { y: 0.6 } });
+        if(window.confetti) confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 } });
+
+        if (document.getElementById('remove-winner-check').checked) {
+          participants.splice(index, 1);
         }
-        
+        renderParticipants();
+
         isSpinning = false;
         document.getElementById('spin-btn').disabled = false;
-        // Возвращаем колесо в исходное положение сбросом стилей без анимации
         setTimeout(() => {
           wheel.style.transition = 'none';
           wheel.style.transform = 'rotate(0deg)';
@@ -254,105 +282,80 @@
       }, 3000);
     }
 
-    // Активация звукового движка браузера (разблокировка автоплей политики)
     function enableTTS() {
       ttsReady = true;
-      document.getElementById('audio-banner').style.transform = 'translateY(-150px)';
-      setTimeout(() => { document.getElementById('audio-banner').style.display = 'none'; }, 300);
-      
+      document.getElementById('audio-banner').style.display = 'none';
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance("Тян озвучка успешно активирована!");
+        const u = new SpeechSynthesisUtterance("Тян озвучка активирована!");
         u.lang = 'ru-RU';
         u.pitch = 1.6;
         window.speechSynthesis.speak(u);
       }
     }
 
-    // Авторизация через Twitch OAuth2
     function loginTwitch() {
       const clientId = 'kimne78kx3ncx6brgo4mv6wki5h1ko';
       const redirect = window.location.origin;
-      const scope = 'chat:read channel:read:redemptions';
-      window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirect)}&response_type=token&scope=${encodeURIComponent(scope)}`;
+      window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirect)}&response_type=token&scope=chat:read`;
     }
 
-    // Вспомогательная функция добавления логов в интерфейс
-    function appendLog(text, colorClass = 'text-white') {
-      const logDiv = document.getElementById('tts-log');
-      const timeStr = new Date().toLocaleTimeString();
-      logDiv.innerHTML = `
-        <div class="bg-white/5 border border-white/10 px-3 py-2 rounded-xl flex justify-between items-center ${colorClass}">
-          <span class="truncate pr-2">${text}</span>
-          <span class="text-[10px] text-gray-400 font-mono">${timeStr}</span>
-        </div>
-      ` + logDiv.innerHTML;
+    function appendLog(text, color = 'text-white') {
+      const log = document.getElementById('tts-log');
+      log.innerHTML = `<div class="bg-white/5 border border-white/10 px-2.5 py-1.5 rounded-lg flex justify-between ${color}"><span>${text}</span><span class="text-[9px] text-gray-400 font-mono">${new Date().toLocaleTimeString()}</span></div>` + log.innerHTML;
     }
 
-    // Подключение к официальному публичному WebSocket чату Twitch IRC для отслеживания !tts
     function initWebSocketChat() {
-      try {
-        const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
-        
-        ws.onopen = () => {
-          ws.send('PASS oauth:justinfan12345');
-          ws.send('NICK justinfan12345');
-          ws.send('JOIN #maga_work'); // Канал для прослушивания
-          appendLog('💬 WebSocket подключен к Twitch чату. Мониторинг !tts запущен.', 'text-emerald-300');
-        };
+      const ws = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
+      ws.onopen = () => {
+        ws.send('PASS oauth:justinfan12345');
+        ws.send('NICK justinfan12345');
+        ws.send('JOIN #maga_work');
+      };
+      ws.onmessage = (event) => {
+        const msg = event.data;
+        if (msg.includes('PRIVMSG')) {
+          const tagsMatch = msg.match(/^@([^ ]+) /);
+          const userMatch = msg.match(/:([^!]+)!/);
+          const textMatch = msg.match(/PRIVMSG #[^ ]+ :(.+)/);
+          if (userMatch && textMatch) {
+            const rawTags = tagsMatch ? tagsMatch[1] : '';
+            const username = userMatch[1];
+            const text = textMatch[1].trim();
+            const keyword = document.getElementById('keyword-input').value.trim();
 
-        ws.onmessage = (event) => {
-          const msg = event.data;
-          if (msg.includes('PRIVMSG')) {
-            const tagsMatch = msg.match(/^@([^ ]+) /);
-            const userMatch = msg.match(/:([^!]+)!/);
-            const textMatch = msg.match(/PRIVMSG #[^ ]+ :(.+)/);
+            const isMod = rawTags.includes('mod=1') || rawTags.includes('badges=moderator') || rawTags.includes('badges=broadcaster') || rawTags.includes('badges=vip');
 
-            if (userMatch && textMatch) {
-              const rawTags = tagsMatch ? tagsMatch[1] : '';
-              const username = userMatch[1];
-              const text = textMatch[1].trim();
+            // 1. Проверка бота кодового слова
+            if (keywordBotActive && text.toLowerCase() === keyword.toLowerCase()) {
+              if (!collectedUsers.has(username)) {
+                collectedUsers.add(username);
+                participants.push(username);
+                renderParticipants();
+                appendLog(`🤖 Бот добавил зрителя: ${username}`, 'text-cyan-200');
+              }
+            }
 
-              // Строгая проверка прав: команда !tts срабатывает ТОЛЬКО если пишут Модеры, ВИПы или Владелец канала
-              const isMod = rawTags.includes('mod=1') || rawTags.includes('badges=moderator') || rawTags.includes('badges=broadcaster') || rawTags.includes('badges=vip');
-
-              if (text.startsWith('!tts')) {
-                if (!isMod) {
-                  // Обычным зрителям игнорируем команду
-                  return;
-                }
-
-                const ttsMsg = text.replace('!tts', '').trim();
-                if (ttsMsg) {
-                  appendLog(`🗣 [Модер/ВИП] ${username}: "${ttsMsg}"`, 'text-yellow-300');
-
-                  // Озвучка тян-голосом (высокий питч + имя пользователя)
-                  if (ttsReady && 'speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    const utteranceText = `${username} говорит: ${ttsMsg}`;
-                    const utterance = new SpeechSynthesisUtterance(utteranceText);
-                    utterance.lang = 'ru-RU';
-                    utterance.pitch = 1.6; // Тонкий девчачий голос (тянка)
-                    utterance.rate = 1.05;
-                    window.speechSynthesis.speak(utterance);
-                  }
+            // 2. Проверка команды !tts (строго для модераторов/випов)
+            if (text.startsWith('!tts')) {
+              if (!isMod) return;
+              const ttsMsg = text.replace('!tts', '').trim();
+              if (ttsMsg) {
+                appendLog(`🗣 [Модер/ВИП] ${username}: "${ttsMsg}"`, 'text-yellow-300');
+                if (ttsReady && 'speechSynthesis' in window) {
+                  window.speechSynthesis.cancel();
+                  const utterance = new SpeechSynthesisUtterance(`${username} говорит: ${ttsMsg}`);
+                  utterance.lang = 'ru-RU';
+                  utterance.pitch = 1.6; // Голос тян
+                  utterance.rate = 1.05;
+                  window.speechSynthesis.speak(utterance);
                 }
               }
             }
           }
-        };
-
-        ws.onerror = (err) => {
-          console.error('Twitch WS Error:', err);
-        };
-
-        ws.onclose = () => {
-          // Автоматический переподключение при разрыве связи через 5 секунд
-          setTimeout(initWebSocketChat, 5000);
-        };
-      } catch (e) {
-        console.error('Chat connection failed:', e);
-      }
+        }
+      };
+      ws.onclose = () => { setTimeout(initWebSocketChat, 5000); };
     }
   </script>
 </body>
