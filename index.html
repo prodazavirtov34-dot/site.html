@@ -1,259 +1,606 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch PointAuction & Roulette</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0e0e10; color: #efeff1; }
-        .twitch-purple { background-color: #9146FF; }
-        .twitch-purple:hover { background-color: #772ce8; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Twitch Tools — аукцион и розыгрыш</title>
+<style>
+:root{
+  --bg:#0e0e10;--panel:#18181b;--panel2:#1f1f23;--line:#2f2f35;--text:#efeff1;--mute:#adadb8;
+  --accent:#9147ff;--accent2:#772ce8;--ok:#00c853;--bad:#eb0400;--gold:#ffd54a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+h1{font-size:18px;margin:0 12px 0 0}
+h1 span{color:var(--accent)}
+input,select,button{font:inherit;color:var(--text);background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+input:focus,select:focus{outline:2px solid var(--accent);border-color:transparent}
+input[type=number]{width:90px}
+input[type=checkbox]{width:auto;accent-color:var(--accent)}
+button{cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);font-weight:600}
+button.primary:hover{background:var(--accent2)}
+button.danger{background:transparent;color:#ff6b6b}
+button.small{padding:3px 8px;font-size:13px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#666;margin-right:6px}
+.dot.on{background:var(--ok)}
+.dot.wait{background:var(--gold)}
+nav{display:flex;gap:4px;padding:12px 16px 0}
+nav button{border-radius:6px 6px 0 0;border-bottom:none;padding:9px 18px}
+nav button.act{background:var(--accent);border-color:var(--accent);font-weight:600}
+main{padding:0 16px 24px}
+.tab{display:none;border:1px solid var(--line);background:var(--panel);border-radius:0 8px 8px 8px;padding:16px}
+.tab.act{display:block}
+.grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.box{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:12px}
+.box h3{margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.row label{color:var(--mute);font-size:13px}
+.hint{color:var(--mute);font-size:13px}
+.lot{display:grid;grid-template-columns:34px 1fr auto auto;gap:10px;align-items:center;padding:9px 10px;border-radius:8px;border:1px solid var(--line);margin-bottom:6px;background:var(--panel)}
+.lot.lead{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+.lot .n{color:var(--mute);font-weight:700}
+.lot .name{font-weight:600;overflow-wrap:anywhere}
+.lot .sum{font-size:18px;font-weight:800;color:var(--gold);white-space:nowrap}
+.lot .ctl{display:flex;gap:4px}
+.timer{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums}
+.log,.chat{max-height:260px;overflow:auto;font-size:13px}
+.log div,.chat div{padding:2px 0;border-bottom:1px solid #2a2a30;overflow-wrap:anywhere}
+.chat b{color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;max-height:220px;overflow:auto}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px}
+.chip.sub{border-color:var(--accent)}
+.stage{height:130px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:44px;font-weight:900;border-radius:10px;background:linear-gradient(135deg,#1d1233,#0e0e10);border:1px solid var(--line);overflow:hidden;padding:0 12px}
+.stage.spin{color:var(--mute)}
+.stage.win{color:var(--gold);animation:pop .5s ease}
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+.win-item{padding:6px 0;border-bottom:1px solid #2a2a30}
+.big{font-size:28px;font-weight:800}
+.empty{color:var(--mute);padding:8px 0}
+</style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
+<header>
+  <h1>Twitch <span>Tools</span></h1>
+  <button id="btnLogin" class="primary">Войти через Twitch</button>
+  <button id="btnCfg" title="Client ID для входа через Twitch">⚙</button>
+  <b id="who" style="color:var(--ok)"></b>
+  <button id="btnLogout" style="display:none">Выйти</button>
+  <label class="hint">Канал:</label>
+  <input id="channel" placeholder="ник стримера" style="width:150px">
+  <button id="btnConnect" class="primary">Подключиться</button>
+  <label id="sayWrap" class="hint" style="display:none"><input id="say" type="checkbox" checked> писать в чат от моего имени</label>
+  <button id="btnDisconnect">Отключить</button>
+  <span><span id="dot" class="dot"></span><span id="status" class="hint">не подключено</span></span>
+  <span style="flex:1"></span>
+  <button id="btnSim" title="Сымитировать сообщения зрителей для проверки">🧪 Тест без стрима</button>
+</header>
 
-    <header class="bg-[#18181b] border-b border-[#26262c] px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <div class="twitch-purple text-white p-2.5 rounded-xl font-bold text-xl flex items-center justify-center shadow-lg shadow-purple-900/30">
-                <i class="fa-solid fa-gavel"></i>
-            </div>
-            <div>
-                <h1 class="font-extrabold text-xl tracking-tight text-white">Twitch PointAuction</h1>
-                <p class="text-xs text-zinc-400">Аукцион за баллы канала & Рулетка</p>
-            </div>
+<div id="loginBox" style="display:none;padding:12px 16px;background:var(--panel2);border-bottom:1px solid var(--line)">
+  <b>Вход через свой Twitch (один раз настроить)</b>
+  <ol class="hint" style="margin:6px 0 10px;padding-left:20px">
+    <li>Открой <a href="https://dev.twitch.tv/console/apps" target="_blank" rel="noopener" style="color:var(--accent)">dev.twitch.tv/console/apps</a> → «Register Your Application» (на аккаунте должна быть включена 2FA).</li>
+    <li>OAuth Redirect URL — вставь точно это: <code id="ruri"></code></li>
+    <li>Category: Chat Bot, Client Type: Public. Скопируй Client ID и вставь сюда:</li>
+  </ol>
+  <div class="row"><input id="clientId" placeholder="Client ID" style="width:320px"><button id="btnSaveCid" class="primary">Сохранить и войти</button></div>
+  <div id="fileWarn" class="hint"></div>
+  <div class="hint">Твитч не принимает адрес вида file://. Запусти сайт локально: открой папку с файлом в терминале → <code>python -m http.server 8000</code> (на Windows <code>py -m http.server 8000</code>) → открой <code>http://localhost:8000/twitch-tools.html</code>. Или залей файл на GitHub Pages / Netlify и используй их адрес в Redirect URL.</div>
+</div>
+
+<nav>
+  <button data-tab="auc" class="act">🔨 Аукцион</button>
+  <button data-tab="giv">🎁 Розыгрыш (ролл)</button>
+</nav>
+
+<main>
+<!-- ========== АУКЦИОН ========== -->
+<section id="tab-auc" class="tab act">
+  <div class="grid">
+    <div>
+      <div class="box" style="margin-bottom:12px">
+        <div class="row">
+          <button id="aStart" class="primary">▶ Старт</button>
+          <button id="aStop">⏹ Стоп</button>
+          <label>Таймер, мин (0 — без):</label><input id="aMin" type="number" min="0" value="10">
+          <span id="aState" class="hint"></span>
         </div>
+        <div class="timer" id="aTimer">--:--</div>
+      </div>
 
-        <div id="auth-container">
-            <a id="twitch-login-btn" href="#" class="twitch-purple text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg inline-flex items-center space-x-2.5 transition transform active:scale-95 text-sm no-underline cursor-pointer">
-                <i class="fa-brands fa-twitch text-lg"></i>
-                <span>Войти через Twitch</span>
-            </a>
+      <div class="box">
+        <div class="row">
+          <input id="lotName" placeholder="Название лота" style="flex:1;min-width:180px">
+          <input id="lotSum" type="number" placeholder="Сумма" value="0">
+          <button id="lotAdd" class="primary">+ Лот</button>
+          <button id="aReset" class="danger">Очистить всё</button>
         </div>
-    </header>
-
-    <main class="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <div class="space-y-6">
-            <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
-                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle text-purple-400"></i> Добавить лот
-                </h2>
-                <form onsubmit="addLot(event)" class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1">Название лота</label>
-                        <input type="text" id="lot-title" required placeholder="Например: Играем в Доту" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-zinc-400 mb-1">Начальная ставка (баллы 🪙)</label>
-                        <input type="number" id="lot-bid" min="0" value="100" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
-                    </div>
-                    <button type="submit" class="w-full twitch-purple text-white font-semibold py-2.5 rounded-xl transition cursor-pointer">Добавить в список</button>
-                </form>
-            </div>
-
-            <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
-                <h2 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                    <i class="fa-solid fa-bolt text-amber-400"></i> Симулятор ставок
-                </h2>
-                <p class="text-xs text-zinc-400 mb-4">Тест списания баллов без дублей.</p>
-                <div class="space-y-3">
-                    <input type="text" id="sim-user" placeholder="Ник зрителя (@Username)" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="number" id="sim-amount" placeholder="Баллы" value="500" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-purple-500">
-                        <select id="sim-lot-select" class="w-full bg-[#0e0e10] border border-[#26262c] rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"></select>
-                    </div>
-                    <button onclick="simulateRedemption()" class="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-2 rounded-xl transition cursor-pointer text-sm">
-                        Закинуть баллы
-                    </button>
-                </div>
-            </div>
+        <div class="row">
+          <label>Шаг кнопок ±:</label><input id="aStep" type="number" value="100" min="1">
         </div>
+        <div id="lots"></div>
+      </div>
+    </div>
 
-        <div class="lg:col-span-2 space-y-6">
-            <div class="bg-[#18181b] border border-[#26262c] rounded-2xl p-5 shadow-xl">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-purple-400"></i> Активные лоты
-                    </h2>
-                    <div class="flex items-center gap-2">
-                        <button onclick="spinRoulette()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-rotate"></i> Крутить рулетку
-                        </button>
-                        <button onclick="clearLots()" class="bg-red-900/40 hover:bg-red-900/60 text-red-300 px-3 py-2 rounded-xl text-xs transition cursor-pointer">Очистить</button>
-                    </div>
-                </div>
-                <div id="lots-list" class="space-y-3 max-h-[420px] overflow-y-auto pr-1">
-                    <div class="text-center py-10 text-zinc-500 text-sm">Список лотов пуст.</div>
-                </div>
-            </div>
+    <div>
+      <div class="box" style="margin-bottom:12px">
+        <h3>Настройки ставок в чате</h3>
+        <div class="row"><label>Команда:</label><input id="aCmd" value="!ставка" style="width:110px"></div>
+        <div class="row"><label>Мин. ставка:</label><input id="aMinBid" type="number" min="0" value="1"></div>
+        <div class="row"><label>Кто может ставить:</label>
+          <select id="aWho"><option value="all">все</option><option value="mods">только модеры и стример</option></select></div>
+        <div class="row"><label><input id="aAuto" type="checkbox" checked> Создавать лот, если такого нет</label></div>
+        <div class="hint">Примеры:<br><code>!ставка 500 Dark Souls</code><br><code>!ставка 200 #3</code> (по номеру)<br><code>!ставка 100</code> (на тот же лот, что и в прошлый раз)<br>Ставки суммируются, как в Pointauc.</div>
+      </div>
+      <div class="box">
+        <h3>Журнал ставок <button id="aUndo" class="small" style="float:right">↶ Отменить последнюю</button></h3>
+        <div id="aLog" class="log"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-            <div id="roulette-box" class="hidden bg-[#18181b] border border-purple-500/50 rounded-2xl p-6 text-center shadow-2xl relative overflow-hidden">
-                <h3 class="text-sm font-semibold uppercase tracking-wider text-purple-400 mb-1">Победитель рулетки</h3>
-                <div id="roulette-winner" class="text-3xl font-extrabold text-white mt-2 animate-bounce">Крутим...</div>
-            </div>
+<!-- ========== РОЗЫГРЫШ ========== -->
+<section id="tab-giv" class="tab">
+  <div class="grid">
+    <div>
+      <div class="box" style="margin-bottom:12px">
+        <div class="row">
+          <label>Кодовое слово:</label>
+          <input id="gKey" value="!прокачка" style="width:170px">
+          <select id="gMode">
+            <option value="exact">точное совпадение</option>
+            <option value="starts">начинается с</option>
+            <option value="contains">содержит</option>
+          </select>
         </div>
-    </main>
+        <div class="row">
+          <button id="gStart" class="primary">▶ Открыть набор</button>
+          <button id="gStop">⏹ Закрыть набор</button>
+          <button id="gClear" class="danger">Сбросить участников</button>
+          <span id="gState" class="hint"></span>
+        </div>
+        <div class="row">
+          <label><input id="gSubs" type="checkbox"> Только сабы</label>
+          <label>Вес саба: ×</label><input id="gW" type="number" min="1" max="10" value="1" style="width:70px">
+          <label><input id="gExcl" type="checkbox" checked> Не выбирать прошлых победителей</label>
+        </div>
+      </div>
 
-    <script>
-        const CLIENT_ID = '66s05bbnnw3g0qkykye9ck3f0k3ui3';
-        const REDIRECT_URI = window.location.origin + window.location.pathname;
+      <div class="stage" id="stage">Жми «Ролл»</div>
+      <div class="row" style="margin-top:12px">
+        <button id="gRoll" class="primary" style="font-size:17px;padding:10px 26px">🎲 Ролл</button>
+        <span class="hint">Участников: <b id="gCount">0</b> (в розыгрыше: <b id="gPool">0</b>)</span>
+      </div>
 
-        const scopes = ['channel:read:redemptions', 'channel:manage:redemptions', 'user:read:email'].join('%20');
-        const authUrl = `https://id.twitch.tv/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}&force_verify=true`;
-        document.getElementById('twitch-login-btn').href = authUrl;
+      <div class="box">
+        <h3>Участники</h3>
+        <div id="gList" class="chips"></div>
+      </div>
+    </div>
 
-        let lots = JSON.parse(localStorage.getItem('twitch_auction_lots')) || [];
-        let processedTransactions = new Set(JSON.parse(localStorage.getItem('twitch_processed_tx')) || []);
+    <div>
+      <div class="box" style="margin-bottom:12px">
+        <h3>Победители <button id="gWinClear" class="small" style="float:right">Очистить</button></h3>
+        <div id="gWins"></div>
+      </div>
+      <div class="box">
+        <h3>Чат</h3>
+        <div id="chat" class="chat"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
 
-        window.onload = function() {
-            const hash = window.location.hash.substring(1);
-            const params = new URLSearchParams(hash);
-            const accessToken = params.get('access_token');
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = n => Number(n).toLocaleString('ru-RU', {maximumFractionDigits: 2});
+const KEY = 'twitchTools.v1';
 
-            if (accessToken) {
-                localStorage.setItem('twitch_token', accessToken);
-                window.history.replaceState({}, document.title, window.location.pathname);
-                fetchUserProfile(accessToken);
-            } else {
-                const savedToken = localStorage.getItem('twitch_token');
-                if (savedToken) {
-                    fetchUserProfile(savedToken);
-                }
-            }
-            renderLots();
-        };
+/* ---------- состояние ---------- */
+const defaults = {
+  channel: '',
+  auction: {open:false, endsAt:0, cmd:'!ставка', minBid:1, who:'all', auto:true, step:100, minutes:10, nextN:1, lots:[], log:[]},
+  giveaway: {open:false, key:'!прокачка', mode:'exact', subsOnly:false, subW:1, excl:true, users:{}, winners:[]}
+};
+let S = JSON.parse(JSON.stringify(defaults));
+try {
+  const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+  if (raw) {
+    S.channel = raw.channel || '';
+    Object.assign(S.auction, raw.auction || {});
+    Object.assign(S.giveaway, raw.giveaway || {});
+  }
+} catch (e) {}
+const lastLot = {}; // user -> lot id
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
 
-        async function fetchUserProfile(token) {
-            try {
-                const response = await fetch('https://api.twitch.tv/helix/users', {
-                    headers: { 'Client-ID': CLIENT_ID, 'Authorization': `Bearer ${token}` }
-                });
-                const data = await response.json();
-                if (data.data && data.data.length > 0) {
-                    const user = data.data[0];
-                    document.getElementById('auth-container').innerHTML = `
-                        <div class="flex items-center gap-3 bg-[#26262c] px-4 py-2 rounded-xl">
-                            <img src="${user.profile_image_url}" class="w-8 h-8 rounded-full border border-purple-500" alt="Avatar">
-                            <div class="text-left">
-                                <div class="text-xs font-bold text-white">${user.display_name}</div>
-                                <div class="text-[10px] text-emerald-400">● Авторизован</div>
-                            </div>
-                            <button onclick="logout()" class="ml-3 text-zinc-400 hover:text-red-400 text-xs cursor-pointer"><i class="fa-solid fa-right-from-bracket"></i></button>
-                        </div>
-                    `;
-                } else { logout(); }
-            } catch (err) { logout(); }
-        }
+/* ---------- вкладки ---------- */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('act', x === b));
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('act', t.id === 'tab-' + b.dataset.tab));
+});
 
-        function logout() {
-            localStorage.removeItem('twitch_token');
-            window.location.href = REDIRECT_URI;
-        }
+/* ---------- подключение к чату (анонимно, только чтение) ---------- */
+let ws = null, wantConn = false;
+function setStatus(text, cls){ $('#status').textContent = text; $('#dot').className = 'dot ' + (cls || ''); }
 
-        function saveState() {
-            localStorage.setItem('twitch_auction_lots', JSON.stringify(lots));
-            localStorage.setItem('twitch_processed_tx', JSON.stringify([...processedTransactions]));
-        }
+const ENDPOINTS = ['wss://irc-ws.chat.twitch.tv:443'].concat(location.protocol === 'https:' ? [] : ['ws://irc-ws.chat.twitch.tv:80']);
+let epIdx = 0;
+function connect(){
+  const ch = $('#channel').value.trim().toLowerCase().replace(/^#/, '');
+  if (!ch) { setStatus('введи ник канала'); return; }
+  S.channel = ch; save();
+  wantConn = true;
+  if (ws) { ws.onclose = null; try { ws.close(); } catch(e){} }
+  setStatus('подключение…', 'wait');
+  let opened = false;
+  ws = new WebSocket(ENDPOINTS[epIdx % ENDPOINTS.length]);
+  ws.onopen = () => {
+    opened = true;
+    ws.send('CAP REQ :twitch.tv/tags twitch.tv/commands');
+    if (AUTH.token && AUTH.login) {
+      ws.send('PASS oauth:' + AUTH.token);
+      ws.send('NICK ' + AUTH.login);
+    } else {
+      ws.send('PASS SCHMOOPIIE');
+      ws.send('NICK justinfan' + Math.floor(10000 + Math.random() * 80000));
+    }
+    ws.send('JOIN #' + ch);
+  };
+  ws.onmessage = e => String(e.data).split('\r\n').forEach(handleLine);
+  ws.onerror = () => setStatus('ошибка соединения с ' + ENDPOINTS[epIdx % ENDPOINTS.length], '');
+  ws.onclose = ev => {
+    if (!opened) epIdx++;
+    if (wantConn) setStatus(opened ? 'переподключение…' : 'нет связи с чатом Twitch (код ' + ev.code + '), пробую снова…', 'wait');
+    else setStatus('отключено', '');
+    if (wantConn) setTimeout(() => wantConn && connect(), 4000);
+  };
+}
+function disconnect(){
+  wantConn = false;
+  if (ws) { ws.onclose = null; try { ws.close(); } catch(e){} ws = null; }
+  setStatus('отключено', '');
+}
 
-        function addLot(e) {
-            e.preventDefault();
-            const title = document.getElementById('lot-title').value.trim();
-            const bid = parseInt(document.getElementById('lot-bid').value) || 0;
-            if(!title) return;
-            lots.push({ id: Date.now(), title: title, bid: bid, leader: 'Нет ставок' });
-            document.getElementById('lot-title').value = '';
-            saveState();
-            renderLots();
-        }
+const MSG_RE = /^(?:@(\S+) )?:([^!\s]+)![^\s]+ PRIVMSG #\S+ :(.*)$/;
+function handleLine(line){
+  if (!line) return;
+  if (line.startsWith('PING')) { ws && ws.send('PONG :tmi.twitch.tv'); return; }
+  if (/NOTICE \* :(Login authentication failed|Improperly formatted auth)/.test(line)) {
+    AUTH.token = ''; AUTH.login = ''; saveAuth(); renderAuth(); disconnect();
+    setStatus('токен недействителен — войди через Twitch заново', '');
+    return;
+  }
+  if (/ (366|ROOMSTATE) /.test(line) || / ROOMSTATE/.test(line)) setStatus('подключено к #' + S.channel, 'on');
+  const m = MSG_RE.exec(line);
+  if (!m) return;
+  const tags = {};
+  (m[1] || '').split(';').forEach(p => { const i = p.indexOf('='); if (i > 0) tags[p.slice(0, i)] = p.slice(i + 1); });
+  const badges = tags['badges'] || '';
+  onMessage({
+    login: m[2],
+    name: tags['display-name'] || m[2],
+    text: m[3].replace(/^\u0001ACTION |\u0001$/g, '').trim(),
+    sub: tags['subscriber'] === '1' || /(subscriber|founder)\//.test(badges),
+    mod: tags['mod'] === '1' || /moderator\//.test(badges),
+    vip: /vip\//.test(badges),
+    owner: /broadcaster\//.test(badges)
+  });
+  setStatus('подключено к #' + S.channel, 'on');
+}
 
-        function renderLots() {
-            const listEl = document.getElementById('lots-list');
-            const selectEl = document.getElementById('sim-lot-select');
-            selectEl.innerHTML = '';
-            if (lots.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-10 text-zinc-500 text-sm">Список лотов пуст.</div>`;
-                return;
-            }
-            listEl.innerHTML = '';
-            lots.forEach((lot, index) => {
-                const opt = document.createElement('option');
-                opt.value = lot.id;
-                opt.textContent = lot.title;
-                selectEl.appendChild(opt);
+/* ---------- общий обработчик сообщений ---------- */
+function onMessage(m){
+  addChat(m);
+  giveawayMessage(m);
+  auctionMessage(m);
+}
+function addChat(m){
+  const box = $('#chat');
+  const d = document.createElement('div');
+  const b = document.createElement('b'); b.textContent = m.name + ': ';
+  d.appendChild(b); d.appendChild(document.createTextNode(m.text));
+  box.appendChild(d);
+  while (box.children.length > 60) box.removeChild(box.firstChild);
+  box.scrollTop = box.scrollHeight;
+}
 
-                const card = document.createElement('div');
-                card.className = `bg-[#0e0e10] border ${index === 0 ? 'border-purple-500/50' : 'border-[#26262c]'} rounded-xl p-4 flex items-center justify-between gap-4`;
-                card.innerHTML = `
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-white text-sm truncate">${lot.title}</h4>
-                        <div class="text-xs text-zinc-400 mt-0.5">Лидер: <span class="text-purple-400 font-medium">@${lot.leader}</span></div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-sm font-extrabold text-amber-400">${lot.bid} 🪙</div>
-                    </div>
-                    <button onclick="removeLot(${lot.id})" class="text-zinc-500 hover:text-red-400 p-2 cursor-pointer"><i class="fa-solid fa-trash text-xs"></i></button>
-                `;
-                listEl.appendChild(card);
-            });
-        }
+/* =========================================================
+   АУКЦИОН
+   ========================================================= */
+const A = () => S.auction;
 
-        function simulateRedemption() {
-            const usernameInput = document.getElementById('sim-user').value.trim();
-            const amount = parseInt(document.getElementById('sim-amount').value) || 0;
-            const lotId = parseInt(document.getElementById('sim-lot-select').value);
-            if (!usernameInput || amount <= 0 || !lotId) return;
+function findLot(ref){
+  ref = ref.trim();
+  if (!ref) return null;
+  const num = /^#?(\d+)$/.exec(ref);
+  if (num) return A().lots.find(l => l.n === +num[1]) || null;
+  const low = ref.toLowerCase();
+  return A().lots.find(l => l.name.toLowerCase() === low)
+      || A().lots.find(l => l.name.toLowerCase().includes(low)) || null;
+}
+function addLot(name, sum){
+  const lot = {id: Date.now() + Math.random(), n: A().nextN++, name: name.trim(), sum: +sum || 0, bids: 0};
+  A().lots.push(lot);
+  return lot;
+}
+function auctionMessage(m){
+  const a = A();
+  if (!a.open) return;
+  const cmd = a.cmd.toLowerCase();
+  const low = m.text.toLowerCase();
+  if (!(low === cmd || low.startsWith(cmd + ' '))) return;
+  if (a.who === 'mods' && !(m.mod || m.owner)) return;
+  const rest = m.text.slice(cmd.length).trim();
+  const mm = /^(\d+(?:[.,]\d+)?)\s*(.*)$/.exec(rest);
+  if (!mm) return;
+  const amount = parseFloat(mm[1].replace(',', '.'));
+  if (!(amount >= a.minBid) || amount <= 0) return;
+  let lot = null;
+  const ref = mm[2].trim();
+  if (ref) {
+    lot = findLot(ref);
+    if (!lot && a.auto && !/^#?\d+$/.test(ref)) lot = addLot(ref.slice(0, 80), 0);
+  } else if (lastLot[m.login]) {
+    lot = a.lots.find(l => l.id === lastLot[m.login]) || null;
+  }
+  if (!lot) return;
+  lot.sum += amount; lot.bids++;
+  lastLot[m.login] = lot.id;
+  a.log.push({t: Date.now(), user: m.name, lotId: lot.id, lotName: lot.name, amount});
+  if (a.log.length > 300) a.log.shift();
+  save(); renderAuction();
+}
+function undoBid(){
+  const e = A().log.pop();
+  if (!e) return;
+  const lot = A().lots.find(l => l.id === e.lotId);
+  if (lot) { lot.sum -= e.amount; lot.bids = Math.max(0, lot.bids - 1); }
+  save(); renderAuction();
+}
+function renderAuction(){
+  const a = A();
+  const sorted = [...a.lots].sort((x, y) => y.sum - x.sum);
+  const box = $('#lots');
+  box.innerHTML = '';
+  if (!sorted.length) box.innerHTML = '<div class="empty">Лотов пока нет — добавь вручную или пусть зрители ставят в чате.</div>';
+  sorted.forEach((l, i) => {
+    const d = document.createElement('div');
+    d.className = 'lot' + (i === 0 && l.sum > 0 ? ' lead' : '');
+    d.innerHTML = `<div class="n">#${l.n}</div>
+      <div><div class="name">${esc(l.name)}</div><div class="hint">ставок: ${l.bids}</div></div>
+      <div class="sum">${fmt(l.sum)}</div>
+      <div class="ctl">
+        <button class="small" data-a="minus">−</button>
+        <button class="small" data-a="plus">+</button>
+        <button class="small danger" data-a="del">✕</button>
+      </div>`;
+    d.querySelectorAll('button').forEach(b => b.onclick = () => {
+      const step = +$('#aStep').value || 100;
+      if (b.dataset.a === 'plus') l.sum += step;
+      if (b.dataset.a === 'minus') l.sum = Math.max(0, l.sum - step);
+      if (b.dataset.a === 'del') a.lots = a.lots.filter(x => x !== l);
+      save(); renderAuction();
+    });
+    box.appendChild(d);
+  });
+  const log = $('#aLog');
+  log.innerHTML = a.log.slice(-40).reverse().map(e =>
+    `<div><b>${esc(e.user)}</b> +${fmt(e.amount)} → ${esc(e.lotName)}</div>`).join('') || '<div class="empty">Пока пусто</div>';
+  $('#aState').textContent = a.open ? '● идёт приём ставок' : '○ приём закрыт';
+}
+function tickAuction(){
+  const a = A();
+  const t = $('#aTimer');
+  if (a.open && a.endsAt) {
+    const left = Math.max(0, a.endsAt - Date.now());
+    const s = Math.ceil(left / 1000);
+    t.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    if (left <= 0) { a.open = false; a.endsAt = 0; save(); renderAuction(); announceAuctionEnd(); }
+  } else {
+    t.textContent = a.open ? '∞' : '--:--';
+  }
+}
+$('#aStart').onclick = () => {
+  const a = A(); const min = +$('#aMin').value || 0;
+  a.open = true; a.endsAt = min > 0 ? Date.now() + min * 60000 : 0; a.minutes = min;
+  say('Аукцион открыт! Ставка: ' + a.cmd + ' <сумма> <лот>' + (min > 0 ? ' · ' + min + ' мин.' : ''));
+  save(); renderAuction(); tickAuction();
+};
+$('#aStop').onclick = () => { const was = A().open; A().open = false; A().endsAt = 0; save(); renderAuction(); tickAuction(); if (was) announceAuctionEnd(); };
+$('#lotAdd').onclick = () => {
+  const n = $('#lotName').value.trim(); if (!n) return;
+  addLot(n, $('#lotSum').value); $('#lotName').value = ''; $('#lotSum').value = 0;
+  save(); renderAuction();
+};
+$('#lotName').addEventListener('keydown', e => { if (e.key === 'Enter') $('#lotAdd').click(); });
+$('#aReset').onclick = () => {
+  if (!confirm('Удалить все лоты и журнал?')) return;
+  Object.assign(A(), {lots: [], log: [], nextN: 1}); save(); renderAuction();
+};
+$('#aUndo').onclick = undoBid;
+['aCmd', 'aMinBid', 'aWho', 'aAuto', 'aStep'].forEach(id => $('#' + id).addEventListener('change', () => {
+  const a = A();
+  a.cmd = $('#aCmd').value.trim() || '!ставка';
+  a.minBid = +$('#aMinBid').value || 0;
+  a.who = $('#aWho').value; a.auto = $('#aAuto').checked; a.step = +$('#aStep').value || 100;
+  save();
+}));
 
-            const txId = `${usernameInput}_${amount}_${lotId}_${Date.now()}`;
-            if (processedTransactions.has(txId)) return;
-            processedTransactions.add(txId);
+/* =========================================================
+   РОЗЫГРЫШ (ролл по кодовому слову)
+   ========================================================= */
+const G = () => S.giveaway;
+function giveawayMessage(m){
+  const g = G();
+  if (!g.open) return;
+  const key = g.key.toLowerCase().trim();
+  if (!key) return;
+  const t = m.text.toLowerCase();
+  const ok = g.mode === 'exact' ? t === key : g.mode === 'starts' ? t.startsWith(key) : t.includes(key);
+  if (!ok) return;
+  if (g.subsOnly && !(m.sub || m.owner)) return;
+  const had = g.users[m.login];
+  g.users[m.login] = {name: m.name, sub: m.sub || (had && had.sub) || false};
+  if (!had) { save(); renderGiveaway(); }
+}
+function pool(){
+  const g = G();
+  const won = new Set(g.winners.map(w => w.login));
+  return Object.entries(g.users)
+    .filter(([login]) => !(g.excl && won.has(login)))
+    .map(([login, u]) => ({login, name: u.name, w: u.sub ? Math.max(1, g.subW) : 1}));
+}
+function rnd(){ const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] / 4294967296; }
+function pick(list){
+  const total = list.reduce((s, x) => s + x.w, 0);
+  let r = rnd() * total;
+  for (const x of list) { r -= x.w; if (r < 0) return x; }
+  return list[list.length - 1];
+}
+let rolling = false;
+function roll(){
+  if (rolling) return;
+  const list = pool();
+  const stage = $('#stage');
+  if (!list.length) { stage.className = 'stage'; stage.textContent = 'Нет участников'; return; }
+  const winner = pick(list);
+  rolling = true; stage.className = 'stage spin';
+  const iv = setInterval(() => { stage.textContent = list[Math.floor(rnd() * list.length)].name; }, 70);
+  setTimeout(() => {
+    clearInterval(iv);
+    stage.className = 'stage win'; stage.textContent = '🎉 ' + winner.name;
+    G().winners.push({login: winner.login, name: winner.name, t: Date.now()});
+    say('🎉 Победитель: @' + winner.name + '!');
+    rolling = false; save(); renderGiveaway();
+  }, 2800);
+}
+function renderGiveaway(){
+  const g = G();
+  const all = Object.entries(g.users);
+  $('#gCount').textContent = all.length;
+  $('#gPool').textContent = pool().length;
+  $('#gList').innerHTML = all.map(([, u]) => `<span class="chip${u.sub ? ' sub' : ''}">${esc(u.name)}</span>`).join('')
+    || '<span class="empty">Пока никого. Открой набор и попроси чат написать кодовое слово.</span>';
+  $('#gWins').innerHTML = g.winners.slice().reverse().map((w, i) =>
+    `<div class="win-item">🏆 <b>${esc(w.name)}</b> <span class="hint">${new Date(w.t).toLocaleTimeString('ru-RU')}</span></div>`).join('')
+    || '<div class="empty">Победителей пока нет</div>';
+  $('#gState').textContent = g.open ? '● набор открыт — пиши «' + g.key + '»' : '○ набор закрыт';
+}
+$('#gStart').onclick = () => { G().open = true; save(); renderGiveaway(); say('Розыгрыш открыт! Напиши в чат: ' + G().key); };
+$('#gStop').onclick = () => { G().open = false; save(); renderGiveaway(); };
+$('#gClear').onclick = () => { if (confirm('Сбросить список участников?')) { G().users = {}; save(); renderGiveaway(); } };
+$('#gWinClear').onclick = () => { G().winners = []; save(); renderGiveaway(); };
+$('#gRoll').onclick = roll;
+['gKey', 'gMode', 'gSubs', 'gW', 'gExcl'].forEach(id => $('#' + id).addEventListener('change', () => {
+  const g = G();
+  g.key = $('#gKey').value.trim() || '!прокачка'; g.mode = $('#gMode').value;
+  g.subsOnly = $('#gSubs').checked; g.subW = +$('#gW').value || 1; g.excl = $('#gExcl').checked;
+  save(); renderGiveaway();
+}));
 
-            const lot = lots.find(l => l.id === lotId);
-            if (lot) {
-                lot.bid += amount;
-                lot.leader = usernameInput.replace('@', '');
-                saveState();
-                renderLots();
-                document.getElementById('sim-user').value = '';
-            }
-        }
+/* ---------- тест без стрима ---------- */
+$('#btnSim').onclick = () => {
+  const names = ['Alex','Mira','Dron','Lena','Kot','Ivan','Sasha','Neo','Zoya','Max','Fox','Rina','Bob','Lis','Tim'];
+  names.forEach((n, i) => {
+    const base = {login: n.toLowerCase(), name: n, sub: i % 3 === 0, mod: i === 1, vip: false, owner: false};
+    if (G().open) onMessage({...base, text: G().key});
+    if (A().open) {
+      const lots = A().lots;
+      const target = lots.length ? '#' + lots[Math.floor(Math.random() * lots.length)].n : 'Тестовый лот ' + (1 + i % 3);
+      onMessage({...base, text: A().cmd + ' ' + (50 + Math.floor(Math.random() * 20) * 10) + ' ' + target});
+    }
+  });
+  if (!G().open && !A().open) alert('Сначала открой набор в розыгрыше или запусти аукцион, потом жми «Тест».');
+};
 
-        function removeLot(id) {
-            lots = lots.filter(l => l.id !== id);
-            saveState();
-            renderLots();
-        }
+/* ---------- вход через Twitch (OAuth implicit) ---------- */
+const AUTH_KEY = 'twitchTools.auth';
+const AUTH = {clientId: '', token: '', login: ''};
+try { Object.assign(AUTH, JSON.parse(localStorage.getItem(AUTH_KEY) || '{}')); } catch (e) {}
+function saveAuth(){ try { localStorage.setItem(AUTH_KEY, JSON.stringify(AUTH)); } catch (e) {} }
+const redirectUri = () => location.origin + location.pathname;
 
-        function clearLots() {
-            if(confirm('Очистить лоты?')) {
-                lots = [];
-                processedTransactions.clear();
-                saveState();
-                renderLots();
-                document.getElementById('roulette-box').classList.add('hidden');
-            }
-        }
+function renderAuth(){
+  const on = !!(AUTH.token && AUTH.login);
+  $('#who').textContent = on ? '✔ ' + AUTH.login : '';
+  $('#btnLogin').style.display = on ? 'none' : '';
+  $('#btnLogout').style.display = on ? '' : 'none';
+  $('#sayWrap').style.display = on ? '' : 'none';
+  $('#clientId').value = AUTH.clientId;
+  const isFile = location.protocol === 'file:';
+  $('#ruri').textContent = isFile ? 'http://localhost:8000/twitch-tools.html' : redirectUri();
+  $('#fileWarn').textContent = isFile ? '⚠ Сейчас сайт открыт как file:// — вход через Twitch так не работает, запусти через localhost (инструкция ниже).' : '';
+}
+function startLogin(){
+  if (!AUTH.clientId || location.protocol === 'file:') { $('#loginBox').style.display = 'block'; return; }
+  const arr = new Uint32Array(2); crypto.getRandomValues(arr);
+  const st = Array.from(arr).join('');
+  try { sessionStorage.setItem('tt.state', st); } catch (e) {}
+  location.href = 'https://id.twitch.tv/oauth2/authorize?' + new URLSearchParams({
+    client_id: AUTH.clientId, redirect_uri: redirectUri(), response_type: 'token',
+    scope: 'chat:read chat:edit', state: st
+  });
+}
+async function authInit(){
+  renderAuth();
+  if (location.hash.includes('access_token')) {
+    const p = new URLSearchParams(location.hash.slice(1));
+    let ok = true;
+    try { ok = p.get('state') === sessionStorage.getItem('tt.state'); } catch (e) {}
+    history.replaceState(null, '', location.pathname + location.search);
+    if (ok) { AUTH.token = p.get('access_token'); saveAuth(); }
+  }
+  if (!AUTH.token) return;
+  try {
+    const r = await fetch('https://id.twitch.tv/oauth2/validate', {headers: {Authorization: 'OAuth ' + AUTH.token}});
+    if (r.status === 401) { AUTH.token = ''; AUTH.login = ''; saveAuth(); renderAuth(); return; }
+    const j = await r.json();
+    AUTH.login = j.login; saveAuth();
+  } catch (e) {
+    setStatus('не удалось связаться с id.twitch.tv (сеть/блокировка?)', '');
+    return;
+  }
+  renderAuth();
+  if (!$('#channel').value) $('#channel').value = AUTH.login;
+  connect();
+}
+function say(text){
+  if (!(AUTH.token && AUTH.login) || !$('#say').checked || !ws || ws.readyState !== 1 || !S.channel) return;
+  ws.send('PRIVMSG #' + S.channel + ' :' + String(text).slice(0, 450));
+}
+function announceAuctionEnd(){
+  const top = [...A().lots].sort((x, y) => y.sum - x.sum)[0];
+  say(top && top.sum > 0 ? 'Аукцион закрыт! Победил лот «' + top.name + '» — ' + fmt(top.sum) : 'Аукцион закрыт.');
+}
+$('#btnLogin').onclick = startLogin;
+$('#btnCfg').onclick = () => { const b = $('#loginBox'); b.style.display = b.style.display === 'none' ? 'block' : 'none'; };
+$('#btnSaveCid').onclick = () => { AUTH.clientId = $('#clientId').value.trim(); saveAuth(); startLogin(); };
+$('#btnLogout').onclick = () => { AUTH.token = ''; AUTH.login = ''; saveAuth(); disconnect(); renderAuth(); };
 
-        function spinRoulette() {
-            if (lots.length === 0) return;
-            const rouletteBox = document.getElementById('roulette-box');
-            const winnerEl = document.getElementById('roulette-winner');
-            rouletteBox.classList.remove('hidden');
+/* ---------- подключение кнопок и старт ---------- */
+$('#btnConnect').onclick = connect;
+$('#btnDisconnect').onclick = disconnect;
+$('#channel').addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
 
-            let counter = 0;
-            const interval = setInterval(() => {
-                const randomLot = lots[Math.floor(Math.random() * lots.length)];
-                winnerEl.textContent = `${randomLot.title} (@${randomLot.leader})`;
-                counter++;
-                if (counter > 12) {
-                    clearInterval(interval);
-                    const winner = lots[Math.floor(Math.random() * lots.length)];
-                    winnerEl.textContent = `🎉 ПОБЕДИТЕЛЬ: ${winner.title} — @${winner.leader} (${winner.bid} 🪙)!`;
-                }
-            }, 80);
-        }
-    </script>
+function initFields(){
+  $('#channel').value = S.channel;
+  const a = A(), g = G();
+  $('#aCmd').value = a.cmd; $('#aMinBid').value = a.minBid; $('#aWho').value = a.who;
+  $('#aAuto').checked = a.auto; $('#aStep').value = a.step; $('#aMin').value = a.minutes;
+  $('#gKey').value = g.key; $('#gMode').value = g.mode; $('#gSubs').checked = g.subsOnly;
+  $('#gW').value = g.subW; $('#gExcl').checked = g.excl;
+}
+initFields(); renderAuction(); renderGiveaway(); tickAuction();
+setInterval(tickAuction, 500);
+authInit();
+</script>
 </body>
 </html>
